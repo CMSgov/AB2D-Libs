@@ -63,5 +63,19 @@
         <testcontainers.version>1.16.0</testcontainers.version>
         <hapi.version>5.4.0</hapi.version>
     </properties>
+      
+    <distributionManagement>
+    <repository>
+        <id>central</id>
+        <name>artifactory-jfrog-artifactory-artifactory-ha-member-1-releases</name>
+        <url>https://artifactory.cloud.cms.gov/artifactory/ab2d-filters</url>
+    </repository>
+    <snapshotRepository>
+        <id>snapshots</id>
+        <name>artifactory-jfrog-artifactory-artifactory-ha-member-1-snapshots</name>
+        <url>https://artifactory.cloud.cms.gov/artifactory/ab2d-filters</url>
+    </snapshotRepository>
+    </distributionManagement>
+    
 
 </project>
