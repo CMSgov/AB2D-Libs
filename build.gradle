@@ -1,0 +1,69 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'pmd'
+}
+
+repositories {
+    mavenCentral()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+group 'gov.cms.ab2d'
+version '1.0-RELEASE'
+sourceCompatibility = 11
+targetCompatibility = 11
+
+ext {
+    hapiVersion = '5.4.0'
+}
+
+dependencies {
+    implementation 'org.projectlombok:lombok:1.18.20'
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
+    implementation 'com.github.spotbugs:spotbugs-annotations:4.2.0'
+
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+    testImplementation 'com.github.spotbugs:spotbugs-annotations:4.2.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
+jacocoTestReport {
+    dependsOn test
+    dependsOn jacocoTestCoverageVerification
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
+}

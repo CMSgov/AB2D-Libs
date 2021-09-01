@@ -11,9 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ExplanationOfBenefitTrimmerSTU3Test {
+public class ExplanationOfBenefitTrimmerSTU3Test {
     private static IBaseResource eobResource = null;
     private static FhirContext context = FhirContext.forDstu3();
 
@@ -35,7 +38,7 @@ class ExplanationOfBenefitTrimmerSTU3Test {
 
     @Test
     public void validateEmpty() {
-        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
+        ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         assertNull(ExplanationOfBenefitTrimmerSTU3.getBenefit(null));
         // Since getting a patient target creates a new one, make sure the object is empty
@@ -85,7 +88,7 @@ class ExplanationOfBenefitTrimmerSTU3Test {
 
     @Test
     public void testItemValues() {
-        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
+        ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         if (eobCarrier.getItem() != null) {
             for (var item : eobCarrier.getItem()) {
                 assertTrue(isNullOrEmpty(item.getDiagnosisLinkId()));
@@ -133,8 +136,8 @@ class ExplanationOfBenefitTrimmerSTU3Test {
     void isPartD() {
         IBaseResource ePartD = ExplanationOfBenefitTrimmerSTU3.getBenefit(
                 EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Part-D-Claims.json"));
-        assertTrue(EOBLoadUtilities.isPartD(ePartD));
-        assertFalse(EOBLoadUtilities.isPartD(eobResource));
-        assertFalse(EOBLoadUtilities.isPartD((org.hl7.fhir.dstu3.model.ExplanationOfBenefit) null));
+        assertTrue(EobUtils.isPartD(ePartD));
+        assertFalse(EobUtils.isPartD(eobResource));
+        assertFalse(EobUtils.isPartD((ExplanationOfBenefit) null));
     }
 }

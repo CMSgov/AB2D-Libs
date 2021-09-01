@@ -1,6 +1,25 @@
 package gov.cms.ab2d.filter;
 
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Attachment;
+import org.hl7.fhir.r4.model.Claim;
+import org.hl7.fhir.r4.model.ClaimResponse;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.ExplanationOfBenefit;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Location;
+import org.hl7.fhir.r4.model.MedicationRequest;
+import org.hl7.fhir.r4.model.Meta;
+import org.hl7.fhir.r4.model.Money;
+import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Period;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.ServiceRequest;
+import org.hl7.fhir.r4.model.StringType;
+import org.hl7.fhir.r4.model.VisionPrescription;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,11 +27,13 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hl7.fhir.r4.model.ExplanationOfBenefit.RemittanceOutcome.COMPLETE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExplanationOfBenefitTrimmerR4Test {
     private ExplanationOfBenefit eob;
-    private Date sampleDate = new Date();
+    private final Date sampleDate = new Date();
 
     @BeforeEach
     void initFullEob() {
@@ -164,7 +185,7 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertTrue(Math.abs(sampleDate.getTime() -  eobtrim.getBillablePeriod().getEnd().getTime()) < 1000);
         assertEquals(1, eobtrim.getCareTeam().size());
         ExplanationOfBenefit.CareTeamComponent careTeamComponent = eobtrim.getCareTeamFirstRep();
-        assertEquals(true, careTeamComponent.getResponsible());
+        assertTrue(careTeamComponent.getResponsible());
         assertEquals("care", careTeamComponent.getRole().getText());
         assertEquals("provider", careTeamComponent.getProvider().getReference());
         assertEquals(1, eobtrim.getDiagnosis().size());
