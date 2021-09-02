@@ -1,9 +1,7 @@
 package gov.cms.ab2d.filter;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
-@Slf4j
 public class ExplanationOfBenefitTrimmer {
     /**
      * Return the trimmed version of the EOB. Currently, only R4 & DSTU3 are supported

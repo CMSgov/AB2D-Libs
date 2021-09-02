@@ -1,6 +1,7 @@
 package gov.cms.ab2d.filter;
 
 import ca.uhn.fhir.context.FhirContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,6 +12,7 @@ import java.io.Reader;
 /**
  * Loads Explanation of Benefits object from a file or reader
  */
+@Slf4j
 public class EOBLoadUtilities {
     public static final String EOB_TYPE_CODE_SYS = "eob-type";
     public static final String EOB_TYPE_PART_D_CODE_VAL = "PDE";
@@ -25,9 +27,12 @@ public class EOBLoadUtilities {
         if (StringUtils.isBlank(fileInClassPath)) {
             return null;
         }
-        ClassLoader classLoader = EOBLoadUtilities.class.getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(fileInClassPath);
-        return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, inputStream);
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileInClassPath)) {
+            return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, inputStream);
+        } catch (Exception ex) {
+            log.error("Unable to open the file", ex);
+            return null;
+        }
     }
 
     /**
@@ -40,12 +45,11 @@ public class EOBLoadUtilities {
         if (reader == null) {
             return null;
         }
-        String response = IOUtils.toString(reader);
         switch (context.getVersion().getVersion()) {
             case DSTU3:
-                return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, response);
+                return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, IOUtils.toString(reader));
             case R4:
-                return FhirContext.forR4().newJsonParser().parseResource(org.hl7.fhir.r4.model.ExplanationOfBenefit.class, response);
+                return FhirContext.forR4().newJsonParser().parseResource(org.hl7.fhir.r4.model.ExplanationOfBenefit.class, IOUtils.toString(reader));
             default:
                 return null;
         }

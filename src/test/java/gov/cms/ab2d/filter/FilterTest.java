@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FilterTest {
+public class FilterTest {
     @Test
     void testFilter() throws ParseException {
         assertTrue(FilterEob.filter(null, null, null, null, true).isEmpty());

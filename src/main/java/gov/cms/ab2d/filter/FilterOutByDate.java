@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,7 @@ public final class FilterOutByDate {
         return getRanges(monthList, year);
     }
 
+    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidLiteralsInIfCondition"})
     private static List<DateRange> getRanges(List<Integer> monthList, int year) {
         List<DateRange> ranges = new ArrayList<>();
         int startVal = -1;
@@ -156,11 +158,11 @@ public final class FilterOutByDate {
      * @param year - the year, 2 or 4 digits (i.e., 1999 or 99)
      * @return the 4 digit year
      */
+    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidLiteralsInIfCondition"})
     static int getYearToUse(int year) {
-        Calendar c = Calendar.getInstance();
         int yearToUse = year;
         if (year < 100) {
-            int currentYear = c.get(Calendar.YEAR);
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
             if (currentYear + 10 < 2000 + year) {
                 yearToUse = 1900 + year;
             } else {
@@ -265,14 +267,12 @@ public final class FilterOutByDate {
      * @throws ParseException - if there is an issue parsing the dates
      */
     static boolean afterDate(Date dateVal, IBaseResource ben) throws ParseException {
-        SimpleDateFormat fullDateFormat = new SimpleDateFormat(FULL);
-        SimpleDateFormat shortDateFormat = new SimpleDateFormat(SHORT);
         Object period = EobUtils.getBillablePeriod(ben);
         if (period == null || dateVal == null) {
             return false;
         }
 
-        Date attToUse = fullDateFormat.parse(shortDateFormat.format(dateVal) + " 00:00:00:000");
+        Date attToUse = new SimpleDateFormat(FULL, Locale.US).parse(new SimpleDateFormat(SHORT, Locale.US).format(dateVal) + " 00:00:00:000");
         Date end = EobUtils.getEndDate(ben);
         return end != null && end.getTime() >= attToUse.getTime();
     }

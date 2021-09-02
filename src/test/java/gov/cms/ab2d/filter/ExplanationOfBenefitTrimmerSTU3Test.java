@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ExplanationOfBenefitTrimmerSTU3Test {
+public class ExplanationOfBenefitTrimmerSTU3Test {
     private static IBaseResource eobResource = null;
     private static FhirContext context = FhirContext.forDstu3();
 

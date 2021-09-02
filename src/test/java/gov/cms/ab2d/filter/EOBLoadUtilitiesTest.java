@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class EOBLoadUtilitiesTest {
-    static IBaseResource eobC;
-    static IBaseResource eobS;
-    static FhirContext context = FhirContext.forDstu3();
+public class EOBLoadUtilitiesTest {
+    private static IBaseResource eobC;
+    private static IBaseResource eobS;
+    private static FhirContext context = FhirContext.forDstu3();
 
     static {
         eobC = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));

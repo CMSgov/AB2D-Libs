@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class FilterOutByDateTest {
-    private final static SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
-    private final static SimpleDateFormat LONGSDF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss:SSS");
+public class FilterOutByDateTest {
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat LONGSDF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss:SSS");
 
     @BeforeAll
     static void setTimeZone() {
