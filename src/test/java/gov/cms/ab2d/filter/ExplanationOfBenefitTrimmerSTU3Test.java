@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,7 +40,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     @Test
     public void validateEmpty() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         assertNull(ExplanationOfBenefitTrimmerSTU3.getBenefit(null));
         // Since getting a patient target creates a new one, make sure the object is empty
         assertTrue(eobCarrier.getPatientTarget().getIdentifier().isEmpty());
@@ -125,6 +126,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
                 EOBLoadUtilities.getSTU3EOBFromFileInClassPath(file));
 
         String result = jsonParser.encodeResourceToString(eCarrier);
+        System.out.println(result);
     }
 
     @Test

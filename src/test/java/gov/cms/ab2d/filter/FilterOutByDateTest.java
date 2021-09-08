@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,8 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FilterOutByDateTest {
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
-    private static final SimpleDateFormat LONGSDF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss:SSS");
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    private static final SimpleDateFormat LONGSDF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss:SSS", Locale.US);
+    private static final String OCT_1_2020 = "10/01/2020";
+    private static final String JAN_1_2020 = "01/01/2020";
 
     @BeforeAll
     static void setTimeZone() {
@@ -37,7 +40,7 @@ public class FilterOutByDateTest {
                     FilterOutByDate.getDateRange(9, 15),
                     FilterOutByDate.getDateRange(10, 12, 5, 15));
             List<IBaseResource> list = List.of(
-                    createEOB("10/01/2020", "10/02/2020"), // In
+                    createEOB(OCT_1_2020, "10/02/2020"), // In
                     createEOB("08/05/2020", "08/06/2020"), // In
                     createEOB("11/07/2020", "11/07/2020"), // Out
                     createEOB("10/07/2020", "11/07/2020"), // In
@@ -58,8 +61,8 @@ public class FilterOutByDateTest {
 
     @Test
     void testAfterAttestation() throws Exception {
-        IBaseResource b = createEOB("10/01/2020", "10/03/2020");
-        assertTrue(FilterOutByDate.afterDate(SDF.parse("10/01/2020"), b));
+        IBaseResource b = createEOB(OCT_1_2020, "10/03/2020");
+        assertTrue(FilterOutByDate.afterDate(SDF.parse(OCT_1_2020), b));
         assertTrue(FilterOutByDate.afterDate(SDF.parse("10/03/2020"), b));
         assertTrue(FilterOutByDate.afterDate(SDF.parse("10/03/2002"), b));
         assertFalse(FilterOutByDate.afterDate(SDF.parse("10/04/2020"), b));
@@ -67,7 +70,7 @@ public class FilterOutByDateTest {
 
     @Test
     void withinDateRange() throws Exception {
-        IBaseResource b = createEOB("10/01/2020", "11/01/2020");
+        IBaseResource b = createEOB(OCT_1_2020, "11/01/2020");
 
         // Any slice of billing period within the interval
         assertTrue(FilterOutByDate.withinDateRange(b, FilterOutByDate.getDateRange(10, 2020)));
@@ -161,13 +164,13 @@ public class FilterOutByDateTest {
         List<Integer> months = List.of(1);
         List<FilterOutByDate.DateRange> ranges = FilterOutByDate.getDateRanges(months, 2020);
         assertEquals(1, ranges.size());
-        assertEquals("01/01/2020", SDF.format(ranges.get(0).getStart()));
+        assertEquals(JAN_1_2020, SDF.format(ranges.get(0).getStart()));
         assertEquals("01/31/2020", SDF.format(ranges.get(0).getEnd()));
 
         months = List.of(1, 2);
         ranges = FilterOutByDate.getDateRanges(months, 2020);
         assertEquals(1, ranges.size());
-        assertEquals("01/01/2020", SDF.format(ranges.get(0).getStart()));
+        assertEquals(JAN_1_2020, SDF.format(ranges.get(0).getStart()));
         assertEquals("02/29/2020", SDF.format(ranges.get(0).getEnd()));
 
         months = List.of(11, 12);
@@ -191,7 +194,7 @@ public class FilterOutByDateTest {
         months = List.of(1, 2, 3, 4, 5, 9);
         ranges = FilterOutByDate.getDateRanges(months, 2020);
         assertEquals(2, ranges.size());
-        assertEquals("01/01/2020", SDF.format(ranges.get(0).getStart()));
+        assertEquals(JAN_1_2020, SDF.format(ranges.get(0).getStart()));
         assertEquals("05/31/2020", SDF.format(ranges.get(0).getEnd()));
         assertEquals("09/01/2020", SDF.format(ranges.get(1).getStart()));
         assertEquals("09/30/2020", SDF.format(ranges.get(1).getEnd()));
@@ -199,7 +202,7 @@ public class FilterOutByDateTest {
         months = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
         ranges = FilterOutByDate.getDateRanges(months, 2020);
         assertEquals(1, ranges.size());
-        assertEquals("01/01/2020", SDF.format(ranges.get(0).getStart()));
+        assertEquals(JAN_1_2020, SDF.format(ranges.get(0).getStart()));
         assertEquals("12/31/2020", SDF.format(ranges.get(0).getEnd()));
     }
 

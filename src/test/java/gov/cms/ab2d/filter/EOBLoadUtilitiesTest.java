@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,7 +68,7 @@ public class EOBLoadUtilitiesTest {
         ExplanationOfBenefit.ProcedureComponent comp = procedures.get(0);
         assertEquals(comp.getSequence(), 1);
         assertNotNull(comp.getDate());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         Date expectedTime = sdf.parse("2016-01-16T00:00:00-0600");
         assertEquals(expectedTime.getTime(), comp.getDate().getTime());
         assertEquals(comp.getProcedureCodeableConcept().getCoding().get(0).getSystem(), "http://hl7.org/fhir/sid/icd-9-cm");
@@ -145,7 +146,7 @@ public class EOBLoadUtilitiesTest {
         assertEquals(components.get(0).getService().getCoding().get(0).getSystem(), "https://bluebutton.cms.gov/resources/codesystem/hcpcs");
         assertEquals(components.get(0).getService().getCoding().get(0).getVersion(), "5");
         assertEquals(components.get(0).getService().getCoding().get(0).getCode(), "92999");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date d = sdf.parse("1999-10-27");
         org.hl7.fhir.dstu3.model.Period period = (org.hl7.fhir.dstu3.model.Period) components.get(0).getServiced();
         assertEquals(period.getStart().getTime(), d.getTime());
@@ -163,15 +164,22 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     void testReaderEOB() throws IOException {
-        ClassLoader classLoader = EOBLoadUtilities.class.getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json");
-        Reader reader = new java.io.InputStreamReader(inputStream);
-        assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
-        // STU3
-        ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
-        assertNotNull(benefit);
-        assertEquals(benefit.getPatient().getReference(), "Patient/-199900000022040");
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try (InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json")) {
+            try (Reader reader = new java.io.InputStreamReader(inputStream)) {
+                assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
+                // STU3
+                ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
+                assertNotNull(benefit);
+                assertEquals(benefit.getPatient().getReference(), "Patient/-199900000022040");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Test
