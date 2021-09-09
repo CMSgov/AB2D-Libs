@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +16,7 @@ public class FilterTest {
     @Test
     void testFilter() throws ParseException {
         assertTrue(FilterEob.filter(null, null, null, null, true).isEmpty());
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
 
         ExplanationOfBenefit eob1 = new ExplanationOfBenefit();
         assertTrue(FilterEob.filter(eob1, null, null, null, true).isEmpty());

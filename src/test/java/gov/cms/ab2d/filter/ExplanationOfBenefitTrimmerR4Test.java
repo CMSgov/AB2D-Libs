@@ -32,8 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExplanationOfBenefitTrimmerR4Test {
-    private ExplanationOfBenefit eob;
-    private final Date sampleDate = new Date();
+    private static ExplanationOfBenefit eob;
+    private static final Date SAMPLE_DATE = new Date();
+    private static final String DUMMY_REF = "1234";
+    private static final String DUMMY_TYPE = "type";
+    private static final String DUMMY_TXT = "text";
 
     @BeforeEach
     void initFullEob() {
@@ -41,47 +44,47 @@ public class ExplanationOfBenefitTrimmerR4Test {
         eob = new ExplanationOfBenefit();
         eob.setText(new Narrative().setStatus(Narrative.NarrativeStatus.ADDITIONAL));
         eob.setContained(List.of(eob));
-        eob.setMeta(new Meta().setLastUpdated(sampleDate));
+        eob.setMeta(new Meta().setLastUpdated(SAMPLE_DATE));
         eob.setPatient(new Reference("Patient/1234"));
-        eob.setPatientTarget(new Patient().setBirthDate(sampleDate));
-        eob.setCreated(sampleDate);
-        eob.setEnterer(new Reference("1234"));
-        eob.setEntererTarget(new Patient().setBirthDate(sampleDate));
-        eob.setInsurer(new Reference("1234"));
+        eob.setPatientTarget(new Patient().setBirthDate(SAMPLE_DATE));
+        eob.setCreated(SAMPLE_DATE);
+        eob.setEnterer(new Reference(DUMMY_REF));
+        eob.setEntererTarget(new Patient().setBirthDate(SAMPLE_DATE));
+        eob.setInsurer(new Reference(DUMMY_REF));
         eob.setInsurerTarget(new Organization().setName("Org"));
-        eob.setProvider(new Reference("1234"));
+        eob.setProvider(new Reference(DUMMY_REF));
         eob.setProviderTarget(new Organization().setName("Org"));
-        eob.setReferral(new Reference("1234"));
+        eob.setReferral(new Reference(DUMMY_REF));
         ServiceRequest req = new ServiceRequest();
         req.setId("Ref");
         eob.setReferralTarget(req);
-        eob.setFacility(new Reference("1234"));
+        eob.setFacility(new Reference(DUMMY_REF));
         eob.setFacilityTarget(new Location().setName("Facility"));
-        eob.setClaim(new Reference("1234"));
-        eob.setClaimTarget(new Claim().setCreated(sampleDate));
-        eob.setClaimResponse(new Reference("1234"));
-        eob.setClaimResponseTarget(new ClaimResponse().setCreated(sampleDate));
+        eob.setClaim(new Reference(DUMMY_REF));
+        eob.setClaimTarget(new Claim().setCreated(SAMPLE_DATE));
+        eob.setClaimResponse(new Reference(DUMMY_REF));
+        eob.setClaimResponseTarget(new ClaimResponse().setCreated(SAMPLE_DATE));
         eob.setDisposition("Disposition");
-        eob.setPrescription(new Reference("1234"));
-        eob.setPrescriptionTarget(new VisionPrescription().setCreated(sampleDate));
-        eob.setOriginalPrescription(new Reference("1234"));
-        eob.setOriginalPrescriptionTarget(new MedicationRequest().setAuthoredOn(sampleDate));
+        eob.setPrescription(new Reference(DUMMY_REF));
+        eob.setPrescriptionTarget(new VisionPrescription().setCreated(SAMPLE_DATE));
+        eob.setOriginalPrescription(new Reference(DUMMY_REF));
+        eob.setOriginalPrescriptionTarget(new MedicationRequest().setAuthoredOn(SAMPLE_DATE));
         eob.setPrecedence(2);
-        eob.setPriority(new CodeableConcept().setText("text"));
-        eob.setFundsReserveRequested(new CodeableConcept().setText("text"));
-        eob.setFundsReserve(new CodeableConcept().setText("text"));
+        eob.setPriority(new CodeableConcept().setText(DUMMY_TXT));
+        eob.setFundsReserveRequested(new CodeableConcept().setText(DUMMY_TXT));
+        eob.setFundsReserve(new CodeableConcept().setText(DUMMY_TXT));
         eob.setPreAuthRef(List.of(new StringType("preauth")));
-        eob.setPreAuthRefPeriod(List.of(new Period().setEnd(sampleDate).setStart(sampleDate)));
-        eob.setFormCode(new CodeableConcept().setText("text"));
-        eob.setBenefitPeriod(new Period().setEnd(sampleDate).setStart(sampleDate));
+        eob.setPreAuthRefPeriod(List.of(new Period().setEnd(SAMPLE_DATE).setStart(SAMPLE_DATE)));
+        eob.setFormCode(new CodeableConcept().setText(DUMMY_TXT));
+        eob.setBenefitPeriod(new Period().setEnd(SAMPLE_DATE).setStart(SAMPLE_DATE));
         eob.setOutcome(COMPLETE);
         eob.setRelated(List.of(new ExplanationOfBenefit.RelatedClaimComponent().setReference(new Identifier().setValue("one"))));
         eob.setPayee(new ExplanationOfBenefit.PayeeComponent().setParty(new Reference("party")));
         eob.setInsurance(List.of(new ExplanationOfBenefit.InsuranceComponent().setCoverage(new Reference("coverage"))));
-        eob.setAccident(new ExplanationOfBenefit.AccidentComponent().setDate(sampleDate));
+        eob.setAccident(new ExplanationOfBenefit.AccidentComponent().setDate(SAMPLE_DATE));
         eob.setAddItem(List.of(new ExplanationOfBenefit.AddedItemComponent().setUnitPrice(new Money().setValue(10))));
-        eob.setPayment(new ExplanationOfBenefit.PaymentComponent().setDate(sampleDate));
-        eob.setForm(new Attachment().setCreation(sampleDate));
+        eob.setPayment(new ExplanationOfBenefit.PaymentComponent().setDate(SAMPLE_DATE));
+        eob.setForm(new Attachment().setCreation(SAMPLE_DATE));
         eob.setProcessNote(List.of(new ExplanationOfBenefit.NoteComponent().setType(Enumerations.NoteType.DISPLAY)));
         eob.setBenefitBalance(List.of(new ExplanationOfBenefit.BenefitBalanceComponent().setDescription("Desc")));
         eob.setTotal(List.of(new ExplanationOfBenefit.TotalComponent().setAmount(new Money().setValue(13))));
@@ -91,9 +94,9 @@ public class ExplanationOfBenefitTrimmerR4Test {
         eob.setItem(List.of(new ExplanationOfBenefit.ItemComponent().setSequence(3).setCategory(new CodeableConcept().setText("category"))));
         eob.setIdentifier(List.of(new Identifier().setType(new CodeableConcept().setText("one")).setValue("value")));
         eob.setStatus(ExplanationOfBenefit.ExplanationOfBenefitStatus.CANCELLED);
-        eob.setType(new CodeableConcept().setText("type"));
+        eob.setType(new CodeableConcept().setText(DUMMY_TYPE));
         eob.setSubType(new CodeableConcept().setText("subtype"));
-        eob.setBillablePeriod(new Period().setEnd(sampleDate).setStart(sampleDate));
+        eob.setBillablePeriod(new Period().setEnd(SAMPLE_DATE).setStart(SAMPLE_DATE));
 
         eob.setCareTeam(List.of(
                 new ExplanationOfBenefit.CareTeamComponent().setResponsible(true)
@@ -104,14 +107,14 @@ public class ExplanationOfBenefitTrimmerR4Test {
                 new ExplanationOfBenefit.DiagnosisComponent()
                 .setSequence(1)
                 .setOnAdmission(new CodeableConcept().setText("admission"))
-                .setType(List.of(new CodeableConcept().setText("type")))
+                .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
         ));
         eob.setProcedure(List.of(
                 new ExplanationOfBenefit.ProcedureComponent()
-                .setType(List.of(new CodeableConcept().setText("type")))
+                .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
                 .setUdi(List.of(new Reference("udi")))
                 .setProcedure(new CodeableConcept().setText("procedure"))
-                .setDate(sampleDate)
+                .setDate(SAMPLE_DATE)
         ));
     }
 
@@ -124,7 +127,7 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertEquals(Narrative.NarrativeStatus.ADDITIONAL, eobtrim.getText().getStatus());
         assertEquals(0, eobtrim.getExtension().size());
         assertEquals(0, eobtrim.getContained().size());
-        assertEquals(sampleDate, eobtrim.getMeta().getLastUpdated());
+        assertEquals(SAMPLE_DATE, eobtrim.getMeta().getLastUpdated());
         assertEquals("Patient/1234", eobtrim.getPatient().getReference());
         assertNull(eobtrim.getPatientTarget().getBirthDate());
         assertNull(eobtrim.getCreated());
@@ -132,11 +135,11 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertNull(eobtrim.getEntererTarget());
         assertNull(eobtrim.getInsurer().getReference());
         assertNull(eobtrim.getInsurerTarget().getName());
-        assertEquals("1234", eobtrim.getProvider().getReference());
+        assertEquals(DUMMY_REF, eobtrim.getProvider().getReference());
         assertNull(eobtrim.getProviderTarget());
         assertNull(eobtrim.getReferral().getReference());
         assertNull(eobtrim.getReferralTarget().getId());
-        assertEquals("1234", eobtrim.getFacility().getReference());
+        assertEquals(DUMMY_REF, eobtrim.getFacility().getReference());
         assertNull(eobtrim.getFacilityTarget().getName());
         assertNull(eobtrim.getClaim().getReference());
         assertNull(eobtrim.getClaimTarget().getCreated());
@@ -179,10 +182,10 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertEquals("value", id.getValue());
         assertEquals("one", id.getType().getText());
         assertEquals(ExplanationOfBenefit.ExplanationOfBenefitStatus.CANCELLED, eobtrim.getStatus());
-        assertEquals("type", eobtrim.getType().getText());
+        assertEquals(DUMMY_TYPE, eobtrim.getType().getText());
         assertEquals("subtype", eobtrim.getSubType().getText());
-        assertTrue(Math.abs(sampleDate.getTime() -  eobtrim.getBillablePeriod().getStart().getTime()) < 1000);
-        assertTrue(Math.abs(sampleDate.getTime() -  eobtrim.getBillablePeriod().getEnd().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  eobtrim.getBillablePeriod().getStart().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  eobtrim.getBillablePeriod().getEnd().getTime()) < 1000);
         assertEquals(1, eobtrim.getCareTeam().size());
         ExplanationOfBenefit.CareTeamComponent careTeamComponent = eobtrim.getCareTeamFirstRep();
         assertTrue(careTeamComponent.getResponsible());
@@ -192,10 +195,10 @@ public class ExplanationOfBenefitTrimmerR4Test {
         ExplanationOfBenefit.DiagnosisComponent diagnosisComponent = eobtrim.getDiagnosisFirstRep();
         assertEquals(1, diagnosisComponent.getSequence());
         assertNull(diagnosisComponent.getOnAdmission().getText());
-        assertEquals("type", diagnosisComponent.getType().get(0).getText());
+        assertEquals(DUMMY_TYPE, diagnosisComponent.getType().get(0).getText());
         assertEquals(1, eobtrim.getProcedure().size());
         ExplanationOfBenefit.ProcedureComponent procedureComponent = eobtrim.getProcedureFirstRep();
-        assertTrue(Math.abs(sampleDate.getTime() -  procedureComponent.getDate().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  procedureComponent.getDate().getTime()) < 1000);
         assertEquals(0, procedureComponent.getType().size());
         assertEquals(0, procedureComponent.getUdi().size());
         assertEquals("procedure", ((CodeableConcept) procedureComponent.getProcedure()).getText());
