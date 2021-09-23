@@ -1,6 +1,5 @@
 pipeline {
-      agent build
-  }
+    agent build
 
 node {
     // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
@@ -19,10 +18,11 @@ node {
     }
 
     stage('Gradle build') {
-        buildInfo = rtGradle.run buildFile: 'build.gradle', tasks:build 'clean artifactoryPublish'
+        buildInfo = rtGradle.run buildFile: 'build.gradle', tasks: 'clean artifactoryPublish'
     }
 
     stage('Publish build info') {
         server.publishBuildInfo buildInfo
     }
+}
 }
