@@ -4,7 +4,7 @@ agent {
 
 node {
     // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
-    def server = Artifactory.server "CMSArtifactory
+    def server = Artifactory.server "CMSArtifactory"
 
     stage('Clone sources') {
         git url: 'https://github.com/CMSgov/AB2D-Filters.git'
