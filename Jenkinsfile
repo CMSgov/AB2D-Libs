@@ -1,5 +1,5 @@
-agent {
-      label 'build'
+pipeline {
+      agent build
   }
 
 node {
