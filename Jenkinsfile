@@ -28,10 +28,6 @@ pipeline {
         }
 
         stage ('Test Gradle') {
-            when {
-                branch 'master'
-            }
-
             steps {
                 rtGradleRun (
                     usesPlugin: true, // Artifactory plugin already defined in build script
