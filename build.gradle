@@ -10,10 +10,10 @@ plugins {
 repositories {
     maven {
         url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-maven-repo'
-        credentials {
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
-        }
+//        credentials {
+//            username = "${artifactory_user}"
+//            password = "${artifactory_password}"
+//        }
     }
 }
 
@@ -86,8 +86,8 @@ artifactory {
 
         repository {
             repoKey = 'ab2d-test'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+//            username = "${artifactory_user}"
+//            password = "${artifactory_password}"
             maven = true
 
         }
@@ -100,8 +100,8 @@ artifactory {
     resolve {
         repository {
             repoKey = 'ab2d-test'
-            username = "${artifactory_user}"
-            password = "${artifactory_password}"
+//            username = "${artifactory_user}"
+//            password = "${artifactory_password}"
             maven = true
 
         }
