@@ -12,7 +12,7 @@ repositories {
         url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-maven-repo'
         credentials {
             username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_KEY']
+            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
         }
     }
 }
@@ -82,18 +82,12 @@ jacocoTestCoverageVerification {
 artifactory {
 //    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
 
-    println project.hasProperty('artifactory_user')
-    println project.hasProperty('artifactory_user') ? project.artifactory_user : 'NOT FOUND'
-
-            println System.getenv( 'ARTIFACTORY_USER' )
-
-
     publish {
 
         repository {
             repoKey = 'ab2d-test'
             username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_KEY']
+            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
             maven = true
 
         }
@@ -107,7 +101,7 @@ artifactory {
         repository {
             repoKey = 'ab2d-test'
             username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_KEY']
+            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
             maven = true
 
         }
