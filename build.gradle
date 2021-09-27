@@ -4,7 +4,7 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'pmd'
-    id 'com.jfrog.artifactory'
+    id 'com.jfrog.artifactory' version "4.24.18"
 }
 
 repositories {
