@@ -18,6 +18,7 @@ pipeline {
                     serverId: "CMSArtifactory",
                     repo: "ab2d-filters",
                     excludePatterns: ["*.war"],
+                    publications: ["mavenJava"]
                 )
 
                 rtGradleResolver (
@@ -32,7 +33,6 @@ pipeline {
             steps {
                 rtGradleRun (
                     usesPlugin: true, // Artifactory plugin already defined in build script
-                    useWrapper: true,
                     tool: 'filtersGradle', // Tool name from Jenkins configuration
                     rootDir: ".",
                     buildFile: 'build.gradle',
