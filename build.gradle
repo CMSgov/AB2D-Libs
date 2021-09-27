@@ -82,6 +82,9 @@ jacocoTestCoverageVerification {
 artifactory {
 //    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
 
+    println System.getenv( 'ARTIFACTORY_USER' )
+
+
     publish {
 
         repository {
