@@ -30,7 +30,7 @@ pipeline {
 
         stage ('Test Gradle') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'artifactory_user', passwordVariable: 'artifactory_password')]) {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     rtGradleRun (
                         usesPlugin: true, // Artifactory plugin already defined in build script
                         tool: 'filtersGradle', // Tool name from Jenkins configuration
