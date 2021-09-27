@@ -1,3 +1,7 @@
+def server
+def rtGradle = Artifactory.newGradleBuild()
+def buildInfo = Artifactory.newBuildInfo()
+
 pipeline {
 
     agent {
@@ -8,32 +12,36 @@ pipeline {
         jdk 'adoptjdk13'
     }
 
-    def server
-    def rtGradle = Artifactory.newGradleBuild()
-    def buildInfo = Artifactory.newBuildInfo()
-
     stages {
 
         stage ('Artifactory configuration') {
-            server = Artifactory.server 'CMSArtifactory'
+            steps {
+                server = Artifactory.server 'CMSArtifactory'
 
-            rtGradle.tool = "filtersGradle"
-            rtGradle.deployer repo:'ab2d-filters', server: server
-            rtGradle.resolver repo:'ab2d-filters-remove', server: server
+                rtGradle.tool = "filtersGradle"
+                rtGradle.deployer repo:'ab2d-filters', server: server
+                rtGradle.resolver repo:'ab2d-filters-remove', server: server
+            }
         }
 
         stage ('Build info') {
-            buildInfo.env.capture = true
+            steps {
+                buildInfo.env.capture = true
+            }
         }
 
         stage ('Gradle configs') {
-            rtGradle.deployer.artifactDeploymentPatterns.addExclude("*.war")
-            rtGradle.usesPlugin = true
-            rtGradle.useWrapper = true
+            steps {
+                rtGradle.deployer.artifactDeploymentPatterns.addExclude("*.war")
+                rtGradle.usesPlugin = true
+                rtGradle.useWrapper = true
+            }
         }
 
         stage ('Test') {
-            rtGradle.run rootDir: '.', buildFile: 'build.gradle', tasks: 'clean test'
+            steps {
+                rtGradle.run rootDir: '.', buildFile: 'build.gradle', tasks: 'clean test'
+            }
         }
 
         stage ('Publish Gradle') {
