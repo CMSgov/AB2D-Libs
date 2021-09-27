@@ -5,7 +5,6 @@ pipeline {
     }
 
     tools {
-        gradle '7.2'
         jdk 'adoptjdk13'
     }
 
