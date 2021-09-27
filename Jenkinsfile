@@ -1,28 +1,48 @@
 pipeline {
-    agent build
 
-node {
-    // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
-    def server = Artifactory.server "CMSArtifactory"
-
-    stage('Clone sources') {
-        git url: 'https://github.com/CMSgov/AB2D-Filters.git'
+    agent {
+        label 'build'
     }
 
-    stage('Artifactory configuration') {
-        // Tool name from Jenkins configuration
-        rtGradle.tool = "filtersGradle"
-        // Set Artifactory repositories for dependencies resolution and artifacts deployment.
-        rtGradle.deployer repo:'ab2d-filters', server: server
-        rtGradle.resolver repo:'ab2d-filters-remote', server: server
+    tools {
+        jdk 'adoptjdk13'
     }
 
-    stage('Gradle build') {
-        buildInfo = rtGradle.run buildFile: 'build.gradle', tasks: 'clean artifactoryPublish'
-    }
+    def server
+    def rtGradle = Artifactory.newGradleBuild()
+    def buildInfo = Artifactory.newBuildInfo()
 
-    stage('Publish build info') {
-        server.publishBuildInfo buildInfo
+    stages {
+
+        stage ('Artifactory configuration') {
+            server = Artifactory.server 'CMSArtifactory'
+
+            rtGradle.tool = "filtersGradle"
+            rtGradle.deployer repo:'ab2d-filters', server: server
+            rtGradle.resolver repo:'ab2d-filters-remove', server: server
+        }
+
+        stage ('Build info') {
+            buildInfo.env.capture = true
+        }
+
+        stage ('Gradle configs') {
+            rtGradle.deployer.artifactDeploymentPatterns.addExclude("*.war")
+            rtGradle.usesPlugin = true
+            rtGradle.useWrapper = true
+        }
+
+        stage ('Test') {
+            rtGradle.run rootDir: '.', buildFile: 'build.gradle', tasks: 'clean test'
+        }
+
+        stage ('Publish Gradle') {
+            when {
+                branch 'master'
+            }
+
+            rtGradle.run rootDir: ".", buildFile: 'build.gradle',
+                "tasks": 'clean artifactoryPublish', buildInfo: buildInfo
+        }
     }
-}
 }
