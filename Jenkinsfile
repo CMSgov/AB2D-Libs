@@ -17,8 +17,7 @@ pipeline {
                     id: "GRADLE_DEPLOYER",
                     serverId: "CMSArtifactory",
                     repo: "ab2d-filters",
-                    excludePatterns: ["*.war"],
-                    publications: ["mavenJava"]
+                    excludePatterns: ["*.war"]
                 )
 
                 rtGradleResolver (
