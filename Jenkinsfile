@@ -1,14 +1,11 @@
 pipeline {
-    agent {
-        label: 'build'
-    }
 
     agent {
         label 'build'
     }
 
     tools {
-        maven 'maven-3.6.3'
+        gradle '7.2'
         jdk 'adoptjdk13'
     }
 
