@@ -46,15 +46,17 @@ pipeline {
 
         stage ('Exec Gradle') {
             steps {
-                rtGradleRun (
-                    usesPlugin: true, // Artifactory plugin already defined in build script
-                    tool: 'filtersGradle', // Tool name from Jenkins configuration
-                    rootDir: ".",
-                    buildFile: 'build.gradle',
-                    tasks: 'artifactoryPublish',
-                    deployerId: "GRADLE_DEPLOYER",
-                    resolverId: "GRADLE_RESOLVER"
-                )
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    rtGradleRun (
+                        usesPlugin: true, // Artifactory plugin already defined in build script
+                        tool: 'filtersGradle', // Tool name from Jenkins configuration
+                        rootDir: ".",
+                        buildFile: 'build.gradle',
+                        tasks: 'artifactoryPublish',
+                        deployerId: "GRADLE_DEPLOYER",
+                        resolverId: "GRADLE_RESOLVER"
+                    )
+                }
             }
         }
     }
