@@ -16,14 +16,14 @@ pipeline {
                 rtGradleDeployer (
                     id: "GRADLE_DEPLOYER",
                     serverId: "CMSArtifactory",
-                    repo: "ab2d-filters",
+                    repo: "ab2d-test",
                     excludePatterns: ["*.war"]
                 )
 
                 rtGradleResolver (
                     id: "GRADLE_RESOLVER",
                     serverId: "CMSArtifactory",
-                    repo: "ab2d-filters-repo"
+                    repo: "ab2d-test"
                 )
             }
         }
