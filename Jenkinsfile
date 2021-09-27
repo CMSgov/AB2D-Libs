@@ -1,14 +1,14 @@
-def server
-def rtGradle = Artifactory.newGradleBuild()
-def buildInfo = Artifactory.newBuildInfo()
-
 pipeline {
+    agent {
+        label: 'build'
+    }
 
     agent {
         label 'build'
     }
 
     tools {
+        maven 'maven-3.6.3'
         jdk 'adoptjdk13'
     }
 
@@ -16,41 +16,72 @@ pipeline {
 
         stage ('Artifactory configuration') {
             steps {
-                server = Artifactory.server 'CMSArtifactory'
+                rtGradleDeployer (
+                    id: "GRADLE_DEPLOYER",
+                    serverId: "CMSArtifactory",
+                    repo: "ab2d-filters",
+                    excludePatterns: ["*.war"],
+                )
 
-                rtGradle.tool = "filtersGradle"
-                rtGradle.deployer repo:'ab2d-filters', server: server
-                rtGradle.resolver repo:'ab2d-filters-remove', server: server
+                rtGradleResolver (
+                    id: "GRADLE_RESOLVER",
+                    serverId: "CMSArtifactory",
+                    repo: "ab2d-filters-repo"
+                )
             }
         }
 
-        stage ('Build info') {
+        stage ('Config Build Info') {
             steps {
-                buildInfo.env.capture = true
+                rtBuildInfo (
+                    captureEnv: true,
+                )
             }
         }
 
-        stage ('Gradle configs') {
-            steps {
-                rtGradle.deployer.artifactDeploymentPatterns.addExclude("*.war")
-                rtGradle.usesPlugin = true
-                rtGradle.useWrapper = true
-            }
-        }
-
-        stage ('Test') {
-            steps {
-                rtGradle.run rootDir: '.', buildFile: 'build.gradle', tasks: 'clean test'
-            }
-        }
-
-        stage ('Publish Gradle') {
+        stage ('Test Gradle') {
             when {
                 branch 'master'
             }
 
-            rtGradle.run rootDir: ".", buildFile: 'build.gradle',
-                "tasks": 'clean artifactoryPublish', buildInfo: buildInfo
+            steps {
+                rtGradleRun (
+                    usesPlugin: true, // Artifactory plugin already defined in build script
+                    useWrapper: true,
+                    tool: 'filtersGradle', // Tool name from Jenkins configuration
+                    rootDir: ".",
+                    buildFile: 'build.gradle',
+                    tasks: 'clean test',
+                    resolverId: "GRADLE_RESOLVER"
+                )
+            }
+        }
+
+        stage ('Exec Gradle') {
+            when {
+                branch 'master'
+            }
+
+            steps {
+                rtGradleRun (
+                    usesPlugin: true, // Artifactory plugin already defined in build script
+                    useWrapper: true,
+                    tool: 'filtersGradle', // Tool name from Jenkins configuration
+                    rootDir: ".",
+                    buildFile: 'build.gradle',
+                    tasks: 'clean artifactoryPublish',
+                    deployerId: "GRADLE_DEPLOYER",
+                    resolverId: "GRADLE_RESOLVER"
+                )
+            }
+        }
+
+        stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "CMSArtifactory"
+                )
+            }
         }
     }
 }
