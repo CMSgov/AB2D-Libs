@@ -35,7 +35,7 @@ pipeline {
                     tool: 'filtersGradle', // Tool name from Jenkins configuration
                     rootDir: ".",
                     buildFile: 'build.gradle',
-                    tasks: 'clean test',
+                    tasks: 'clean test --info',
                     deployerId: "GRADLE_DEPLOYER",
                     resolverId: "GRADLE_RESOLVER"
                 )

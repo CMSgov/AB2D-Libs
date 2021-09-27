@@ -77,6 +77,8 @@ fabric.properties
 ######################################################
 ## Gradle gitignore
 
+gradle.properties
+
 .gradlea
 **/build/
 !src/**/build/

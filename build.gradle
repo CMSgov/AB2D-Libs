@@ -9,13 +9,17 @@ plugins {
 
 repositories {
     maven {
-        url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-filters-repo/'
+        url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-maven-repo'
+        credentials {
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
     }
 }
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
         }
     }
@@ -71,6 +75,35 @@ jacocoTestCoverageVerification {
             limit {
                 minimum = 0.80
             }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+
+    publish {
+
+        repository {
+            repoKey = 'ab2d-test'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+            publishBuildInfo = false
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'ab2d-test'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
         }
     }
 }
