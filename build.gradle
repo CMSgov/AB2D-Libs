@@ -4,11 +4,13 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'pmd'
-    id 'com.jfrog.artifactory' version "4.24.18"
+    id 'com.jfrog.artifactory' version '4.24.18'
 }
 
 repositories {
-    mavenCentral()
+    maven {
+        url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-filters-repo/'
+    }
 }
 
 publishing {
