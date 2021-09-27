@@ -49,7 +49,7 @@ pipeline {
                     tool: 'filtersGradle', // Tool name from Jenkins configuration
                     rootDir: ".",
                     buildFile: 'build.gradle',
-                    tasks: 'clean artifactoryPublish',
+                    tasks: 'artifactoryPublish',
                     deployerId: "GRADLE_DEPLOYER",
                     resolverId: "GRADLE_RESOLVER"
                 )
