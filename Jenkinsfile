@@ -23,7 +23,7 @@ pipeline {
                 rtGradleResolver (
                     id: "GRADLE_RESOLVER",
                     serverId: "CMSArtifactory",
-                    repo: "ab2d-filters-repo"
+                    repo: "ab2d-filters"
                 )
             }
         }
