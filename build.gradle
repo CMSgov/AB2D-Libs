@@ -4,6 +4,7 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'pmd'
+    id 'com.jfrog.artifactory'
 }
 
 repositories {
