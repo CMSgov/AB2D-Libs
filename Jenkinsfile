@@ -11,22 +11,22 @@ pipeline {
 
     stages {
 
-        stage ('Artifactory configuration') {
-            steps {
-                rtGradleDeployer (
-                    id: "GRADLE_DEPLOYER",
-                    serverId: "CMSArtifactory",
-                    repo: "ab2d-filters",
-                    excludePatterns: ["*.war"]
-                )
-
-                rtGradleResolver (
-                    id: "GRADLE_RESOLVER",
-                    serverId: "CMSArtifactory",
-                    repo: "ab2d-filters"
-                )
-            }
-        }
+//         stage ('Artifactory configuration') {
+//             steps {
+//                 rtGradleDeployer (
+//                     id: "GRADLE_DEPLOYER",
+//                     serverId: "CMSArtifactory",
+//                     repo: "ab2d-filters",
+//                     excludePatterns: ["*.war"]
+//                 )
+//
+//                 rtGradleResolver (
+//                     id: "GRADLE_RESOLVER",
+//                     serverId: "CMSArtifactory",
+//                     repo: "ab2d-filters"
+//                 )
+//             }
+//         }
 
         stage ('Test Gradle') {
             steps {
