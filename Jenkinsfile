@@ -27,14 +27,6 @@ pipeline {
             }
         }
 
-        stage ('Config Build Info') {
-            steps {
-                rtBuildInfo (
-                    captureEnv: true,
-                )
-            }
-        }
-
         stage ('Test Gradle') {
             when {
                 branch 'master'
@@ -68,14 +60,6 @@ pipeline {
                     tasks: 'clean artifactoryPublish',
                     deployerId: "GRADLE_DEPLOYER",
                     resolverId: "GRADLE_RESOLVER"
-                )
-            }
-        }
-
-        stage ('Publish build info') {
-            steps {
-                rtPublishBuildInfo (
-                    serverId: "CMSArtifactory"
                 )
             }
         }
