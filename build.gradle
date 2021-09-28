@@ -1,109 +1,129 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'checkstyle'
-    id 'jacoco'
-    id 'pmd'
-    id 'com.jfrog.artifactory' version '4.24.18'
+    id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
-
-repositories {
-    maven {
-        url 'https://artifactory.cloud.cms.gov/artifactory/ab2d-maven-repo'
-        credentials {
-            username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-group 'gov.cms.ab2d'
-version '1.0-RELEASE'
-sourceCompatibility = 11
-targetCompatibility = 11
 
 ext {
+    artifactoryLoc = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
+            : System.getenv()['ARTIFACTORY_URL']
+
+    // Override user and password
+    artifactory_user = project.hasProperty('artifactory_user') ? project.artifactory_user
+            : System.getenv()['ARTIFACTORY_USER']
+    artifactory_password = project.hasProperty('artifactory_password') ? project.artifactory_password
+            : System.getenv()['ARTIFACTORY_PASSWORD']
+
+    sourcesRepo = 'ab2d-maven-repo'
+    deployerRepo = 'ab2d-test'
+    resolverRepo = 'ab2d-test'
+
+    lombokVersion = '1.18.20'
     hapiVersion = '5.4.0'
+    spotbugsVersion = '4.2.0'
+    junitVersion = '5.7.0'
 }
 
-dependencies {
-    implementation 'org.projectlombok:lombok:1.18.20'
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.2.0'
+allprojects {
 
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
-
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    testImplementation 'com.github.spotbugs:spotbugs-annotations:4.2.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
-
-test {
-    testLogging {
-        showStandardStreams true
-        events "passed", "skipped", "failed"
-    }
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport // report is always generated after tests run
-}
-
-jacocoTestReport {
-    dependsOn test
-    dependsOn jacocoTestCoverageVerification
-}
-
-jacoco {
-    toolVersion = "0.8.7"
-}
-
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.80
+    repositories {
+        maven {
+            url = "${artifactoryLoc}/${sourcesRepo}"
+            credentials {
+                username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
+                password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
             }
         }
     }
 }
 
-artifactory {
-//    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+subprojects {
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
+    apply plugin: 'pmd'
 
-    publish {
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
-        repository {
-            repoKey = 'ab2d-test'
-            username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
-            maven = true
+    group 'gov.cms.ab2d'
 
+    dependencies {
+        implementation "org.projectlombok:lombok:$lombokVersion"
+        implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
+
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    }
+
+    jar {
+        processResources.exclude('checkstyle.xml')
+        processResources.exclude('spotbugs-filter.xml')
+    }
+
+    test {
+        testLogging {
+            showStandardStreams true
+            events "passed", "skipped", "failed"
         }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts = true
-            publishBuildInfo = false
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport // report is always generated after tests run
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        dependsOn jacocoTestCoverageVerification
+    }
+
+    jacoco {
+        toolVersion = "0.8.7"
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.80
+                }
+            }
         }
     }
-    resolve {
-        repository {
-            repoKey = 'ab2d-test'
-            username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-            password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
-            maven = true
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = project.artifactoryLoc
+
+        publish {
+
+            repository {
+                repoKey = "${deployerRepo}"
+                username = project.artifactory_user
+                password = project.artifactory_password
+                maven = true
+
+            }
+            defaults {
+                publications('mavenJava')
+                publishArtifacts = true
+                publishBuildInfo = false
+            }
+        }
+        resolve {
+            repository {
+                repoKey = "${resolverRepo}"
+                username = project.artifactory_user
+                password = project.artifactory_password
+                maven = true
+            }
         }
     }
 }
