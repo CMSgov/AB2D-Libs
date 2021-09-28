@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        ARTIFACTORY_URL = credentialsId('ARTIFACTORY_URL')
+        ARTIFACTORY_URL = credentials('ARTIFACTORY_URL')
     }
 
     agent {
