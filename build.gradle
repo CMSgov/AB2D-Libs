@@ -1,3 +1,7 @@
+import groovy.time.TimeCategory
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
@@ -20,16 +24,58 @@ ext {
     hapiVersion = '5.4.0'
     spotbugsVersion = '4.2.0'
     junitVersion = '5.7.0'
+
+    failedTests = []
+    skippedTests = []
+    testSuites = []
 }
 
 allprojects {
+
+    tasks.withType(Test) { testTask ->
+
+        testTask.testLogging { logging ->
+            events TestLogEvent.FAILED,
+                    TestLogEvent.SKIPPED,
+                    TestLogEvent.STANDARD_OUT,
+                    TestLogEvent.STANDARD_ERROR
+            exceptionFormat TestExceptionFormat.FULL
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+
+        afterTest { desc, result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                rootProject.ext.failedTests.add(desc)
+            }
+
+            if (result.resultType == TestResult.ResultType.SKIPPED) {
+                rootProject.ext.skippedTests.add(desc)
+            }
+        }
+
+        afterSuite { desc, result ->
+            if (desc.parent) return // Only summarize results for whole modules
+
+
+            String summary = "${testTask.project.name}:${testTask.name} results: ${result.resultType} " +
+                    "(" +
+                    "Tests run ${result.testCount}, " +
+                    "succeeded ${result.successfulTestCount}, " +
+                    "failed ${result.failedTestCount}, " +
+                    "skipped ${result.skippedTestCount}" +
+                    ") "
+            rootProject.ext.testSuites += summary
+        }
+    }
 
     repositories {
         maven {
             url = "${artifactoryLoc}/${sourcesRepo}"
             credentials {
-                username = project.hasProperty('artifactory_user') ? project.artifactory_user : System.getenv()['ARTIFACTORY_USER']
-                password = project.hasProperty('artifactory_password') ? project.artifactory_password : System.getenv()['ARTIFACTORY_PASSWORD']
+                username = project.artifactory_user
+                password = project.artifactory_password
             }
         }
     }
@@ -64,10 +110,6 @@ subprojects {
     }
 
     test {
-        testLogging {
-            showStandardStreams = true
-            events ["passed", "skipped", "failed"]
-        }
         useJUnitPlatform()
         finalizedBy jacocoTestReport // report is always generated after tests run
     }
@@ -125,5 +167,27 @@ subprojects {
                 maven = true
             }
         }
+    }
+}
+
+gradle.buildFinished {
+
+    if (!rootProject.ext.skippedTests.isEmpty()) {
+        println "Skipped Tests: "
+        for (String skippedTestDesc : rootProject.ext.skippedTests) {
+            println "\t" + skippedTestDesc
+        }
+    }
+
+    if (!rootProject.ext.failedTests.isEmpty()) {
+        println "Failing Tests: "
+        for (String failedTestDesc : rootProject.ext.failedTests) {
+            println "\t" + failedTestDesc
+        }
+    }
+
+    if (!rootProject.ext.testSuites.isEmpty()) {
+        println "Test Suite Summary: "
+        println rootProject.ext.testSuites
     }
 }
