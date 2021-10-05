@@ -1,69 +1,193 @@
+import groovy.time.TimeCategory
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'checkstyle'
-    id 'jacoco'
-    id 'pmd'
+    id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
 
-repositories {
-    mavenCentral()
+ext {
+    artifactoryLoc = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
+            : System.getenv()['ARTIFACTORY_URL']
+
+    // Override user and password
+    artifactory_user = project.hasProperty('artifactory_user') ? project.artifactory_user
+            : System.getenv()['ARTIFACTORY_USER']
+    artifactory_password = project.hasProperty('artifactory_password') ? project.artifactory_password
+            : System.getenv()['ARTIFACTORY_PASSWORD']
+
+    sourcesRepo = 'ab2d-maven-repo'
+    deployerRepo = 'ab2d-test'
+    resolverRepo = 'ab2d-test'
+
+    lombokVersion = '1.18.20'
+    hapiVersion = '5.4.0'
+    spotbugsVersion = '4.2.0'
+    junitVersion = '5.7.0'
+
+    failedTests = []
+    skippedTests = []
+    testSuites = []
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
+allprojects {
+
+    tasks.withType(Test) { testTask ->
+
+        testTask.testLogging { logging ->
+            events TestLogEvent.FAILED,
+                    TestLogEvent.SKIPPED,
+                    TestLogEvent.STANDARD_OUT,
+                    TestLogEvent.STANDARD_ERROR
+            exceptionFormat TestExceptionFormat.FULL
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+
+        afterTest { desc, result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                rootProject.ext.failedTests.add(desc)
+            }
+
+            if (result.resultType == TestResult.ResultType.SKIPPED) {
+                rootProject.ext.skippedTests.add(desc)
+            }
+        }
+
+        afterSuite { desc, result ->
+            if (desc.parent) return // Only summarize results for whole modules
+
+
+            String summary = "${testTask.project.name}:${testTask.name} results: ${result.resultType} " +
+                    "(" +
+                    "Tests run ${result.testCount}, " +
+                    "succeeded ${result.successfulTestCount}, " +
+                    "failed ${result.failedTestCount}, " +
+                    "skipped ${result.skippedTestCount}" +
+                    ") "
+            rootProject.ext.testSuites += summary
+        }
+    }
+
+    repositories {
+        maven {
+            url = "${artifactoryLoc}/${sourcesRepo}"
+            credentials {
+                username = project.artifactory_user
+                password = project.artifactory_password
+            }
         }
     }
 }
 
-group 'gov.cms.ab2d'
-version '1.0-RELEASE'
-sourceCompatibility = 11
-targetCompatibility = 11
+subprojects {
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
+    apply plugin: 'pmd'
 
-ext {
-    hapiVersion = '5.4.0'
-}
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
-dependencies {
-    implementation 'org.projectlombok:lombok:1.18.20'
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.2.0'
+    group 'gov.cms.ab2d'
 
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
+    dependencies {
+        implementation "org.projectlombok:lombok:$lombokVersion"
+        implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    testImplementation 'com.github.spotbugs:spotbugs-annotations:4.2.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-}
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport // report is always generated after tests run
-}
+        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    }
 
-jacocoTestReport {
-    dependsOn test
-    dependsOn jacocoTestCoverageVerification
-}
+    jar {
+        processResources.exclude('checkstyle.xml')
+        processResources.exclude('spotbugs-filter.xml')
+    }
 
-jacoco {
-    toolVersion = "0.8.7"
-}
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport // report is always generated after tests run
+    }
 
-jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                minimum = 0.80
+    jacocoTestReport {
+        dependsOn test
+        dependsOn jacocoTestCoverageVerification
+    }
+
+    jacoco {
+        toolVersion = "0.8.7"
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.80
+                }
             }
         }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = project.artifactoryLoc
+
+        publish {
+
+            repository {
+                repoKey = "${deployerRepo}"
+                username = project.artifactory_user
+                password = project.artifactory_password
+                maven = true
+
+            }
+            defaults {
+                publications('mavenJava')
+                publishArtifacts = true
+                publishBuildInfo = false
+            }
+        }
+        resolve {
+            repository {
+                repoKey = "${resolverRepo}"
+                username = project.artifactory_user
+                password = project.artifactory_password
+                maven = true
+            }
+        }
+    }
+}
+
+gradle.buildFinished {
+
+    if (!rootProject.ext.skippedTests.isEmpty()) {
+        println "Skipped Tests: "
+        for (String skippedTestDesc : rootProject.ext.skippedTests) {
+            println "\t" + skippedTestDesc
+        }
+    }
+
+    if (!rootProject.ext.failedTests.isEmpty()) {
+        println "Failing Tests: "
+        for (String failedTestDesc : rootProject.ext.failedTests) {
+            println "\t" + failedTestDesc
+        }
+    }
+
+    if (!rootProject.ext.testSuites.isEmpty()) {
+        println "Test Suite Summary: "
+        println rootProject.ext.testSuites
     }
 }

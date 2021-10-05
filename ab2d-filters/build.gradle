@@ -1,0 +1,16 @@
+configurations {
+    spi
+}
+
+version '1.0-RELEASE'
+
+dependencies {
+    // Move these dependencies to the individual libraries that need them if adding
+    // other modules to this project
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
+}
