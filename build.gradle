@@ -95,6 +95,7 @@ subprojects {
     println("Is the project var artifactory user set? " + project.hasProperty('artifactory_user'))
     println("Is the project var artifactory password set? " + project.hasProperty('artifactory_password'))
     println("Is the project var artifactory url set? " + project.hasProperty('artifactory_url'))
+    println("What's the URL? " + project.artifactory_url)
 
     println("Is the project var artifactory user set? " + project.artifactory_user.isEmpty())
     println("Is the project var artifactory password set? " + project.artifactory_password.isEmpty())
