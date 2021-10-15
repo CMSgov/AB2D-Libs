@@ -91,6 +91,9 @@ subprojects {
 
     println("Is artifactory user set in env var? " + System.getenv().containsKey("ARTIFACTORY_USER"))
     println("Is artifactory password set in env var? " +System.getenv().containsKey("ARTIFACTORY_PASSWORD"))
+    println("Is the project var artifactory user set? " + project.artifactory_user != null)
+    println("Is the project var artifactory password set? " + project.artifactory_password != null)
+    println("Is the project var artifactory url set? " + project.artifactory_url != null)
 
     sourceCompatibility = 11
     targetCompatibility = 11
