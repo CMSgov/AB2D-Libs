@@ -4,6 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'com.jfrog.artifactory' version '4.24.18' apply false
+    id 'com.github.spotbugs' version '4.7.6' apply false
 }
 
 ext {
@@ -88,6 +89,7 @@ subprojects {
     apply plugin: 'checkstyle'
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
 
     sourceCompatibility = 11
     targetCompatibility = 11
@@ -131,6 +133,13 @@ subprojects {
                 }
             }
         }
+    }
+
+    checkstyle {
+        configFile file("$rootDir/config/checkstyle.xml")
+    }
+
+    spotbugs {
     }
 
     publishing {
