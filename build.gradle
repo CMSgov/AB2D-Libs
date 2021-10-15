@@ -89,6 +89,9 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
 
+    println("Is artifactory user set in env var? " + System.getenv().containsKey("ARTIFACTORY_USER"))
+    println("Is artifactory password set in env var? " +System.getenv().containsKey("ARTIFACTORY_PASSWORD"))
+
     sourceCompatibility = 11
     targetCompatibility = 11
 
