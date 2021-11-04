@@ -2,7 +2,7 @@ configurations {
     spi
 }
 
-version '1.0-SNAPSHOT'
+version '1.0'
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding

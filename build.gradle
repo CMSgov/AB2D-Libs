@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
+    id 'java-library'
     id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
 
@@ -58,7 +59,6 @@ allprojects {
         afterSuite { desc, result ->
             if (desc.parent) return // Only summarize results for whole modules
 
-
             String summary = "${testTask.project.name}:${testTask.name} results: ${result.resultType} " +
                     "(" +
                     "Tests run ${result.testCount}, " +
@@ -89,19 +89,15 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
 
-    println("Is artifactory user set in env var? " + System.getenv().containsKey("ARTIFACTORY_USER"))
-    println("Is artifactory password set in env var? " +System.getenv().containsKey("ARTIFACTORY_PASSWORD"))
-
-    println("Is the project var artifactory user set? " + project.hasProperty('artifactory_user'))
-    println("Is the project var artifactory password set? " + project.hasProperty('artifactory_password'))
-    println("Is the project var artifactory url set? " + project.hasProperty('artifactory_url'))
-
+    if (artifactory_user == null || artifactory_user.isEmpty()) {
+        println("Artifactory user not set");
+    }
+    if (artifactory_password == null || artifactory_password.isEmpty()) {
+        println("Artifactory password not set");
+    }
     println("Artifactory loc? " + project.getProperty('artifactoryLoc'))
 
-//    println("Is the project var artifactory user set? " + project.artifactory_user.isEmpty())
-//    println("Is the project var artifactory password set? " + project.artifactory_password.isEmpty())
-//    println("Is the project var artifactory url set? " + project.artifactory_url.isEmpty())
-//    println("Is the project var artifactory url set? " + project.artifactoryLoc.isEmpty())
+    println("Branch is " + gitBranch())
 
     sourceCompatibility = 11
     targetCompatibility = 11
@@ -121,6 +117,8 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
+        classifier (!gitBranch().equalsIgnoreCase("master") ? "SNAPSHOT" : "")
+        out.println("building " + classifier)
     }
 
     test {
@@ -204,4 +202,13 @@ gradle.buildFinished {
         println "Test Suite Summary: "
         println rootProject.ext.testSuites
     }
+}
+
+def gitBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch
 }
