@@ -6,6 +6,7 @@ plugins {
     id 'java-library'
     id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
+    id 'com.github.spotbugs' version '4.7.6' apply false
 }
 
 ext {
