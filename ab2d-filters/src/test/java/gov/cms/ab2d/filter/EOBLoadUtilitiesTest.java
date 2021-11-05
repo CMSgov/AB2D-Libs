@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -168,7 +169,7 @@ public class EOBLoadUtilitiesTest {
     void testReaderEOB() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json")) {
-            try (Reader reader = new java.io.InputStreamReader(inputStream)) {
+            try (Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
                 // STU3
                 ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
