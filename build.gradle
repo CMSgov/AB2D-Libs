@@ -4,6 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
+    id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
 
@@ -88,6 +89,7 @@ subprojects {
     apply plugin: 'checkstyle'
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
+    apply plugin: 'com.github.spotbugs'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
         println("Artifactory user not set");
@@ -143,6 +145,13 @@ subprojects {
                 }
             }
         }
+    }
+
+    checkstyle {
+        configFile file("$rootDir/config/checkstyle.xml")
+    }
+
+    spotbugs {
     }
 
     publishing {
