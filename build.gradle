@@ -19,8 +19,8 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     sourcesRepo = 'ab2d-maven-repo'
-    deployerRepo = 'ab2d-test'
-    resolverRepo = 'ab2d-test'
+    deployerRepo = 'ab2d-main'
+    resolverRepo = 'ab2d-main'
 
     lombokVersion = '1.18.20'
     hapiVersion = '5.4.0'
