@@ -30,14 +30,16 @@ pipeline {
         }
 
         stage ('Publish Libraries') {
-            withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-                sh '''
-                    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    sh '''
+                        BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-                    if [ $BRANCH = 'master' ] || [ $FORCE_PUBLISH ]; then
-                        gradle artifactoryPublish -b build.gradle
-                    fi
-                '''
+                        if [ $BRANCH = 'master' ] || [ $FORCE_PUBLISH ]; then
+                            gradle artifactoryPublish -b build.gradle
+                        fi
+                    '''
+                }
             }
         }
     }
