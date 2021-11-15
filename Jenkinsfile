@@ -21,6 +21,14 @@ pipeline {
             }
         }
 
+        stage ('Build Jars') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    sh 'gradle jar --info -b build.gradle'
+                }
+            }
+        }
+
         stage ('Publish Libraries') {
             when {
                 branch 'master'

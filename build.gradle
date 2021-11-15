@@ -3,8 +3,9 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id 'com.jfrog.artifactory' version '4.24.18' apply false
+    id 'java-library'
     id 'com.github.spotbugs' version '4.7.6' apply false
+    id 'com.jfrog.artifactory' version '4.24.18' apply false
 }
 
 ext {
@@ -59,7 +60,6 @@ allprojects {
         afterSuite { desc, result ->
             if (desc.parent) return // Only summarize results for whole modules
 
-
             String summary = "${testTask.project.name}:${testTask.name} results: ${result.resultType} " +
                     "(" +
                     "Tests run ${result.testCount}, " +
@@ -91,6 +91,16 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'com.github.spotbugs'
 
+    if (artifactory_user == null || artifactory_user.isEmpty()) {
+        println("Artifactory user not set");
+    }
+    if (artifactory_password == null || artifactory_password.isEmpty()) {
+        println("Artifactory password not set");
+    }
+    println("Artifactory loc? " + project.getProperty('artifactoryLoc'))
+
+    println("Branch is " + gitBranch())
+
     sourceCompatibility = 11
     targetCompatibility = 11
 
@@ -109,6 +119,8 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
+        classifier (!gitBranch().equalsIgnoreCase("master") ? "SNAPSHOT" : "")
+        out.println("building " + classifier)
     }
 
     test {
@@ -199,4 +211,13 @@ gradle.buildFinished {
         println "Test Suite Summary: "
         println rootProject.ext.testSuites
     }
+}
+
+def gitBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch
 }
