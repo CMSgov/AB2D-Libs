@@ -119,7 +119,7 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
-        classifier (!gitBranch().equalsIgnoreCase("master") ? "SNAPSHOT" : "")
+        classifier (!gitBranch().equalsIgnoreCase("main") ? "SNAPSHOT" : "")
         out.println("building " + classifier)
     }
 
