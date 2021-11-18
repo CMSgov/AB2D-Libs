@@ -27,7 +27,7 @@ public final class FilterEob {
             return Optional.empty();
         }
         if (skipBillablePeriodCheck || FilterOutByDate.valid(resource, attTime, earliestDate, dateRanges)) {
-            return Optional.of(resource);
+            return Optional.of(ExplanationOfBenefitTrimmer.getBenefit(resource));
         }
         return Optional.empty();
     }
