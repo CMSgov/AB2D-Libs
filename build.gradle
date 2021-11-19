@@ -120,7 +120,8 @@ subprojects {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
         classifier (!gitBranch().equalsIgnoreCase("main") ? "SNAPSHOT" : "")
-        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier)
+        home = System.getenv('CI_BRANCH');
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + home)
     }
 
     test {
