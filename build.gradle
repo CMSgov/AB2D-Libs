@@ -120,7 +120,7 @@ subprojects {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
         classifier (!gitBranch().equalsIgnoreCase("main") ? "SNAPSHOT" : "")
-        out.println("building branch - " + gitBranch() + ", classifier - " + classifier)
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier)
     }
 
     test {
