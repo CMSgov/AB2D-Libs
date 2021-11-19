@@ -119,7 +119,7 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         processResources.exclude('spotbugs-filter.xml')
-        classifier (!gitBranch().equalsIgnoreCase("main") ? "SNAPSHOT" : "")
+        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
