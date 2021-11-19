@@ -31,7 +31,7 @@ pipeline {
 
         stage ('Publish Libraries') {
             when {
-                branch 'master'
+                branch 'main'
             }
 
             steps {
