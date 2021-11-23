@@ -21,8 +21,10 @@ class StatusManagerTest {
     @Test
     void testVars() {
         assertEquals(2, ConfigManager.getMultiplier());
-        assertEquals(tmpdir + JOB_DOWNLOADS + "abc/streaming/", ConfigManager.getFileStreamingDirectory(ABC));
-        assertEquals(tmpdir + JOB_DOWNLOADS + "abc/finished/", ConfigManager.getFileDoneDirectory(ABC));
+        assertEquals(new File(tmpdir + JOB_DOWNLOADS + "abc/streaming/").getAbsolutePath(),
+                new File(ConfigManager.getFileStreamingDirectory(ABC)).getAbsolutePath());
+        assertEquals(new File(tmpdir + JOB_DOWNLOADS + "abc/finished/").getAbsolutePath(),
+                new File(ConfigManager.getFileDoneDirectory(ABC)).getAbsolutePath());
         assertEquals(ONE_MEGA_BYTE, ConfigManager.getMaxFileSize());
     }
 
