@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StatusManagerTest {
     private final transient String tmpdir = System.getProperty("java.io.tmpdir");
     private static final String ABC = "abc";
-    private static final String JOB_DOWNLOADS = "jobdownloads/";
+    private static final String JOB_DOWNLOADS = "/jobdownloads/";
 
     @Test
     void testVars() {
