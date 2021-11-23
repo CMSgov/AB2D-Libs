@@ -53,7 +53,7 @@ public final class ConfigManager {
     }
 
     public static String getJobDirectory(String jobId) {
-        String dir = getInstance().getProperty("efs.mount") + jobId + "/";
+        String dir = getInstance().getProperty("efs.mount") + "/" + jobId + "/";
         String tmpDirLoc = "java.io.tmpdir";
         return dir.replace("${" + tmpDirLoc + "}", System.getProperty(tmpDirLoc));
     }
