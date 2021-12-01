@@ -12,5 +12,7 @@ dependencies {
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
     implementation "org.projectlombok:lombok:$lombokVersion"
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.6')
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.6'){
+        exclude group: 'org.junit.vintage'
+    }
 }
