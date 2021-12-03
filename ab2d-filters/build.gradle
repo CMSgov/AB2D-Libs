@@ -4,6 +4,11 @@ configurations {
 
 version '1.2'
 
+task printVersion {
+    println project.version
+}
+
+
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding
     // other modules to this project

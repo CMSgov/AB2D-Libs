@@ -24,6 +24,8 @@ pipeline {
         stage ('Build Jars') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    def projectVersion = sh (script: "gradle getVersion", returnStdout: true).trim()
+                    echo projectVersion
                     sh 'gradle jar --info -b build.gradle'
                 }
             }
