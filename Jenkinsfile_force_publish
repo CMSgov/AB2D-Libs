@@ -22,7 +22,6 @@ pipeline {
         }
 
         stage ('Build Jars') {
-            def projectVersion = sh (script: "gradle getVersion", returnStdout: true).trim()
             steps {
                 script {
                     GIT_COMMIT_EMAIL = sh (
