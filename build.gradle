@@ -71,6 +71,12 @@ allprojects {
         }
     }
 
+    task printVersion {
+        doLast {
+            println project.version
+        }
+    }
+
     repositories {
         maven {
             url = "${artifactoryLoc}/${sourcesRepo}"
@@ -188,7 +194,10 @@ subprojects {
         }
     }
 }
-
+//
+//task printVersion {
+//    println project.version
+//}
 gradle.buildFinished {
 
     if (!rootProject.ext.skippedTests.isEmpty()) {

@@ -4,9 +4,9 @@ configurations {
 
 version '1.2'
 
-task printVersion {
-    println project.version
-}
+//task printVersion {
+//    println project.version
+//}
 
 
 dependencies {

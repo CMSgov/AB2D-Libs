@@ -1,8 +1,8 @@
 version '1.0'
 
-task printVersion {
-    println project.version
-}
+//task printVersion {
+//    println project.version
+//}
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding
