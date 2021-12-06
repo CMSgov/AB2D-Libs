@@ -38,20 +38,20 @@ pipeline {
 
         stage ('Publish Libraries') {
             steps {
-                script {
-                    def versionInfo = sh(
-                            script: 'gradle -q lookForArtifacts -p fhir',
-                            returnStdout: true
-                    ).trim()
-                    if (versionInfo == 'false') {
-                        echo 'execute'
-                    } else {
-                        echo 'skip'
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    script {
+                        def versionInfo = sh(
+                                script: 'gradle -q lookForArtifacts -p fhir',
+                                returnStdout: true
+                        ).trim()
+                        if (versionInfo == 'false') {
+                            echo 'execute'
+                        } else {
+                            echo 'skip'
+                        }
                     }
-                }
-//                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
 //                    sh 'gradle artifactoryPublish -b build.gradle'
-//                }
+                }
             }
         }
     }
