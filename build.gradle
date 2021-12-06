@@ -71,6 +71,50 @@ allprojects {
         }
     }
 
+
+//    tasks.urlExists(repositoryUrl) {
+//
+//        try {
+//            def connection = (HttpURLConnection) new URL(repositoryUrl).openConnection()
+//
+//            connection.setRequestProperty("Authorization", "Basic " + getBase64EncodedCredentials())
+//            connection.setConnectTimeout(10000)
+//            connection.setReadTimeout(10000)
+//            connection.setRequestMethod("HEAD")
+//
+//            def responseCode = connection.getResponseCode()
+//
+//            if (responseCode == 401) {
+//                throw new RuntimeException("Unauthorized MavenUser user. Please provide valid username and password.")
+//            }
+//
+//            return (200 == responseCode)
+//
+//        } catch (IOException ignored) {
+//            println(ignored)
+//            return false
+//        }
+//
+//    }
+
+    task lookForArtifacts {
+//        group "upload"
+
+        doLast {
+            println("# searching for existing artifact wit id")
+            println("")
+
+//            println("URLLOL: " + "${artifactoryLoc}/${sourcesRepo}/ab2d-main/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar")
+            System.out.println(urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar"))
+//            return urlExists("${artifactoryLoc}/${sourcesRepo}")
+
+        }
+    }
+
+//    task.getBase64EncodedCredentials() {
+//        def s = "$artifactory_user" + ":" + "$artifactory_password"
+//        return s.bytes.encodeBase64().toString()
+//    }
     task getVersion {
         doLast {
             println project.version
@@ -227,4 +271,34 @@ def gitBranch() {
     proc.err.eachLine { line -> println line }
     proc.waitFor()
     branch
+}
+
+def getBase64EncodedCredentials() {
+    def s = "$artifactory_user" + ":" + "$artifactory_password"
+    return s.bytes.encodeBase64().toString()
+}
+
+def urlExists(repositoryUrl) {
+
+    try {
+        def connection = (HttpURLConnection) new URL(repositoryUrl).openConnection()
+
+        connection.setRequestProperty("Authorization", "Basic " + getBase64EncodedCredentials())
+        connection.setConnectTimeout(10000)
+        connection.setReadTimeout(10000)
+        connection.setRequestMethod("HEAD")
+
+        def responseCode = connection.getResponseCode()
+
+        if (responseCode == 401) {
+            throw new RuntimeException("Unauthorized MavenUser user. Please provide valid username and password.")
+        }
+
+        return (200 == responseCode)
+
+    } catch (IOException ignored) {
+        println(ignored)
+        return false
+    }
+
 }

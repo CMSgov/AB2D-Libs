@@ -35,9 +35,22 @@ pipeline {
             }
 
             steps {
-                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-                    sh 'gradle artifactoryPublish -b build.gradle'
+
+                def versionInfo = sh (
+                            script: 'gradle -q lookForArtifacts -p fhir',
+                            returnStdout: true
+                        ).trim()
+                echo versionInfo
+                if (versionInfo == 'false') {
+                   echo 'execute'
+                } else {
+                   echo 'skip'
                 }
+
+//                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+//
+//                    sh 'gradle artifactoryPublish -b build.gradle'
+//                }
             }
         }
     }
