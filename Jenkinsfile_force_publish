@@ -49,6 +49,7 @@ pipeline {
                         for (int i = 1; i < versionPublishedList.size(); i++) {
                             def artifactoryInfo = versionPublishedList[i].split(":")
                             if (artifactoryInfo[1] == 'false') {
+                                echo "Deploying ${artifactoryInfo[0]}"
                                 deployScript += "${artifactoryInfo[0]}:artifactoryPublish "
                             }
                         }
