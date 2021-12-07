@@ -40,15 +40,19 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     script {
-                        def versionInfo = sh(
-                                script: 'gradle -q lookForArtifacts -p fhir',
+                        def deployScript = '';
+                        def versionPublished = sh(
+                                script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
                         ).trim()
-                        if (versionInfo == 'false') {
-                            echo 'execute'
-                        } else {
-                            echo 'skip'
+                        if (versionPublished == 'false') {
+                            deployScript += "fhir:artifactoryPublish"
                         }
+                        echo versionPublished
+//                        def versionPublished = sh(
+//                                script: 'gradle -q lookForArtifacts -p fhir',
+//                                returnStdout: true
+
                     }
 //                    sh 'gradle artifactoryPublish -b build.gradle'
                 }
