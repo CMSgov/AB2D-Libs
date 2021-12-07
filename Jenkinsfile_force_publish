@@ -49,7 +49,7 @@ pipeline {
                                 script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
                         ).trim().split("//")
-                        echo versionPublishedList.split("//")[0]
+                        echo versionPublishedList[0]
 
                         for (int i = 1; i < versionPublishedList.size(); i++) {
                             def artifactoryInfo = versionPublishedList[i].split(":")
