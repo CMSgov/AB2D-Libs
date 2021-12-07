@@ -33,12 +33,26 @@ pipeline {
             when {
                 branch 'main'
             }
-
             steps {
-//                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-//
-//                    sh 'gradle artifactoryPublish -b build.gradle'
-//                }
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    script {
+                        def deployScript = '';
+                        def versionPublishedList = sh(
+                                script: 'gradle -q lookForArtifacts',
+                                returnStdout: true
+                        ).trim().split("'''")
+
+                        for (int i = 1; i < versionPublishedList.size(); i++) {
+                            def artifactoryInfo = versionPublishedList[i].split(":")
+                            if (artifactoryInfo[1] == 'false') {
+                                echo "Deploying ${artifactoryInfo[0]}"
+                                deployScript += "${artifactoryInfo[0]}:artifactoryPublish "
+                            }
+                        }
+
+                        sh "gradle ${deployScript} -b build.gradle"
+                    }
+                }
             }
         }
     }
