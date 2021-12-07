@@ -48,7 +48,7 @@ pipeline {
                         if (versionPublished == 'false') {
                             deployScript += "fhir:artifactoryPublish"
                         }
-                        echo versionPublished
+//                        echo versionPublished
 //                        def versionPublished = sh(
 //                                script: 'gradle -q lookForArtifacts -p fhir',
 //                                returnStdout: true
