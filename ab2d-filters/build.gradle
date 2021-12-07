@@ -2,7 +2,7 @@ configurations {
     spi
 }
 
-version '1.2'
+version '0.1'
 
 //task printVersion {
 //    println project.version
