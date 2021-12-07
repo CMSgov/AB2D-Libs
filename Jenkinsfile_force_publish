@@ -48,7 +48,9 @@ pipeline {
 
                         versionPublishedList.each { versionPublishedInfo ->
                             def artifactoryInfo = versionPublishedInfo.split(":")
+                            echo artifactoryInfo + "/ " + versionPublishedInfo
                             if (artifactoryInfo[1] == 'false') {
+                                echo "${artifactoryInfo[0]}:artifactoryPublish "
                                 deployScript += "${artifactoryInfo[0]}:artifactoryPublish "
                             }
                         }
