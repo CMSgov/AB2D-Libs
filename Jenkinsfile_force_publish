@@ -41,33 +41,19 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     script {
                         def deployScript = '';
-                        echo sh(
-                                script: 'gradle -q lookForArtifacts',
-                                returnStdout: true
-                        ).trim()
                         def versionPublishedList = sh(
                                 script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
                         ).trim().split("'''")
-                        echo versionPublishedList[0]
 
                         for (int i = 1; i < versionPublishedList.size(); i++) {
                             def artifactoryInfo = versionPublishedList[i].split(":")
-                            echo "artifactoryInfo/ " + versionPublishedList[i]
                             if (artifactoryInfo[1] == 'false') {
-                                echo "${artifactoryInfo[0]}:artifactoryPublish "
                                 deployScript += "${artifactoryInfo[0]}:artifactoryPublish "
                             }
                         }
-//
-//                        if (versionPublished == 'false') {
-//                            deployScript += "fhir:artifactoryPublish"
-//                        }
 
                         echo deployScript
-//                        def versionPublished = sh(
-//                                script: 'gradle -q lookForArtifacts -p fhir',
-//                                returnStdout: true
 
                     }
 //                    sh 'gradle artifactoryPublish -b build.gradle'
