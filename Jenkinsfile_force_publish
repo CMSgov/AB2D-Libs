@@ -44,7 +44,7 @@ pipeline {
                         def versionPublished = sh(
                                 script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
-                        ).trim()
+                        ).trim().split(" ")
                         if (versionPublished == 'false') {
                             deployScript += "fhir:artifactoryPublish"
                         }

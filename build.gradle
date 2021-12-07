@@ -101,11 +101,9 @@ allprojects {
 //        group "upload"
 
         doLast {
-            println("# searching for existing artifact wit id")
-            println("")
-
-//            println("URLLOL: " + "${artifactoryLoc}/${sourcesRepo}/ab2d-main/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar")
-            System.out.println(urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar"))
+//            println("URLLOL: " + "${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar")
+            if(project.name != 'ab2d-libs')
+                System.out.print(project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar") + " ")
 //            return urlExists("${artifactoryLoc}/${sourcesRepo}")
 
         }
