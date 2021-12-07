@@ -50,7 +50,7 @@ pipeline {
                                 returnStdout: true
                         ).trim()
                         echo versionPublishedList
-                        versionPublishedList.split(" ")[0]
+                        echo versionPublishedList.split(" ")[0]
 
                         versionPublishedList.split(" ").each { versionPublishedInfo ->
                             def artifactoryInfo = versionPublishedInfo.split(":")
