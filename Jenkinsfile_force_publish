@@ -55,9 +55,8 @@ pipeline {
                         }
 
                         echo deployScript
-
+                        sh "gradle ${deployScript} -b build.gradle"
                     }
-//                    sh 'gradle artifactoryPublish -b build.gradle'
                 }
             }
         }
