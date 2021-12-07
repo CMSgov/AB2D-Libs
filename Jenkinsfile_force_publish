@@ -41,6 +41,10 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     script {
                         def deployScript = '';
+                        echo sh(
+                                script: 'gradle -q lookForArtifacts',
+                                returnStdout: true
+                        ).trim()
                         def versionPublishedList = sh(
                                 script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
