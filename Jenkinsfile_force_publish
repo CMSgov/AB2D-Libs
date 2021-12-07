@@ -48,11 +48,19 @@ pipeline {
                         def versionPublishedList = sh(
                                 script: 'gradle -q lookForArtifacts',
                                 returnStdout: true
-                        ).trim()
-                        echo versionPublishedList
-                        echo versionPublishedList.split(" ")[0]
+                        ).trim().split("//")
+                        echo versionPublishedList.split("//")[0]
 
-                        versionPublishedList.split(" ").each { versionPublishedInfo ->
+                        for (int i = 1; i < versionPublishedList.size(); i++) {
+                            def artifactoryInfo = versionPublishedList[i].split(":")
+                            echo "artifactoryInfo/ " + versionPublishedList[i]
+                            if (artifactoryInfo[1] == 'false') {
+                                echo "${artifactoryInfo[0]}:artifactoryPublish "
+                                deployScript += "${artifactoryInfo[0]}:artifactoryPublish "
+                            }
+                        }
+
+                        versionPublishedList.split("//").each { versionPublishedInfo ->
                             def artifactoryInfo = versionPublishedInfo.split(":")
                             echo "artifactoryInfo/ " + versionPublishedInfo
                             if (artifactoryInfo[1] == 'false') {

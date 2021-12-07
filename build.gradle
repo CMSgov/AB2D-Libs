@@ -103,7 +103,7 @@ allprojects {
         doLast {
 //            println("URLLOL: " + "${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar")
             if(project.name != 'ab2d-libs')
-                System.out.print(project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar") + " ")
+                System.out.print("//"+project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}-SNAPSHOT.jar"))
 //            return urlExists("${artifactoryLoc}/${sourcesRepo}")
 
         }
@@ -236,10 +236,7 @@ subprojects {
         }
     }
 }
-//
-//task printVersion {
-//    println project.version
-//}
+
 gradle.buildFinished {
 
     if (!rootProject.ext.skippedTests.isEmpty()) {
