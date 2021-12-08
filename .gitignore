@@ -96,3 +96,21 @@ gradle-app.setting
 ##################################################
 ## Mac Specific
 .DS_Store
+.gradle/*
+**/.idea/*
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+target/
