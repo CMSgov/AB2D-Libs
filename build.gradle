@@ -72,9 +72,10 @@ allprojects {
     }
 
 
+    // In each Project run to check if the version exists in the repository
     task lookForArtifacts {
-
         doLast {
+            //This is the parent build where nothing gets published. Skip it.
             if(project.name != 'ab2d-libs')
                 System.out.print("'''"+project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}.jar"))
         }
@@ -230,11 +231,14 @@ def gitBranch() {
     branch
 }
 
+
 def getBase64EncodedCredentials() {
     def s = "$artifactory_user" + ":" + "$artifactory_password"
     return s.bytes.encodeBase64().toString()
 }
 
+
+//Check if url exist in the repository
 def urlExists(repositoryUrl) {
 
     try {
