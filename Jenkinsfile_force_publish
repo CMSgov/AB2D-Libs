@@ -32,7 +32,7 @@ pipeline {
         stage ('Publish Libraries') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-                    sh 'gradle artifactoryPublish -Dsnapshot=true -b build.gradle'
+                    sh 'gradle artifactoryPublish -b build.gradle'
                 }
             }
         }
