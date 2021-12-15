@@ -71,6 +71,19 @@ allprojects {
         }
     }
 
+
+    // In each Project run to check if the version exists in the repository
+    task lookForArtifacts {
+        doLast {
+            //This is the parent build where nothing gets published. Skip it.
+            if(project.name != 'ab2d-libs')
+                //Set path to repository that might exist if previous published on this version.
+                //Sets project name and if it exists in repository. Print out so jenkins can take it.
+                System.out.print("'''"+project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}.jar"))
+        }
+    }
+
+
     repositories {
         maven {
             url = "${artifactoryLoc}/${sourcesRepo}"
@@ -218,4 +231,37 @@ def gitBranch() {
     proc.err.eachLine { line -> println line }
     proc.waitFor()
     branch
+}
+
+
+def getBase64EncodedCredentials() {
+    def s = "$artifactory_user" + ":" + "$artifactory_password"
+    return s.bytes.encodeBase64().toString()
+}
+
+
+//Check if url exist in the repository
+def urlExists(repositoryUrl) {
+
+    try {
+        def connection = (HttpURLConnection) new URL(repositoryUrl).openConnection()
+
+        connection.setRequestProperty("Authorization", "Basic " + getBase64EncodedCredentials())
+        connection.setConnectTimeout(10000)
+        connection.setReadTimeout(10000)
+        connection.setRequestMethod("HEAD")
+
+        def responseCode = connection.getResponseCode()
+
+        if (responseCode == 401) {
+            throw new RuntimeException("Unauthorized MavenUser user. Please provide valid username and password.")
+        }
+
+        return (200 == responseCode)
+
+    } catch (IOException ignored) {
+        println(ignored)
+        return false
+    }
+
 }
