@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static gov.cms.ab2d.aggregator.ConfigManager.getFileDoneDirectory;
 import static gov.cms.ab2d.aggregator.ConfigManager.getFileStreamingDirectory;
@@ -51,5 +52,10 @@ public class StatusManager {
         // Get the contents. If there are no files to aggregate, we're done.
         File[] contents = dirPath.toFile().listFiles();
         return contents == null || contents.length == 0;
+    }
+
+    public static List<File> getFiles(String jobId, boolean error) {
+        String jobDir = ConfigManager.getJobDirectory(jobId);
+        return FileUtils.listFiles(jobDir, error);
     }
 }

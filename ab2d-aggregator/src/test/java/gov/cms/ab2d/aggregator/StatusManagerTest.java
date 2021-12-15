@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 import static gov.cms.ab2d.aggregator.ConfigManager.ONE_MEGA_BYTE;
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
@@ -58,5 +59,25 @@ class StatusManagerTest {
             assertTrue(deleteAllInDir(testdir));
             assertTrue(StatusManager.isJobAggregated(jobId));
         }
+    }
+
+    @Test
+    void testGetFiles() throws IOException {
+        List<File> dataFiles = StatusManager.getFiles("abc", false);
+        List<File> errorFiles = StatusManager.getFiles("abc", true);
+        assertEquals(0, dataFiles.size());
+        assertEquals(0, errorFiles.size());
+
+        AggregatorTest.writeToFile(tmpdir + "/S001_0001" + FileOutputType.NDJSON, 10);
+        dataFiles = StatusManager.getFiles("abc", false);
+        errorFiles = StatusManager.getFiles("abc", true);
+        assertEquals(1, dataFiles.size());
+        assertEquals(0, errorFiles.size());
+
+        AggregatorTest.writeToFile(tmpdir + "/S001_0002" + FileOutputType.NDJSON_ERROR, 10);
+        dataFiles = StatusManager.getFiles("abc", false);
+        errorFiles = StatusManager.getFiles("abc", true);
+        assertEquals(1, dataFiles.size());
+        assertEquals(1, errorFiles.size());
     }
 }
