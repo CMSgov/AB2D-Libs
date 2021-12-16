@@ -136,6 +136,8 @@ subprojects {
     dependencies {
         implementation "org.projectlombok:lombok:$lombokVersion"
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
+        implementation "org.springframework.boot:spring-boot-starter-web:$springBoot"
+        implementation "org.springframework.boot:spring-boot-starter-validation:$springBoot"
 
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 

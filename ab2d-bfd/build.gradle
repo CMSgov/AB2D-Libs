@@ -1,9 +1,7 @@
-version = "$bfd"
+version = "0.0.1"
 
 dependencies {
     implementation "com.github.spotbugs:spotbugs-annotations:4.5.1"
-    implementation "org.springframework.boot:spring-boot-starter-web:$springBoot"
-    implementation "org.springframework.boot:spring-boot-starter-validation:$springBoot"
     implementation "org.apache.httpcomponents:httpclient:$httpComponents"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhir"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiFhir"
