@@ -1,0 +1,13 @@
+name: Snyk Maven Scanner
+on: push
+jobs:
+  maven_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk Maven to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}          
+        with:
+          command: monitor
