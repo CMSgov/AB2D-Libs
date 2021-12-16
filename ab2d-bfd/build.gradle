@@ -1,26 +1,24 @@
-version = '0.0.1'
+version = "$bfd"
 
 dependencies {
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.5.1'
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.6'
-    implementation 'org.springframework.boot:spring-boot-starter-validation:2.5.6'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-client:5.6.1'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:5.6.1'
-    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:5.6.1'
-    implementation 'org.springframework.retry:spring-retry:1.3.1'
-    implementation 'com.newrelic.agent.java:newrelic-api:7.4.1'
-    implementation 'gov.cms.ab2d:fhir:1.0'
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.5.1'
-    testImplementation 'org.testcontainers:testcontainers:1.16.2'
-    testImplementation 'org.testcontainers:postgresql:1.16.2'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.6'
-    testImplementation 'org.mock-server:mockserver-netty:5.11.2'
-    testImplementation 'org.mock-server:mockserver-client-java:5.11.2'
-    testImplementation 'org.testcontainers:testcontainers:1.16.2'
-    testImplementation 'org.testcontainers:postgresql:1.16.2'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.2'
-    compileOnly 'org.projectlombok:lombok:1.18.22'
+    implementation "com.github.spotbugs:spotbugs-annotations:4.5.1"
+    implementation "org.springframework.boot:spring-boot-starter-web:$springBoot"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$springBoot"
+    implementation "org.apache.httpcomponents:httpclient:$httpComponents"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhir"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiFhir"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhir"
+    implementation "org.springframework.retry:spring-retry:$springframeworkRetry"
+    implementation "com.newrelic.agent.java:newrelic-api:$newRelic"
+    implementation "gov.cms.ab2d:fhir:$fhir"
+    testImplementation "org.testcontainers:testcontainers:$testContainer"
+    testImplementation "org.testcontainers:postgresql:$testContainer"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainer"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBoot"
+    testImplementation "org.mock-server:mockserver-netty:$mockServer"
+    testImplementation "org.mock-server:mockserver-client-java:$mockServer"
+    testImplementation "org.testcontainers:testcontainers:$testContainer"
+    testImplementation "org.testcontainers:postgresql:$testContainer"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainer"
 }
 
