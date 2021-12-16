@@ -1,2 +1,3 @@
 rootProject.name = 'ab2d-libs'
-include 'ab2d-filters','ab2d-fhir'
+include 'ab2d-filters','ab2d-fhir',"ab2d-bfd"
+
