@@ -19,7 +19,7 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     fhirVersion='1.0'
-    bfdVersion='1.0'
+    bfdVersion='1.0.1'
     filtersVersion='1.2'
 
 
