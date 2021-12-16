@@ -4,7 +4,7 @@ This library implements the connection and configuration to BFD for AB2D.
 
 ## Using the Library
 
-Add this library to Maven
+Add to Maven Project
 
 ```
 <dependency>

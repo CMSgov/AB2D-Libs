@@ -1,4 +1,4 @@
-version = "1.0"
+version = "$bfdVersion"
 
 dependencies {
     implementation "org.apache.httpcomponents:httpclient:$httpComponentsVersion"

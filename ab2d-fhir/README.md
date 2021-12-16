@@ -6,7 +6,7 @@ This FHIR Library is used to manage and process FHIR Data for AB2D.
 
 ## Using the Library
 
-Add this library to Maven
+Add this library to Maven Project
 ```
 <dependency>
     <groupId>gov.cms.ab2d</groupId>
