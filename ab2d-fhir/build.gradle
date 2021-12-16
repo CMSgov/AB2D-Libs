@@ -1,4 +1,4 @@
-version "$fhir"
+version "$fhirVersion"
 
 
 dependencies {

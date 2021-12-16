@@ -2,7 +2,7 @@ configurations {
     spi
 }
 
-version "$filters"
+version "$filtersVersion"
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding
