@@ -1,7 +1,7 @@
 name: Snyk Scanner
 on: push
 jobs:
-  security:
+  maven security scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -17,3 +17,19 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: snyk.sarif
+  gradle security scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk Gradle to check for vulnerabilities
+        uses: snyk/actions/gradle@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}          
+        with:
+          command: monitor
+          args: --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif        
