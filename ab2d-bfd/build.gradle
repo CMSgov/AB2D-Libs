@@ -7,7 +7,7 @@ dependencies {
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiFhirVersion"
     implementation "org.springframework.retry:spring-retry:$springframeworkRetryVersion"
     implementation "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
-    implementation "gov.cms.ab2d:fhir:$fhirVersion"
+    implementation "gov.cms.ab2d:fhir-ab2d:$fhirVersion"
     testImplementation "org.testcontainers:testcontainers:$testContainerVersion"
     testImplementation "org.testcontainers:postgresql:$testContainerVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainerVersion"
