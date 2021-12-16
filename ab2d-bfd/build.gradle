@@ -12,7 +12,6 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:$testContainer"
     testImplementation "org.testcontainers:postgresql:$testContainer"
     testImplementation "org.testcontainers:junit-jupiter:$testContainer"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBoot"
     testImplementation "org.mock-server:mockserver-netty:$mockServer"
     testImplementation "org.mock-server:mockserver-client-java:$mockServer"
     testImplementation "org.testcontainers:testcontainers:$testContainer"

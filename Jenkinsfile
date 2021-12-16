@@ -16,6 +16,7 @@ pipeline {
         stage ('Build and Test Libraries') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    sh 'gradle -b build.gradle'
                     sh 'gradle clean test --info -b build.gradle'
                 }
             }
