@@ -43,7 +43,7 @@ pipeline {
                     git branch: env.BRANCH_NAME, credentialsId: 'GITHUB_AB2D_JENKINS_PAT', url: env.GIT_URL
                     // Automatically saves the an id for the SonarQube build
                     withSonarQubeEnv('CMSSonar') {
-                        sh '''./gradlew sonarqube -Dsonar.projectKey=ab2d-lib-project -Dsonar.host.url=https://sonarqube.cloud.cms.gov'''
+                        sh '''gradle  --stacktrace sonarqube -Dsonar.projectKey=ab2d-lib-project -Dsonar.host.url=https://sonarqube.cloud.cms.gov'''
                     }
                 }
             }
