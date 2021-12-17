@@ -21,7 +21,7 @@ public final class JobHelper {
      * @param jobId - the job id and the root directory
      * @throws IOException if there is a problem creating the directories
      */
-    static void workerSetUpJobDirectories(String jobId) throws IOException {
+    public static void workerSetUpJobDirectories(String jobId) throws IOException {
         // Create job directory
         createADir(ConfigManager.getJobDirectory(jobId));
 
@@ -39,7 +39,7 @@ public final class JobHelper {
      *
      * @param jobId - the job id
      */
-    static void workerFinishJob(String jobId) {
+    public static void workerFinishJob(String jobId) {
         deleteAllInDir(ConfigManager.getFileStreamingDirectory(jobId));
     }
 

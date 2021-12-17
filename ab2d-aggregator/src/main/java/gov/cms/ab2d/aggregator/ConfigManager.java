@@ -53,9 +53,13 @@ public final class ConfigManager {
     }
 
     public static String getJobDirectory(String jobId) {
-        String dir = getInstance().getProperty("efs.mount") + "/" + jobId + "/";
-        String tmpDirLoc = "java.io.tmpdir";
-        return dir.replace("${" + tmpDirLoc + "}", System.getProperty(tmpDirLoc));
+        String dir = System.getenv("AB2D_EFS_MOUNT");
+        if (dir == null || !dir.isEmpty()) {
+            dir = getInstance().getProperty("efs.mount");
+            String tmpDirLoc = "java.io.tmpdir";
+            dir = dir.replace("${" + tmpDirLoc + "}", System.getProperty(tmpDirLoc));
+        }
+        return dir + "/" + jobId + "/";
     }
 
     public static String getFileStreamingDirectory(String jobId) {

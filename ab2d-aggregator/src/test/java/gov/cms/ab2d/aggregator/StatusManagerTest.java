@@ -4,8 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static gov.cms.ab2d.aggregator.ConfigManager.ONE_MEGA_BYTE;
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
@@ -22,9 +25,9 @@ class StatusManagerTest {
     @Test
     void testVars() {
         assertEquals(2, ConfigManager.getMultiplier());
-        assertEquals(new File(tmpdir + JOB_DOWNLOADS + "abc/streaming/").getAbsolutePath(),
+        assertEquals(new File(tmpdir + JOB_DOWNLOADS + ABC + "/streaming/").getAbsolutePath(),
                 new File(ConfigManager.getFileStreamingDirectory(ABC)).getAbsolutePath());
-        assertEquals(new File(tmpdir + JOB_DOWNLOADS + "abc/finished/").getAbsolutePath(),
+        assertEquals(new File(tmpdir + JOB_DOWNLOADS + ABC + "/finished/").getAbsolutePath(),
                 new File(ConfigManager.getFileDoneDirectory(ABC)).getAbsolutePath());
         assertEquals(ONE_MEGA_BYTE, ConfigManager.getMaxFileSize());
     }
@@ -63,20 +66,25 @@ class StatusManagerTest {
 
     @Test
     void testGetFiles() throws IOException {
-        List<File> dataFiles = StatusManager.getFiles("abc", false);
-        List<File> errorFiles = StatusManager.getFiles("abc", true);
+        String job = ABC;
+        String jobDir = ConfigManager.getJobDirectory(job);
+        File dirFile = new File(jobDir);
+        assertTrue(dirFile.mkdirs());
+
+        List<File> dataFiles = StatusManager.getFiles(ABC, false);
+        List<File> errorFiles = StatusManager.getFiles(ABC, true);
         assertEquals(0, dataFiles.size());
         assertEquals(0, errorFiles.size());
 
-        AggregatorTest.writeToFile(tmpdir + "/S001_0001" + FileOutputType.NDJSON, 10);
-        dataFiles = StatusManager.getFiles("abc", false);
-        errorFiles = StatusManager.getFiles("abc", true);
+        AggregatorTest.writeToFile(jobDir + "/S001_0001" + FileOutputType.NDJSON.getSuffix(), 10);
+        dataFiles = StatusManager.getFiles(job, false);
+        errorFiles = StatusManager.getFiles(job, true);
         assertEquals(1, dataFiles.size());
         assertEquals(0, errorFiles.size());
 
-        AggregatorTest.writeToFile(tmpdir + "/S001_0002" + FileOutputType.NDJSON_ERROR, 10);
-        dataFiles = StatusManager.getFiles("abc", false);
-        errorFiles = StatusManager.getFiles("abc", true);
+        AggregatorTest.writeToFile(jobDir + "/S001_0002" + FileOutputType.NDJSON_ERROR.getSuffix(), 10);
+        dataFiles = StatusManager.getFiles(job, false);
+        errorFiles = StatusManager.getFiles(job, true);
         assertEquals(1, dataFiles.size());
         assertEquals(1, errorFiles.size());
     }

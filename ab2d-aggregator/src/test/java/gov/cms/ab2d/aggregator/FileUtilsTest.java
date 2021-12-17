@@ -73,6 +73,8 @@ class FileUtilsTest {
     @Test
     void getSizeOfFiles() throws IOException {
         File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/abc");
+        createADir(fulltmpdir.getAbsolutePath());
+        FileUtils.deleteAllInDir(fulltmpdir);
         try {
             assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
             assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
@@ -182,6 +184,7 @@ class FileUtilsTest {
     }
 
     static Path createFile(File dir, String fileName, String data) throws IOException {
+        Files.createDirectories(Path.of(dir.getAbsolutePath()));
         Path p = Path.of(dir.getAbsolutePath(), fileName);
         assertTrue(p.toFile().createNewFile());
         Files.writeString(p, data);

@@ -31,7 +31,7 @@ public class BeneficiaryStream implements AutoCloseable {
     private transient boolean open = false;
     private final transient FileOutputStream stream;
 
-    BeneficiaryStream(String jobId, boolean error) throws IOException {
+    public BeneficiaryStream(String jobId, boolean error) throws IOException {
         this.jobId = jobId;
         this.error = error;
         this.open = true;
@@ -67,15 +67,15 @@ public class BeneficiaryStream implements AutoCloseable {
         return this.open;
     }
 
-    boolean moveFileToDone() {
+    public boolean moveFileToDone() {
         return tmpFile.renameTo(completeFile);
     }
 
-    void write(String val) throws IOException {
+    public void write(String val) throws IOException {
         bout.write(val.getBytes(StandardCharsets.UTF_8));
     }
 
-    void flush() throws IOException {
+    public void flush() throws IOException {
         bout.flush();
     }
 
@@ -84,5 +84,4 @@ public class BeneficiaryStream implements AutoCloseable {
         File directory = new File(ConfigManager.getFileStreamingDirectory(this.jobId));
         return File.createTempFile(FILE_PREFIX, suffix, directory);
     }
-
 }
