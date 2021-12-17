@@ -36,6 +36,23 @@ pipeline {
                 }
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    git branch: 'master', credentialsId: 'GITHUB_AB2D_JENKINS_PAT', url: env.GIT_URL
+                    git branch: env.BRANCH_NAME, credentialsId: 'GITHUB_AB2D_JENKINS_PAT', url: env.GIT_URL
+                    // Automatically saves the an id for the SonarQube build
+                    withSonarQubeEnv('CMSSonar') {
+                        sh '''./gradlew sonarqube \\
+                            -Dsonar.projectKey=ab2d-lib-project \\
+                            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \\
+                            -Dsonar.login=${ARTIFACTORY_USER}
+                            -Dsonar.password=${ARTIFACTORY_PASSWORD} \\
+                            '''
+                    }
+                }
+            }
+        }
 
         stage ('Publish Libraries') {
             when {
