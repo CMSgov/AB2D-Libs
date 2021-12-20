@@ -1,0 +1,22 @@
+name: Github Secrets Scanner
+
+on: [push]
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    env:
+      REPO: https://github.com/CMSgov/ab2d
+    steps:
+    - uses: actions/checkout@v1
+    - name: gitleaks-action
+      uses: semanticbits/ab2d-gitleaks-automation/gitleaks-action@master
+      with:
+        config-path: https://raw.githubusercontent.com/semanticbits/ab2d-gitleaks-automation/master/ab2d/gitleaks.toml
+    - name: Slack notification
+      if: failure()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      uses: Ilshidur/action-slack@master
+      with:
+        args: 'Potential Secrets found in: https://github.com/{{ GITHUB_REPOSITORY }}/commit/{{ GITHUB_SHA }} Link to build with full gitleaks output: https://github.com/{{ GITHUB_REPOSITORY }}/commit/{{ GITHUB_SHA }}/checks'
