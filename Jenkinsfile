@@ -46,6 +46,16 @@ pipeline {
                 }
             }
         }
+        stage("Quality Gate") {
+            options {
+                timeout(time: 10, unit: 'MINUTES')
+            }
+            steps {
+                // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                // true = set pipeline to UNSTABLE, false = don't
+                waitForQualityGate abortPipeline: true
+            }
+        }
 
         stage ('Publish Libraries') {
             when {
