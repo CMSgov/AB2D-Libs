@@ -136,13 +136,9 @@ subprojects {
 
     dependencies {
         compileOnly "org.springframework.boot:spring-boot-dependencies:$springBootVersion@pom"
-        implementation "org.projectlombok:lombok:$lombokVersion"
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
-        implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
-        implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
 
         testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
         testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

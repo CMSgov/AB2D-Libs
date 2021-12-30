@@ -1,6 +1,8 @@
 version = "$bfdVersion"
 
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.apache.httpcomponents:httpclient:$httpComponentsVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiFhirVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiFhirVersion"
