@@ -7,7 +7,9 @@ plugins {
     id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
-    id "io.spring.dependency-management" version '1.0.11.RELEASE'
+    id "io.spring.dependency-management" version '1.0.11.RELEASE' apply true
+    id 'org.springframework.boot' version '2.6.2'
+
 }
 
 ext {
@@ -49,6 +51,8 @@ ext {
 }
 
 allprojects {
+//    apply plugin: 'java'
+//    apply plugin: 'io.spring.dependency-management'
 
     tasks.withType(Test) { testTask ->
 
@@ -112,6 +116,9 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'java'
+//    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -119,8 +126,6 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
     apply plugin: 'com.github.spotbugs'
-    apply plugin: 'java'
-    apply plugin: 'io.spring.dependency-management'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
         println("Artifactory user not set");
@@ -139,8 +144,10 @@ subprojects {
 
     dependencyManagement {
         dependencies {
-            dependency "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
-            dependency "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+//            dependency "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+//            dependency "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+            dependency "org.projectlombok:lombok:$lombokVersion"
+//            compile group: 'org.springframework.boot', name: 'spring-boot-dependencies', version: '2.6.2', ext: 'pom'
         }
     }
 

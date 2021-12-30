@@ -1,9 +1,11 @@
 version "$fhirVersion"
+apply plugin: 'org.springframework.boot'
 
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding
     // other modules to this project
+    implementation "org.projectlombok:lombok"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
@@ -12,9 +14,8 @@ dependencies {
     implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-    implementation "org.projectlombok:lombok:$lombokVersion"
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test:$springBoot'){
+    testImplementation("org.springframework.boot:spring-boot-starter-test"){
         exclude group: 'org.junit.vintage'
     }
 }
