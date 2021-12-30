@@ -13,5 +13,4 @@ dependencies {
     implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-    implementation "org.projectlombok:lombok"
 }

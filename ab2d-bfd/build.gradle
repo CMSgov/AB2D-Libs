@@ -11,7 +11,6 @@ dependencies {
     implementation "org.springframework.retry:spring-retry:$springframeworkRetryVersion"
     implementation "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
     implementation "gov.cms.ab2d:ab2d-fhir:$fhirVersion"
-    implementation "org.projectlombok:lombok"
     testImplementation "org.testcontainers:testcontainers:$testContainerVersion"
     testImplementation "org.testcontainers:postgresql:$testContainerVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainerVersion"
