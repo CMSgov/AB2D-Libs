@@ -119,6 +119,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
     apply plugin: 'com.github.spotbugs'
+    apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
@@ -135,6 +136,13 @@ subprojects {
     targetCompatibility = 11
 
     group 'gov.cms.ab2d'
+
+    dependencyManagement {
+        dependencies {
+            dependency "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+            dependency "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+        }
+    }
 
     dependencies {
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
