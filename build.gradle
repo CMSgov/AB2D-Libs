@@ -7,6 +7,7 @@ plugins {
     id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
+    id "io.spring.dependency-management" version '1.0.11.RELEASE'
 }
 
 ext {
@@ -118,6 +119,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'pmd'
     apply plugin: 'com.github.spotbugs'
+    apply plugin: 'io.spring.dependency-management'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
         println("Artifactory user not set");
@@ -135,7 +137,6 @@ subprojects {
     group 'gov.cms.ab2d'
 
     dependencies {
-        compileOnly "org.springframework.boot:spring-boot-dependencies:$springBootVersion@pom"
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
 
         testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
