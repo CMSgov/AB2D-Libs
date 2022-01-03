@@ -1,6 +1,4 @@
 version "$fhirVersion"
-//apply plugin: 'org.springframework.boot'
-
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding

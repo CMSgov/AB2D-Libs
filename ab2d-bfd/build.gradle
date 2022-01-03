@@ -1,7 +1,7 @@
 version = "$bfdVersion"
-//apply plugin: 'org.springframework.boot'
 
 dependencies {
+    implementation "gov.cms.ab2d:ab2d-fhir:$fhirVersion"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.apache.httpcomponents:httpclient"
@@ -10,7 +10,6 @@ dependencies {
     implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4"
     implementation "org.springframework.retry:spring-retry"
     implementation "com.newrelic.agent.java:newrelic-api"
-    implementation "gov.cms.ab2d:ab2d-fhir:$fhirVersion"
     testImplementation "org.testcontainers:testcontainers"
     testImplementation "org.testcontainers:postgresql"
     testImplementation "org.testcontainers:junit-jupiter"

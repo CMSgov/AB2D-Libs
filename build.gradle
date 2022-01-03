@@ -162,7 +162,7 @@ subprojects {
         }
     }
 
-    //dependencies to be applied to all projects. 
+    //dependencies to be applied to all projects.
     dependencies {
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
         implementation "org.projectlombok:lombok:$lombokVersion"
