@@ -8,7 +8,7 @@ plugins {
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
     id "io.spring.dependency-management" version '1.0.11.RELEASE' apply true
-    id 'org.springframework.boot' version '2.6.2'
+//    id 'org.springframework.boot' version '2.6.2'
 
 }
 
@@ -144,10 +144,16 @@ subprojects {
 
     dependencyManagement {
         dependencies {
-//            dependency "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
-//            dependency "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+            imports {
+                mavenBom 'org.springframework.boot:spring-boot-dependencies:2.6.2'
+            }
+            dependency "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
+            dependency "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
+            dependency "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
+            dependency "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
+            dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
+            dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
             dependency "org.projectlombok:lombok:$lombokVersion"
-//            compile group: 'org.springframework.boot', name: 'spring-boot-dependencies', version: '2.6.2', ext: 'pom'
         }
     }
 

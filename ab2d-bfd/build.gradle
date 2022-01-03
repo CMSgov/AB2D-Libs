@@ -1,5 +1,5 @@
 version = "$bfdVersion"
-apply plugin: 'org.springframework.boot'
+//apply plugin: 'org.springframework.boot'
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
