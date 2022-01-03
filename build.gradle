@@ -8,8 +8,6 @@ plugins {
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
     id "io.spring.dependency-management" version '1.0.11.RELEASE' apply true
-//    id 'org.springframework.boot' version '2.6.2'
-
 }
 
 ext {
@@ -51,9 +49,6 @@ ext {
 }
 
 allprojects {
-//    apply plugin: 'java'
-//    apply plugin: 'io.spring.dependency-management'
-
     tasks.withType(Test) { testTask ->
 
         testTask.testLogging { logging ->
@@ -117,7 +112,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-//    apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'java-library'
@@ -142,6 +136,8 @@ subprojects {
 
     group 'gov.cms.ab2d'
 
+
+    //dependencyManagement used to manage version of dependencies in projects.
     dependencyManagement {
         dependencies {
             imports {
@@ -154,16 +150,25 @@ subprojects {
             dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
             dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
             dependency "org.projectlombok:lombok:$lombokVersion"
+            dependency "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
+            dependency "org.testcontainers:testcontainers:$testContainerVersion"
+            dependency "org.testcontainers:postgresql:$testContainerVersion"
+            dependency "org.testcontainers:junit-jupiter:$testContainerVersion"
+            dependency "org.mock-server:mockserver-netty:$mockServerVersion"
+            dependency "org.mock-server:mockserver-client-java:$mockServerVersion"
+            dependency "org.testcontainers:testcontainers:$testContainerVersion"
+            dependency "org.testcontainers:postgresql:$testContainerVersion"
+            dependency "org.testcontainers:junit-jupiter:$testContainerVersion"
         }
     }
 
+    //dependencies to be applied to all projects. 
     dependencies {
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
         implementation "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor  "org.projectlombok:lombok:$lombokVersion"
 
         testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-
         testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
