@@ -159,18 +159,12 @@ subprojects {
             dependency "org.testcontainers:testcontainers:$testContainerVersion"
             dependency "org.testcontainers:postgresql:$testContainerVersion"
             dependency "org.testcontainers:junit-jupiter:$testContainerVersion"
+            dependency "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
+            dependency "org.projectlombok:lombok:$lombokVersion"
+
+            dependency "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+            dependency "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
         }
-    }
-
-    //dependencies to be applied to all projects.
-    dependencies {
-        implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
-        implementation "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor  "org.projectlombok:lombok:$lombokVersion"
-
-        testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
 
     jar {
