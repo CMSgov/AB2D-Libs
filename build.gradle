@@ -7,7 +7,6 @@ plugins {
     id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
-    id "io.spring.dependency-management" version '1.0.11.RELEASE' apply true
 }
 
 ext {
@@ -111,8 +110,6 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'com.jfrog.artifactory'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -137,34 +134,28 @@ subprojects {
     group 'gov.cms.ab2d'
 
 
-    //dependencyManagement used to manage version of dependencies in projects.
-    dependencyManagement {
-        dependencies {
-            imports {
-                mavenBom 'org.springframework.boot:spring-boot-dependencies:2.6.2'
-            }
-            dependency "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
-            dependency "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
-            dependency "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
-            dependency "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
-            dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
-            dependency "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-            dependency "org.projectlombok:lombok:$lombokVersion"
-            dependency "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
-            dependency "org.testcontainers:testcontainers:$testContainerVersion"
-            dependency "org.testcontainers:postgresql:$testContainerVersion"
-            dependency "org.testcontainers:junit-jupiter:$testContainerVersion"
-            dependency "org.mock-server:mockserver-netty:$mockServerVersion"
-            dependency "org.mock-server:mockserver-client-java:$mockServerVersion"
-            dependency "org.testcontainers:testcontainers:$testContainerVersion"
-            dependency "org.testcontainers:postgresql:$testContainerVersion"
-            dependency "org.testcontainers:junit-jupiter:$testContainerVersion"
-            dependency "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
-            dependency "org.projectlombok:lombok:$lombokVersion"
+    dependencies {
+        implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
+        testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
-            dependency "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-            dependency "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        }
+        implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"))
+        implementation(platform("com.newrelic.agent.java:newrelic-api:$newRelicVersion"))
+        implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
+        implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
+        implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
+        implementation(platform("org.mock-server:mockserver-netty:$mockServerVersion"))
+        implementation(platform("org.mock-server:mockserver-client-java:$mockServerVersion"))
+        implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
+        implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
+        implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
+        implementation(platform(annotationProcessor("org.projectlombok:lombok:$lombokVersion")))
     }
 
     jar {
