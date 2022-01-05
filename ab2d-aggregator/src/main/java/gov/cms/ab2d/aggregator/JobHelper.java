@@ -21,15 +21,15 @@ public final class JobHelper {
      * @param jobId - the job id and the root directory
      * @throws IOException if there is a problem creating the directories
      */
-    public static void workerSetUpJobDirectories(String jobId) throws IOException {
+    public static void workerSetUpJobDirectories(String jobId, String baseDir, String streamDir, String finishedDir) throws IOException {
         // Create job directory
-        createADir(ConfigManager.getJobDirectory(jobId));
+        createADir(baseDir + "/" + jobId);
 
         // Create the directory where we're going to put all the finished streams
-        createADir(ConfigManager.getFileDoneDirectory(jobId));
+        createADir(baseDir + "/" + jobId + "/" + streamDir);
 
         // Create a directory that we're going to dump all the streaming files
-        createADir(ConfigManager.getFileStreamingDirectory(jobId));
+        createADir(baseDir + "/" + jobId + "/" + finishedDir);
     }
 
 
@@ -37,18 +37,18 @@ public final class JobHelper {
      * This allows the worker to send a message to the aggregator that it is done streaming data. This
      * deletes the streaming directory
      *
-     * @param jobId - the job id
+     * @param streamingDir - the location where all finished files are put by the worker
      */
-    public static void workerFinishJob(String jobId) {
-        deleteAllInDir(ConfigManager.getFileStreamingDirectory(jobId));
+    public static void workerFinishJob(String streamingDir) {
+        deleteAllInDir(streamingDir);
     }
 
     /**
      * This allows the aggregator to let the job know that the aggregator has finished aggregating EOB files
      *
-     * @param jobId - the job id
+     * @param finishedDir - the job id
      */
-    public static void aggregatorFinishJob(String jobId) {
-        deleteAllInDir(ConfigManager.getFileDoneDirectory(jobId));
+    public static void aggregatorFinishJob(String finishedDir) {
+        deleteAllInDir(finishedDir);
     }
 }

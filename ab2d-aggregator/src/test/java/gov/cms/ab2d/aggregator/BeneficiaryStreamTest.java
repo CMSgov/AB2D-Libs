@@ -1,7 +1,7 @@
 package gov.cms.ab2d.aggregator;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -13,35 +13,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 class BeneficiaryStreamTest {
 
     private static final String JOB_ID = "job1";
-
-    @AfterEach
-    void cleanUp() {
-        File fileTmp = new File(ConfigManager.getFileStreamingDirectory(JOB_ID));
-        if (fileTmp.exists()) {
-            File[] files = fileTmp.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    assertTrue(f.delete());
-                }
-            }
-        }
-        File tmpFDoneDir = new File(ConfigManager.getFileDoneDirectory(JOB_ID));
-        if (tmpFDoneDir.exists()) {
-            File[] files = tmpFDoneDir.listFiles();
-            if (files != null) {
-                for (File f : files) {
-                    assertTrue(f.delete());
-                }
-            }
-        }
-
-    }
+    private static final String STREAM_DIR = "streaming";
+    private static final String FINISH_DIR = "finished";
 
     @Test
     @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.CloseResource"})
-    void testCreateAndWriteToStream() {
+    void testCreateAndWriteToStream(@TempDir File tmpDirFolder) {
         BeneficiaryStream savedStream = null;
-        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, false)) {
+        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), false, STREAM_DIR, FINISH_DIR)) {
             savedStream = stream;
             for (int i = 0; i < 1000; i++) {
                 stream.write(AggregatorTest.getAlphaNumericString(1000));
@@ -50,7 +29,7 @@ class BeneficiaryStreamTest {
             File tmpFile = stream.getFile();
             assertTrue(tmpFile.exists());
             assertTrue(stream.isOpen());
-            File tmpFileDirectory = new File(ConfigManager.getFileStreamingDirectory(JOB_ID));
+            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + "/" + JOB_ID + "/" + STREAM_DIR);
             File theFile = Path.of(tmpFileDirectory.getAbsolutePath(), tmpFile.getName()).toFile();
             assertTrue(theFile.exists());
 
@@ -61,7 +40,7 @@ class BeneficiaryStreamTest {
             File tmpFile = savedStream.getFile();
             assertTrue(tmpFile.exists());
             assertFalse(savedStream.isOpen());
-            File tmpFileDirectory = new File(ConfigManager.getFileDoneDirectory(JOB_ID));
+            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + "/" + JOB_ID + "/" + FINISH_DIR);
             File theFile = Path.of(tmpFileDirectory.getAbsolutePath(), tmpFile.getName()).toFile();
             assertTrue(theFile.exists());
         }

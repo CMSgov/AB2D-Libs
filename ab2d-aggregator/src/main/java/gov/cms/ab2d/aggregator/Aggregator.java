@@ -5,32 +5,36 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
-import static gov.cms.ab2d.aggregator.ConfigManager.getFileDoneDirectory;
-import static gov.cms.ab2d.aggregator.ConfigManager.getJobDirectory;
-import static gov.cms.ab2d.aggregator.ConfigManager.getMaxFileSize;
-import static gov.cms.ab2d.aggregator.ConfigManager.getMultiplier;
 import static gov.cms.ab2d.aggregator.FileUtils.cleanUpFiles;
 import static gov.cms.ab2d.aggregator.FileUtils.combineFiles;
 import static gov.cms.ab2d.aggregator.FileUtils.getSizeOfFileOrDirectory;
 import static gov.cms.ab2d.aggregator.FileUtils.getSizeOfFiles;
 import static gov.cms.ab2d.aggregator.FileUtils.listFiles;
-import static gov.cms.ab2d.aggregator.StatusManager.isJobDoneStreamingData;
 
 /**
  * Does the work of aggregating files
  */
 @Getter
 public class Aggregator {
+    public static final int ONE_MEGA_BYTE = 1024 * 1024;
 
     private final String jobId;
     private final String mainDirectory;
     private final String contractNumber;
+    private final String streamDir;
+    private final String finishedDir;
+    private final String fileDir;
+    private final int maxMegaByes;
+    private final int multiplier;
+
     private int currentFileIndex = 1;
     private int currentErrorFileIndex = 1;
 
@@ -40,10 +44,19 @@ public class Aggregator {
      * @param jobId - the job ID
      * @param contractNumber - the contract number (used for naming files)
      */
-    public Aggregator(String jobId, String contractNumber) {
+    public Aggregator(String jobId, String contractNumber, String fileDir, int maxMegaBytes, String streamDir,
+                      String finishedDir, int multiplier) throws IOException {
         this.jobId = jobId;
-        this.mainDirectory = getJobDirectory(jobId);
+        this.mainDirectory = fileDir + "/" + jobId;
         this.contractNumber = contractNumber;
+        this.fileDir = fileDir;
+        this.streamDir = streamDir;
+        this.maxMegaByes = maxMegaBytes;
+        this.finishedDir = finishedDir;
+        this.multiplier = multiplier;
+
+        // The worker should do this by default, but just in case, set up all the directories
+        JobHelper.workerSetUpJobDirectories(jobId, fileDir, streamDir, finishedDir);
     }
 
     /**
@@ -79,7 +92,7 @@ public class Aggregator {
      */
     String getNextFileName(boolean error) {
         String namePart = error ? getNextErrorFileName() : getNextDataFileName();
-        return mainDirectory + namePart;
+        return Path.of(mainDirectory, namePart).toFile().getAbsolutePath();
     }
 
     /**
@@ -89,8 +102,8 @@ public class Aggregator {
      * @return - true if we have enough files or the worker is done writing out files
      */
     boolean okayToDoAggregation(boolean error) {
-        long size = getSizeOfFiles(getFileDoneDirectory(this.jobId), error);
-        return size > getMultiplier() * getMaxFileSize() || isJobDoneStreamingData(this.jobId);
+        long size = getSizeOfFiles(this.mainDirectory + "/" + this.finishedDir, error);
+        return (size > ((long) this.multiplier * getMaxFileSize())) || isJobDoneStreamingData();
     }
 
     String getNextDataFileName() {
@@ -183,7 +196,7 @@ public class Aggregator {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     List<FileDescriptor>  getSortedFileDescriptors(boolean error) {
-        List<File> availableFiles = listFiles(getFileDoneDirectory(this.jobId), error);
+        List<File> availableFiles = listFiles(this.mainDirectory + "/" + this.finishedDir, error);
 
         List<FileDescriptor> files = new ArrayList<>();
         availableFiles.forEach(f -> {
@@ -198,5 +211,38 @@ public class Aggregator {
 
         // Order the files by file size
         return orderBySize(files);
+    }
+
+    public boolean isJobDoneStreamingData() {
+        String streamingDir = this.mainDirectory + "/" + this.streamDir;
+        boolean fileExists = dirExists(streamingDir);
+        // Job is done if dir doesn't exist
+        return !fileExists;
+    }
+
+    private boolean dirExists(String dir) {
+        return Files.exists(Path.of(dir));
+    }
+
+    /**
+     * Has the aggregator finished doing all its aggregation?
+     *
+     * @return true if the aggregator has indicated that it has finished combining all outputted worker files.
+     * This will always be false if the worker is not done streaming
+     */
+    public boolean isJobAggregated() {
+        // If job isn't done, we can't be done aggregating
+        if (dirExists(this.mainDirectory + "/" + this.streamDir)) {
+            return false;
+        }
+        // Look for the files in the done writing directory
+        if (dirExists(this.mainDirectory + "/" + this.finishedDir)) {
+            return false;
+        }
+        return true;
+    }
+
+    public int getMaxFileSize() {
+        return this.maxMegaByes * ONE_MEGA_BYTE;
     }
 }

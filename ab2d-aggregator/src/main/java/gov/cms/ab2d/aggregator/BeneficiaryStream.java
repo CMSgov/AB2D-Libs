@@ -28,20 +28,26 @@ public class BeneficiaryStream implements AutoCloseable {
     private final transient File completeFile;
     private final transient String jobId;
     private final transient boolean error;
+    private final transient String jobDir;
     private transient boolean open = false;
     private final transient FileOutputStream stream;
+    private final transient String streamingDir;
+    private final transient String finishedDir;
 
-    public BeneficiaryStream(String jobId, boolean error) throws IOException {
+    public BeneficiaryStream(String jobId, String baseDir, boolean error, String streamingDir, String finishedDir) throws IOException {
         this.jobId = jobId;
         this.error = error;
         this.open = true;
-        JobHelper.workerSetUpJobDirectories(jobId);
-        tmpFile = createNewFile();
-        stream = new FileOutputStream(tmpFile);
-        bout = new BufferedOutputStream(stream);
-        File directory = new File(ConfigManager.getFileDoneDirectory(this.jobId));
+        this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();
+        this.streamingDir = streamingDir;
+        this.finishedDir = finishedDir;
+        JobHelper.workerSetUpJobDirectories(jobId, baseDir, streamingDir, finishedDir);
+        this.tmpFile = createNewFile();
+        this.stream = new FileOutputStream(tmpFile);
+        this.bout = new BufferedOutputStream(stream);
+        File directory = new File(jobDir + "/" + finishedDir);
         String file = tmpFile.getName();
-        completeFile = Path.of(directory.getAbsolutePath(), file).toFile();
+        this.completeFile = Path.of(directory.getAbsolutePath(), file).toFile();
     }
 
     @Override
@@ -81,7 +87,7 @@ public class BeneficiaryStream implements AutoCloseable {
 
     private File createNewFile() throws IOException {
         String suffix = this.error ? FileOutputType.NDJSON_ERROR.getSuffix() : FileOutputType.NDJSON.getSuffix();
-        File directory = new File(ConfigManager.getFileStreamingDirectory(this.jobId));
+        File directory = new File(this.jobDir + "/" + this.streamingDir);
         return File.createTempFile(FILE_PREFIX, suffix, directory);
     }
 }
