@@ -138,8 +138,6 @@ subprojects {
 
         //Libraries that are needed across platform and are used at runtime
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
-        testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 
         //set dependencies and versions for child projects to use (maven dependency management equivalent)
         implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
