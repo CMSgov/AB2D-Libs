@@ -327,6 +327,19 @@ class AggregatorTest {
         assertTrue(aggregator.isJobAggregated());
     }
 
+    @Test
+    void testRemoveEmptyFiles(@TempDir File tmpDir) throws IOException {
+        Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
+                FINISHED_DIR, MULTIPLIER);
+        aggregator.removeEmptyFiles();
+        String jobDoneStreamDir = tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR;
+        writeToFile(jobDoneStreamDir + "/" + F_1_NDJSON, 0);
+        File f1 = Path.of(jobDoneStreamDir + "/" + F_1_NDJSON).toFile();
+        assertTrue(f1.exists());
+        aggregator.removeEmptyFiles();
+        assertFalse(f1.exists());
+    }
+
     static void writeToFile(String file, int numOfChars) throws IOException {
         String val = getAlphaNumericString(numOfChars);
         Files.write(Path.of(file), val.getBytes(StandardCharsets.UTF_8));

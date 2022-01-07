@@ -70,6 +70,9 @@ public class Aggregator {
      * @throws IOException if one of this file manipulations fails
      */
     public boolean aggregate(boolean error) throws IOException {
+        // remove any empty files
+        removeEmptyFiles();
+
         if (!okayToDoAggregation(error)) {
             return false;
         }
@@ -81,6 +84,24 @@ public class Aggregator {
         combineFiles(bestFiles, fileName);
         cleanUpFiles(bestFiles);
         return true;
+    }
+
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    void removeEmptyFiles() {
+        String finishedDir = this.mainDirectory + "/" + this.finishedDir;
+        List<File> availableFiles = listFiles(finishedDir, false);
+        availableFiles.addAll(listFiles(finishedDir, true));
+        List<File> emptyFiles = availableFiles.stream()
+                .filter(f -> {
+                            long size;
+                            try {
+                                size = getSizeOfFileOrDirectory(f.getAbsolutePath());
+                            } catch (IOException e) {
+                                size = 0L;
+                            }
+                            return size == 0;
+                        }).collect(Collectors.toList());
+        emptyFiles.forEach(File::delete);
     }
 
     /**
