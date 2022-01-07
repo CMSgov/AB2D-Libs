@@ -114,3 +114,5 @@ gradle-app.setting
 *.ipr
 
 target/
+#Snyk CLI
+.dccache

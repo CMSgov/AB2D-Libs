@@ -1,0 +1,27 @@
+version = "$bfdVersion"
+
+dependencies {
+    implementation "gov.cms.ab2d:ab2d-fhir:$fhirVersion"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.apache.httpcomponents:httpclient"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-client"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4"
+    implementation "org.springframework.retry:spring-retry"
+    implementation "com.newrelic.agent.java:newrelic-api"
+    testImplementation "org.testcontainers:testcontainers"
+    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.mock-server:mockserver-netty"
+    testImplementation "org.mock-server:mockserver-client-java"
+    testImplementation "org.testcontainers:testcontainers"
+    testImplementation "org.testcontainers:postgresql"
+    implementation "org.projectlombok:lombok"
+    annotationProcessor  "org.projectlombok:lombok"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+}
+

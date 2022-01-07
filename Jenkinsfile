@@ -13,7 +13,15 @@ pipeline {
     }
 
     stages {
-        stage ('Build and Test Libraries') {
+
+        stage ('Build Libraries') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    sh 'gradle -b build.gradle '
+                }
+            }
+        }
+        stage ('Test Libraries') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     sh 'gradle clean test --info -b build.gradle'
@@ -26,6 +34,26 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
                     sh 'gradle jar --info -b build.gradle'
                 }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    // Automatically saves the an id for the SonarQube build
+                    withSonarQubeEnv('CMSSonar') {
+                        sh 'gradle sonarqube -Dsonar.projectKey=ab2d-lib-project -Dsonar.host.url=https://sonarqube.cloud.cms.gov'
+                    }
+                }
+            }
+        }
+        stage("Quality Gate") {
+            options {
+                timeout(time: 10, unit: 'MINUTES')
+            }
+            steps {
+                // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                // true = set pipeline to UNSTABLE, false = don't
+                waitForQualityGate abortPipeline: true
             }
         }
 

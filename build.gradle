@@ -6,6 +6,7 @@ plugins {
     id 'java-library'
     id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
+    id "org.sonarqube" version "3.0"
 }
 
 ext {
@@ -18,14 +19,24 @@ ext {
     artifactory_password = project.hasProperty('artifactory_password') ? project.artifactory_password
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
+    fhirVersion='1.0'
+    bfdVersion='1.0.1'
+    filtersVersion='1.2'
+
+
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
 
-    lombokVersion = '1.18.20'
-    hapiVersion = '5.4.0'
-    spotbugsVersion = '4.2.0'
-    junitVersion = '5.7.0'
+    lombokVersion = '1.18.22'
+    hapiVersion = '5.6.1'
+    spotbugsVersion = '4.5.2'
+    springBootVersion='2.6.2'
+    newRelicVersion='7.4.3'
+    testContainerVersion='1.16.2'
+    mockServerVersion='5.11.2'
+
+
 
     failedTests = []
     skippedTests = []
@@ -33,7 +44,6 @@ ext {
 }
 
 allprojects {
-
     tasks.withType(Test) { testTask ->
 
         testTask.testLogging { logging ->
@@ -119,14 +129,30 @@ subprojects {
 
     group 'gov.cms.ab2d'
 
+
     dependencies {
-        implementation "org.projectlombok:lombok:$lombokVersion"
+
+        //Libraries that are needed across platform and are used at runtime
         implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
 
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-
-        testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        //set dependencies and versions for child projects to use (maven dependency management equivalent)
+        implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"))
+        implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"))
+        implementation(platform("com.newrelic.agent.java:newrelic-api:$newRelicVersion"))
+        implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
+        implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
+        implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
+        implementation(platform("org.mock-server:mockserver-netty:$mockServerVersion"))
+        implementation(platform("org.mock-server:mockserver-client-java:$mockServerVersion"))
+        implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
+        implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
+        implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
+        implementation(platform(annotationProcessor("org.projectlombok:lombok:$lombokVersion")))
     }
 
     jar {

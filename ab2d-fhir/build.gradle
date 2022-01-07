@@ -1,18 +1,23 @@
-version '1.0'
-
+version "$fhirVersion"
 
 dependencies {
     // Move these dependencies to the individual libraries that need them if adding
     // other modules to this project
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-base:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"
-    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"
-    implementation "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-base"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-client"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.r4"
+    implementation "ca.uhn.hapi.fhir:org.hl7.fhir.dstu3"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3"
+    implementation "ca.uhn.hapi.fhir:hapi-fhir-structures-r4"
+    implementation "org.projectlombok:lombok"
+    annotationProcessor  "org.projectlombok:lombok"
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.5.6'){
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test"){
         exclude group: 'org.junit.vintage'
     }
 }
