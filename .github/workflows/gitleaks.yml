@@ -6,13 +6,13 @@ jobs:
   gitleaks:
     runs-on: ubuntu-latest
     env:
-      REPO: https://github.com/CMSgov/ab2d
+      REPO: https://github.com/CMSgov/ab2d-libs
     steps:
     - uses: actions/checkout@v1
     - name: gitleaks-action
       uses: semanticbits/ab2d-gitleaks-automation/gitleaks-action@master
       with:
-        config-path: https://raw.githubusercontent.com/semanticbits/ab2d-gitleaks-automation/master/ab2d/gitleaks.toml
+        config-path: https://raw.githubusercontent.com/semanticbits/ab2d-gitleaks-automation/master/ab2d-libs/gitleaks.toml
     - name: Slack notification
       if: failure()
       env:
