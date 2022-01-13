@@ -50,7 +50,7 @@ public class AggregatorCallable implements Callable<Integer> {
         }
         // We've taken all the files that the worker has given us, "finish" the job so that
         // the worker knows we're done
-        JobHelper.aggregatorFinishJob(this.baseDir + "/" + this.jobId + "/" + this.streamDir);
+        JobHelper.aggregatorFinishJob(this.baseDir + "/" + this.jobId + "/" + this.finishedDir);
         return numAggregations;
     }
 }

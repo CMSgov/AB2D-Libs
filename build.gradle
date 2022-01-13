@@ -23,7 +23,6 @@ ext {
     bfdVersion='1.0.1'
     filtersVersion='1.2'
 
-
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
@@ -35,8 +34,6 @@ ext {
     newRelicVersion='7.4.3'
     testContainerVersion='1.16.2'
     mockServerVersion='5.11.2'
-
-
 
     failedTests = []
     skippedTests = []
@@ -81,7 +78,6 @@ allprojects {
         }
     }
 
-
     // In each Project run to check if the version exists in the repository
     task lookForArtifacts {
         doLast {
@@ -92,7 +88,6 @@ allprojects {
                 System.out.print("'''"+project.name + ":" + urlExists("${artifactoryLoc}/${deployerRepo}/gov/cms/ab2d/${project.name}/${project.version}/${project.name}-${project.version}.jar"))
         }
     }
-
 
     repositories {
         maven {
@@ -128,7 +123,6 @@ subprojects {
     targetCompatibility = 11
 
     group 'gov.cms.ab2d'
-
 
     dependencies {
 
@@ -259,12 +253,10 @@ def gitBranch() {
     branch
 }
 
-
 def getBase64EncodedCredentials() {
     def s = "$artifactory_user" + ":" + "$artifactory_password"
     return s.bytes.encodeBase64().toString()
 }
-
 
 //Check if url exist in the repository
 def urlExists(repositoryUrl) {
@@ -289,5 +281,4 @@ def urlExists(repositoryUrl) {
         println(ignored)
         return false
     }
-
 }
