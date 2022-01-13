@@ -48,6 +48,14 @@ public class AggregatorCallable implements Callable<Integer> {
             // Sleep a little between checks
             Thread.sleep(1000);
         }
+        // aggregate the final data files
+        while (aggregator.aggregate(false)) {
+            numAggregations++;
+        }
+        // aggregate the final error files
+        while (aggregator.aggregate(true)) {
+            numAggregations++;
+        }
         // We've taken all the files that the worker has given us, "finish" the job so that
         // the worker knows we're done
         JobHelper.aggregatorFinishJob(this.baseDir + "/" + this.jobId + "/" + this.finishedDir);
