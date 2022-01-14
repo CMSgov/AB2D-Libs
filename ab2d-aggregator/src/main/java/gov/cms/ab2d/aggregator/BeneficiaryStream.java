@@ -26,21 +26,17 @@ public class BeneficiaryStream implements AutoCloseable {
     private final transient BufferedOutputStream bout;
     private final transient File tmpFile;
     private final transient File completeFile;
-    private final transient String jobId;
     private final transient boolean error;
     private final transient String jobDir;
-    private transient boolean open = false;
+    private transient boolean open;
     private final transient FileOutputStream stream;
     private final transient String streamingDir;
-    private final transient String finishedDir;
 
     public BeneficiaryStream(String jobId, String baseDir, boolean error, String streamingDir, String finishedDir) throws IOException {
-        this.jobId = jobId;
         this.error = error;
         this.open = true;
         this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();
         this.streamingDir = streamingDir;
-        this.finishedDir = finishedDir;
         JobHelper.workerSetUpJobDirectories(jobId, baseDir, streamingDir, finishedDir);
         this.tmpFile = createNewFile();
         this.stream = new FileOutputStream(tmpFile);

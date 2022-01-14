@@ -24,6 +24,12 @@ import static gov.cms.ab2d.aggregator.FileUtils.listFiles;
  */
 @Getter
 public class Aggregator {
+
+    public enum AggregatorResult {
+        PERFORMED,
+        NOT_PERFORMED
+    }
+
     public static final int ONE_MEGA_BYTE = 1024 * 1024;
 
     private final String jobId;
@@ -31,7 +37,6 @@ public class Aggregator {
     private final String contractNumber;
     private final String streamDir;
     private final String finishedDir;
-    private final String fileDir;
     private final int maxMegaByes;
     private final int multiplier;
 
@@ -49,7 +54,6 @@ public class Aggregator {
         this.jobId = jobId;
         this.mainDirectory = fileDir + "/" + jobId;
         this.contractNumber = contractNumber;
-        this.fileDir = fileDir;
         this.streamDir = streamDir;
         this.maxMegaByes = maxMegaBytes;
         this.finishedDir = finishedDir;
@@ -69,21 +73,21 @@ public class Aggregator {
      *      and we then did aggregate, false if there aren't enough files to aggregate.
      * @throws IOException if one of this file manipulations fails
      */
-    public boolean aggregate(boolean error) throws IOException {
+    public AggregatorResult aggregate(boolean error) throws IOException {
         // remove any empty files
         removeEmptyFiles();
 
         if (!okayToDoAggregation(error)) {
-            return false;
+            return AggregatorResult.NOT_PERFORMED;
         }
         List<File> bestFiles = getBestFiles(error);
         if (bestFiles.isEmpty()) {
-            return false;
+            return AggregatorResult.NOT_PERFORMED;
         }
         String fileName = getNextFileName(error);
         combineFiles(bestFiles, fileName);
         cleanUpFiles(bestFiles);
-        return true;
+        return AggregatorResult.PERFORMED;
     }
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
@@ -164,7 +168,7 @@ public class Aggregator {
     @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition", "PMD.DataflowAnomalyAnalysis"})
     List<File> getBestFiles(boolean error) {
         // Get all the files and their sizes in sorted order
-        List<FileDescriptor> sortedFiles = getSortedFileDescriptors(error);
+        List<FileReferenceHolder> sortedFiles = getSortedFileReferences(error);
 
         // If there are no files, return an empty list
         if (sortedFiles == null || sortedFiles.isEmpty()) {
@@ -182,14 +186,14 @@ public class Aggregator {
             return List.of(sortedFiles.get(sortedFiles.size() - 1).getFile());
         }
 
-        List<FileDescriptor> bestFiles = new ArrayList<>();
+        List<FileReferenceHolder> bestFiles = new ArrayList<>();
         long totalFileSize = 0L;
 
         // Add the large files first - iterate backwards until we're over the top on the next item
         // Remove items as we go. Find the first next biggest files that will add up to the max file size
-        ListIterator<FileDescriptor> bigIter = sortedFiles.listIterator(sortedFiles.size());
+        ListIterator<FileReferenceHolder> bigIter = sortedFiles.listIterator(sortedFiles.size());
         while (bigIter.hasPrevious()) {
-            FileDescriptor fd = bigIter.previous();
+            FileReferenceHolder fd = bigIter.previous();
             if (totalFileSize + fd.getSize() > getMaxFileSize()) {
                 continue;
             }
@@ -198,14 +202,14 @@ public class Aggregator {
             bigIter.remove();
         }
 
-        return bestFiles.stream().map(FileDescriptor::getFile).collect(Collectors.toList());
+        return bestFiles.stream().map(FileReferenceHolder::getFile).collect(Collectors.toList());
     }
 
-    List<FileDescriptor> orderBySize(List<FileDescriptor> files) {
+    List<FileReferenceHolder> orderBySize(List<FileReferenceHolder> files) {
         if (files == null) {
             return new ArrayList<>();
         }
-        return files.stream().sorted(Comparator.comparingLong(FileDescriptor::getSize)).collect(Collectors.toList());
+        return files.stream().sorted(Comparator.comparingLong(FileReferenceHolder::getSize)).collect(Collectors.toList());
     }
 
     /**
@@ -216,10 +220,10 @@ public class Aggregator {
      * @return the list of file descriptors with the relevant extensions
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    List<FileDescriptor>  getSortedFileDescriptors(boolean error) {
+    List<FileReferenceHolder> getSortedFileReferences(boolean error) {
         List<File> availableFiles = listFiles(this.mainDirectory + "/" + this.finishedDir, error);
 
-        List<FileDescriptor> files = new ArrayList<>();
+        List<FileReferenceHolder> files = new ArrayList<>();
         availableFiles.forEach(f -> {
             long size;
             try {
@@ -227,7 +231,7 @@ public class Aggregator {
             } catch (IOException e) {
                 size = 0L;
             }
-            files.add(new FileDescriptor(f, size));
+            files.add(new FileReferenceHolder(f, size));
         });
 
         // Order the files by file size
@@ -257,10 +261,7 @@ public class Aggregator {
             return false;
         }
         // Look for the files in the done writing directory
-        if (dirExists(this.mainDirectory + "/" + this.finishedDir)) {
-            return false;
-        }
-        return true;
+        return !dirExists(this.mainDirectory + "/" + this.finishedDir);
     }
 
     public int getMaxFileSize() {

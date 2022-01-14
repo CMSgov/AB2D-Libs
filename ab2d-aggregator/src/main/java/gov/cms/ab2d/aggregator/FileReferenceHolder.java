@@ -11,7 +11,7 @@ import java.io.File;
  */
 @Getter
 @AllArgsConstructor
-public class FileDescriptor {
+public class FileReferenceHolder {
     private File file;
     private long size;
 }

@@ -10,7 +10,7 @@ class FileDescriptorTest {
 
     @Test
     void getData() {
-        FileDescriptor fd = new FileDescriptor(new File("/tmp"), 10);
+        FileReferenceHolder fd = new FileReferenceHolder(new File("/tmp"), 10);
         assertEquals("/tmp", fd.getFile().getAbsolutePath());
         assertEquals(10, fd.getSize());
     }

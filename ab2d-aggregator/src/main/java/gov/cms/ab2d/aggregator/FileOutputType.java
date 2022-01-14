@@ -7,7 +7,8 @@ import java.io.File;
  */
 public enum FileOutputType {
     NDJSON(".ndjson"),
-    NDJSON_ERROR("_error.ndjson");
+    NDJSON_ERROR("_error.ndjson"),
+    UNKNOWN("");
 
     private final String suffix;
 
@@ -25,7 +26,7 @@ public enum FileOutputType {
 
     public static FileOutputType getFileType(String file) {
         if (file == null) {
-            return null;
+            return UNKNOWN;
         }
         if (file.endsWith(NDJSON.getSuffix())) {
             if (file.endsWith(NDJSON_ERROR.getSuffix())) {
@@ -33,6 +34,6 @@ public enum FileOutputType {
             }
             return NDJSON;
         }
-        return null;
+        return UNKNOWN;
     }
 }
