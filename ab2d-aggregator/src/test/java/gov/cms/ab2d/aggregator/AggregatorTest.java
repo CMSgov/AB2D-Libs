@@ -46,11 +46,18 @@ class AggregatorTest {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     @Test
+    void nextFile(@TempDir File tmpDir) throws IOException {
+        Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
+                FINISHED_DIR, MULTIPLIER);
+        assertEquals(aggregator.getContractNumber() + "_0001.ndjson", aggregator.getNextDataFileName());
+        assertEquals(aggregator.getContractNumber() + "_0002.ndjson", aggregator.getNextDataFileName());
+        assertEquals(aggregator.getContractNumber() + "_0001_error.ndjson", aggregator.getNextErrorFileName());
+    }
+
+    @Test
     void aggregate(@TempDir File tmpDir) throws IOException {
         Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
                 FINISHED_DIR, MULTIPLIER);
-        assertEquals(tmpDir.getAbsolutePath() + "/" + aggregator.getContractNumber() + "_0001.ndjson", aggregator.getNextDataFileName());
-        assertEquals(tmpDir.getAbsolutePath() + "/" + aggregator.getContractNumber() + "_error_0001.ndjson", aggregator.getNextErrorFileName());
         String finishedDir = tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR;
         assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         writeToFile(finishedDir + "/" + F_1_NDJSON, 700 * 1024);

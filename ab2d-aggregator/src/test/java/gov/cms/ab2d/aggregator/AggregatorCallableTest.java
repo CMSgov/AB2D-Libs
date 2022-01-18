@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static gov.cms.ab2d.aggregator.Aggregator.ONE_MEGA_BYTE;
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class AggregatorCallableTest {
@@ -37,7 +38,7 @@ class AggregatorCallableTest {
         // For each batch
         for (int i = 0; i < 100; i++) {
             // Create a file for the batch of beneficiaries
-            try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), false, STREAM_DIR, FINISH_DIR)) {
+            try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR)) {
                 // For each beneficiary
                 for (int b = 0; b < 250; b++) {
                     int length = RANDOM.nextInt(1000);

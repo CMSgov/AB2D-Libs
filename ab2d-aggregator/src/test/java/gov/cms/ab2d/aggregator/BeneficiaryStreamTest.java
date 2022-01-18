@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.nio.file.Path;
 
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -20,7 +21,7 @@ class BeneficiaryStreamTest {
     @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.CloseResource"})
     void testCreateAndWriteToStream(@TempDir File tmpDirFolder) {
         BeneficiaryStream savedStream = null;
-        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), false, STREAM_DIR, FINISH_DIR)) {
+        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR)) {
             savedStream = stream;
             for (int i = 0; i < 1000; i++) {
                 stream.write(AggregatorTest.getAlphaNumericString(1000));
