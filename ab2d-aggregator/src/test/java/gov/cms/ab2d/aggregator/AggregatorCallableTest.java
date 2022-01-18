@@ -48,7 +48,7 @@ class AggregatorCallableTest {
                 fail(ex);
             }
         }
-        JobHelper.workerFinishJob(tmpDirFolder.getAbsolutePath() + "/" + JOB_ID + "/" + STREAM_DIR);
+        JobHelper.workerFinishJob(tmpDirFolder.getAbsolutePath() + File.separator + JOB_ID + File.separator + STREAM_DIR);
         while (!future.isDone()) {
             Thread.sleep(1000);
         }
@@ -59,11 +59,11 @@ class AggregatorCallableTest {
     @Disabled
     @Test
     void combineBigFiles(@TempDir File tmpDirFolder) throws IOException {
-        String jobDir = tmpDirFolder.getAbsolutePath() + "/" + JOB_ID;
+        String jobDir = tmpDirFolder.getAbsolutePath() + File.separator + JOB_ID;
 
         FileUtils.createADir(jobDir);
         System.out.println("Creating files");
-        AggregatorTest.writeToFile(jobDir + "/" + FILE_1, 100 * ONE_MEGA_BYTE);
+        AggregatorTest.writeToFile(jobDir + File.separator + FILE_1, 100 * ONE_MEGA_BYTE);
         System.out.println("Now copy first file");
         Files.copy(Path.of(jobDir, FILE_1), Path.of(jobDir, "file2.txt"));
         Files.copy(Path.of(jobDir, FILE_1), Path.of(jobDir, "file3.txt"));

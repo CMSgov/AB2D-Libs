@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,7 @@ public class Aggregator {
     public Aggregator(String jobId, String contractNumber, String fileDir, int maxMegaBytes, String streamDir,
                       String finishedDir, int multiplier) throws IOException {
         this.jobId = jobId;
-        this.mainDirectory = fileDir + "/" + jobId;
+        this.mainDirectory = Paths.get(fileDir, jobId).toFile().getAbsolutePath();
         this.contractNumber = contractNumber;
         this.streamDir = streamDir;
         this.maxMegaByes = maxMegaBytes;
@@ -98,9 +99,9 @@ public class Aggregator {
 
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     void removeEmptyFiles() {
-        String finishedDir = this.mainDirectory + "/" + this.finishedDir;
-        List<File> availableFiles = listFiles(finishedDir, DATA);
-        availableFiles.addAll(listFiles(finishedDir, ERROR));
+        String fDir = this.mainDirectory + File.separator + this.finishedDir;
+        List<File> availableFiles = listFiles(fDir, DATA);
+        availableFiles.addAll(listFiles(fDir, ERROR));
         List<File> emptyFiles = availableFiles.stream()
                 .filter(f -> {
                             long size;
@@ -139,7 +140,7 @@ public class Aggregator {
      * @return - true if we have enough files or the worker is done writing out files
      */
     boolean okayToDoAggregation(FileOutputType type) {
-        long size = getSizeOfFiles(this.mainDirectory + "/" + this.finishedDir, type);
+        long size = getSizeOfFiles(this.mainDirectory + File.separator + this.finishedDir, type);
         return (size > ((long) this.multiplier * getMaxFileSize())) || isJobDoneStreamingData();
     }
 
@@ -233,7 +234,7 @@ public class Aggregator {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     List<FileReferenceHolder> getSortedFileReferences(FileOutputType type) {
-        List<File> availableFiles = listFiles(this.mainDirectory + "/" + this.finishedDir, type);
+        List<File> availableFiles = listFiles(this.mainDirectory + File.separator + this.finishedDir, type);
 
         List<FileReferenceHolder> files = new ArrayList<>();
         availableFiles.forEach(f -> {
@@ -251,7 +252,7 @@ public class Aggregator {
     }
 
     public boolean isJobDoneStreamingData() {
-        String streamingDir = this.mainDirectory + "/" + this.streamDir;
+        String streamingDir = this.mainDirectory + File.separator + this.streamDir;
         boolean fileExists = dirExists(streamingDir);
         // Job is done if dir doesn't exist
         return !fileExists;
@@ -269,11 +270,11 @@ public class Aggregator {
      */
     public boolean isJobAggregated() {
         // If job isn't done, we can't be done aggregating
-        if (dirExists(this.mainDirectory + "/" + this.streamDir)) {
+        if (dirExists(this.mainDirectory + File.separator + this.streamDir)) {
             return false;
         }
         // Look for the files in the done writing directory
-        return !dirExists(this.mainDirectory + "/" + this.finishedDir);
+        return !dirExists(this.mainDirectory + File.separator + this.finishedDir);
     }
 
     public int getMaxFileSize() {

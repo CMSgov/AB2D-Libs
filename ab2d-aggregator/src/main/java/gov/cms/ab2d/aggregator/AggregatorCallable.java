@@ -2,6 +2,7 @@ package gov.cms.ab2d.aggregator;
 
 import lombok.Getter;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.PERFORMED;
@@ -62,7 +63,7 @@ public class AggregatorCallable implements Callable<Integer> {
         }
         // We've taken all the files that the worker has given us, "finish" the job so that
         // the worker knows we're done
-        JobHelper.aggregatorFinishJob(this.baseDir + "/" + this.jobId + "/" + this.finishedDir);
+        JobHelper.aggregatorFinishJob(this.baseDir + File.separator + this.jobId + File.separator + this.finishedDir);
         return numAggregations;
     }
 }

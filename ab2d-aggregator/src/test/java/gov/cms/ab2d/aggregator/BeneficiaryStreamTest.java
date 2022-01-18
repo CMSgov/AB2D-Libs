@@ -30,7 +30,7 @@ class BeneficiaryStreamTest {
             File tmpFile = stream.getFile();
             assertTrue(tmpFile.exists());
             assertTrue(stream.isOpen());
-            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + "/" + JOB_ID + "/" + STREAM_DIR);
+            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + File.separator + JOB_ID + File.separator + STREAM_DIR);
             File theFile = Path.of(tmpFileDirectory.getAbsolutePath(), tmpFile.getName()).toFile();
             assertTrue(theFile.exists());
 
@@ -41,7 +41,7 @@ class BeneficiaryStreamTest {
             File tmpFile = savedStream.getFile();
             assertTrue(tmpFile.exists());
             assertFalse(savedStream.isOpen());
-            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + "/" + JOB_ID + "/" + FINISH_DIR);
+            File tmpFileDirectory = new File(tmpDirFolder.getAbsolutePath() + File.separator + JOB_ID + File.separator + FINISH_DIR);
             File theFile = Path.of(tmpFileDirectory.getAbsolutePath(), tmpFile.getName()).toFile();
             assertTrue(theFile.exists());
         }

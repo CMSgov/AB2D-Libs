@@ -1,5 +1,6 @@
 package gov.cms.ab2d.aggregator;
 
+import java.io.File;
 import java.io.IOException;
 
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
@@ -23,13 +24,13 @@ public final class JobHelper {
      */
     public static void workerSetUpJobDirectories(String jobId, String baseDir, String streamDir, String finishedDir) throws IOException {
         // Create job directory
-        createADir(baseDir + "/" + jobId);
+        createADir(baseDir + File.separator + jobId);
 
         // Create the directory where we're going to put all the finished streams
-        createADir(baseDir + "/" + jobId + "/" + streamDir);
+        createADir(baseDir + File.separator + jobId + File.separator + streamDir);
 
         // Create a directory that we're going to dump all the streaming files
-        createADir(baseDir + "/" + jobId + "/" + finishedDir);
+        createADir(baseDir + File.separator + jobId + File.separator + finishedDir);
     }
 
 

@@ -21,16 +21,17 @@ import java.nio.file.Path;
  * streams to be written to and when the file is closed, it moves it to the "done" directory, waiting
  * for the aggregator to pick it up
  */
+@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class BeneficiaryStream implements AutoCloseable {
     private static final String FILE_PREFIX = "tmp_";
-    private final transient BufferedOutputStream bout;
-    private final transient File tmpFile;
-    private final transient File completeFile;
-    private final transient FileOutputType type;
-    private final transient String jobDir;
-    private transient boolean open;
-    private final transient FileOutputStream stream;
-    private final transient String streamingDir;
+    private final BufferedOutputStream bout;
+    private final File tmpFile;
+    private final File completeFile;
+    private final FileOutputType type;
+    private final String jobDir;
+    private boolean open;
+    private final FileOutputStream stream;
+    private final String streamingDir;
 
     public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
         this.type = type;
@@ -41,7 +42,7 @@ public class BeneficiaryStream implements AutoCloseable {
         this.tmpFile = createNewFile();
         this.stream = new FileOutputStream(tmpFile);
         this.bout = new BufferedOutputStream(stream);
-        File directory = new File(jobDir + "/" + finishedDir);
+        File directory = new File(jobDir + File.separator + finishedDir);
         String file = tmpFile.getName();
         this.completeFile = Path.of(directory.getAbsolutePath(), file).toFile();
     }
@@ -83,7 +84,7 @@ public class BeneficiaryStream implements AutoCloseable {
 
     private File createNewFile() throws IOException {
         String suffix = type.getSuffix();
-        File directory = new File(this.jobDir + "/" + this.streamingDir);
+        File directory = new File(this.jobDir + File.separator + this.streamingDir);
         return File.createTempFile(FILE_PREFIX, suffix, directory);
     }
 }

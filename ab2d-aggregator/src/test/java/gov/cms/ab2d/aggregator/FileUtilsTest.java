@@ -25,6 +25,7 @@ class FileUtilsTest {
     private static final String FILE_1 = "file1";
     private static final String FILE_2 = "file2";
     private static final String TST_DIR = "tstdir";
+    private static final String SUBDIR = "subdir";
     private static final String TXT = ".txt";
     private static final String BOGUS_FILE = "bogusFile.txt";
 
@@ -112,12 +113,12 @@ class FileUtilsTest {
     void testExceptions() {
         assertEquals(0, FileUtils.getSizeOfFiles(null));
         assertEquals(0, FileUtils.getSizeOfFiles(new ArrayList<>()));
-        assertEquals(0, FileUtils.getSizeOfFiles(Collections.singletonList(new File("/" + BOGUS_FILE))));
+        assertEquals(0, FileUtils.getSizeOfFiles(Collections.singletonList(new File(File.separator + BOGUS_FILE))));
     }
 
     @Test
     void listFiles() throws IOException {
-        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR);
+        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR);
 
         try {
             List<File> fileListEmpty = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), DATA);
@@ -143,7 +144,7 @@ class FileUtilsTest {
 
     @Test
     void getSizeOfFileOrDirectory() throws IOException {
-        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR);
+        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR);
 
         try {
             String data1 = "aaaaaaaa";
@@ -163,23 +164,23 @@ class FileUtilsTest {
 
     @Test
     void testDeleteAllInDir() throws IOException {
-        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR);
+        File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR);
         assertTrue(fulltmpdir.exists());
         assertNotNull(createFile(fulltmpdir, FILE_1 + TXT, "ABCD"));
         assertTrue(deleteAllInDir(fulltmpdir));
         assertFalse(fulltmpdir.exists());
 
-        fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR);
+        fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR);
         assertNotNull(createFile(fulltmpdir, FILE_1 + TXT, "ABCD"));
         assertNotNull(createFile(fulltmpdir, FILE_2 + TXT, "EFGH"));
-        File fulltmpdirSub = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR + "/subdir");
+        File fulltmpdirSub = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR + File.separator + SUBDIR);
         assertNotNull(createFile(fulltmpdirSub, "file3.txt", "IJKL"));
         File[] files = fulltmpdir.listFiles();
         assertNotNull(files);
         assertEquals(3, files.length);
-        assertTrue(files[0].getName().equals(FILE_1 + TXT) || files[0].getName().equals(FILE_2 + TXT) || files[0].getName().equals("subdir"));
-        assertTrue(files[1].getName().equals(FILE_1 + TXT) || files[1].getName().equals(FILE_2 + TXT) || files[1].getName().equals("subdir"));
-        assertTrue(files[2].getName().equals(FILE_1 + TXT) || files[2].getName().equals(FILE_2 + TXT) || files[2].getName().equals("subdir"));
+        assertTrue(files[0].getName().equals(FILE_1 + TXT) || files[0].getName().equals(FILE_2 + TXT) || files[0].getName().equals(SUBDIR));
+        assertTrue(files[1].getName().equals(FILE_1 + TXT) || files[1].getName().equals(FILE_2 + TXT) || files[1].getName().equals(SUBDIR));
+        assertTrue(files[2].getName().equals(FILE_1 + TXT) || files[2].getName().equals(FILE_2 + TXT) || files[2].getName().equals(SUBDIR));
         assertTrue(deleteAllInDir(fulltmpdir));
         assertFalse(fulltmpdirSub.exists());
         assertFalse(fulltmpdir.exists());

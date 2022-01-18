@@ -21,7 +21,10 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * We work a lot with files so having a utils class to help with that is useful
  */
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-public class FileUtils {
+public final class FileUtils {
+    private FileUtils() {
+    }
+
     /**
      * Given a list of files, combine them into an outfile and then remove the component files
      *

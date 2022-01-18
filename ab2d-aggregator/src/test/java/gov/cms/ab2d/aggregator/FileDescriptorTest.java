@@ -14,8 +14,4 @@ class FileDescriptorTest {
         assertEquals("/tmp", fd.getFile().getAbsolutePath());
         assertEquals(10, fd.getSize());
     }
-
-    @Test
-    void getSize() {
-    }
 }
