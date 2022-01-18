@@ -1,5 +1,7 @@
 package gov.cms.ab2d.aggregator;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -21,6 +23,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  * We work a lot with files so having a utils class to help with that is useful
  */
 @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+@Slf4j
 public final class FileUtils {
     private FileUtils() {
     }
@@ -57,7 +60,12 @@ public final class FileUtils {
             return true;
         }
         for (File f : files) {
-            clean = clean && f.delete();
+            try {
+                Files.delete(Path.of(f.getAbsolutePath()));
+            } catch (IOException e) {
+                log.error("Unable to delete file: " + f.getAbsolutePath(), e);
+                clean = false;
+            }
         }
         return clean;
     }
@@ -166,10 +174,20 @@ public final class FileUtils {
                     }
                 }
             } else {
-                return dir.delete();
+                return deleteIt(dir);
             }
-            deleted &= dir.delete();
+            deleted &= deleteIt(dir);
         }
         return deleted;
+    }
+
+    static boolean deleteIt(File f) {
+        try {
+            Files.delete(Path.of(f.getAbsolutePath()));
+            return true;
+        } catch (IOException ex) {
+            log.error("Unable to delete file: " + f.getAbsolutePath(), ex);
+            return false;
+        }
     }
 }
