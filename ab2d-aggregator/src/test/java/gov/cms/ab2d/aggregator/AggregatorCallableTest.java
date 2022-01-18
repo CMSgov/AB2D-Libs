@@ -56,6 +56,7 @@ class AggregatorCallableTest {
         System.out.println("Time is: " + (t2 - t1) / 1000);
     }
 
+    // Disabled because it takes a long time but keeping as it is useful when you are doing performance tests
     @Disabled
     @Test
     void combineBigFiles(@TempDir File tmpDirFolder) throws IOException {
