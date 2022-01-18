@@ -17,6 +17,8 @@ import java.util.stream.Stream;
 
 import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.PERFORMED;
 import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.NOT_PERFORMED;
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,16 +49,18 @@ class AggregatorTest {
     void aggregate(@TempDir File tmpDir) throws IOException {
         Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
                 FINISHED_DIR, MULTIPLIER);
+        assertEquals(tmpDir.getAbsolutePath() + "/" + aggregator.getContractNumber() + "_0001.ndjson", aggregator.getNextDataFileName());
+        assertEquals(tmpDir.getAbsolutePath() + "/" + aggregator.getContractNumber() + "_error_0001.ndjson", aggregator.getNextErrorFileName());
         String finishedDir = tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR;
-        assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+        assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         writeToFile(finishedDir + "/" + F_1_NDJSON, 700 * 1024);
-        assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+        assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         writeToFile(finishedDir + "/" + F_2_NDJSON, 200 * 1024);
-        assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+        assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         writeToFile(finishedDir + "/" + F_3_NDJSON, 800 * 1024);
-        assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+        assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         writeToFile(finishedDir + "/" + F_4_NDJSON, 900 * 1024);
-        assertEquals(PERFORMED, aggregator.aggregate(false));
+        assertEquals(PERFORMED, aggregator.aggregate(DATA));
 
         String jobDir = tmpDir.getAbsolutePath() + "/" + JOB_ID;
 
@@ -70,11 +74,11 @@ class AggregatorTest {
             assertEquals((900) * 1024, Files.size(Path.of(finalDirFiles.get(0).getAbsolutePath())));
         }
 
-        assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+        assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
 
         File tmpFileDir = new File(tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + STREAMING_DIR);
         assertTrue(tmpFileDir.delete());
-        assertEquals(PERFORMED, aggregator.aggregate(false));
+        assertEquals(PERFORMED, aggregator.aggregate(DATA));
 
         files = new File(jobDir).listFiles();
         if (files != null) {
@@ -94,7 +98,7 @@ class AggregatorTest {
             long size = Files.size(Path.of(f1.getAbsolutePath())) + Files.size(Path.of(f2.getAbsolutePath()));
             assertEquals((900 + 800 + 200) * 1024, size);
 
-            assertEquals(PERFORMED, aggregator.aggregate(false));
+            assertEquals(PERFORMED, aggregator.aggregate(DATA));
         }
         files = new File(jobDir).listFiles();
         if (files != null) {
@@ -108,7 +112,7 @@ class AggregatorTest {
             long size = Files.size(Path.of(f1.getAbsolutePath())) + Files.size(Path.of(f2.getAbsolutePath())) + Files.size(Path.of(f3.getAbsolutePath()));
             assertEquals((700 + 900 + 800 + 200) * 1024, size);
 
-            assertEquals(NOT_PERFORMED, aggregator.aggregate(false));
+            assertEquals(NOT_PERFORMED, aggregator.aggregate(DATA));
         }
 
         files = new File(jobDir).listFiles();
@@ -130,9 +134,9 @@ class AggregatorTest {
         Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
                 FINISHED_DIR, MULTIPLIER);
         String jobDir = tmpDir.getAbsolutePath() + "/" + JOB_ID;
-        assertEquals(jobDir + "/" + CONTRACT_NUM + DATA_1_EXT, aggregator.getNextFileName(false));
-        assertEquals(jobDir + "/" + CONTRACT_NUM + DATA_2_EXT, aggregator.getNextFileName(false));
-        assertEquals(jobDir + "/" + CONTRACT_NUM + "_0001_error.ndjson", aggregator.getNextFileName(true));
+        assertEquals(jobDir + "/" + CONTRACT_NUM + DATA_1_EXT, aggregator.getNextFileName(DATA));
+        assertEquals(jobDir + "/" + CONTRACT_NUM + DATA_2_EXT, aggregator.getNextFileName(DATA));
+        assertEquals(jobDir + "/" + CONTRACT_NUM + "_0001_error.ndjson", aggregator.getNextFileName(ERROR));
 
         // Reset the index so any other test won't have an invalid file index
         Field currentFileIndex = aggregator.getClass().getDeclaredField("currentFileIndex");
@@ -145,21 +149,21 @@ class AggregatorTest {
         Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
                 FINISHED_DIR, MULTIPLIER);
         String jobDoneDir = tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR;
-        assertFalse(aggregator.okayToDoAggregation(false));
+        assertFalse(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_1_NDJSON, 700 * 1024);
-        assertFalse(aggregator.okayToDoAggregation(false));
+        assertFalse(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_3_NDJSON, 200 * 1024);
-        assertFalse(aggregator.okayToDoAggregation(false));
+        assertFalse(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_4_NDJSON, 800 * 1024);
-        assertFalse(aggregator.okayToDoAggregation(false));
+        assertFalse(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_5_NDJSON, 900 * 1024);
-        assertTrue(aggregator.okayToDoAggregation(false));
+        assertTrue(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_6_NDJSON, 1025 * 1024);
-        assertTrue(aggregator.okayToDoAggregation(false));
+        assertTrue(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_7_NDJSON, 101 * 1024);
-        assertTrue(aggregator.okayToDoAggregation(false));
+        assertTrue(aggregator.okayToDoAggregation(DATA));
         writeToFile(jobDoneDir + "/" + F_8_NDJSON, 11 * 1024);
-        assertTrue(aggregator.okayToDoAggregation(false));
+        assertTrue(aggregator.okayToDoAggregation(DATA));
     }
 
     @Test
@@ -178,12 +182,12 @@ class AggregatorTest {
         writeToFile(jobDoneStreamDir + "/" + F_8_NDJSON, 11 * 1024); // 7
 
         // The first file that is returned is the one that is too large
-        List<File> bestFiles = aggregator.getBestFiles(false);
+        List<File> bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(1, bestFiles.size());
         assertEquals(F_6_NDJSON, bestFiles.get(0).getName());
         assertTrue(bestFiles.get(0).delete());
 
-        bestFiles = aggregator.getBestFiles(false);
+        bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(3, bestFiles.size());
         assertEquals(F_4_NDJSON, bestFiles.get(0).getName());
         assertEquals(F_3_NDJSON, bestFiles.get(1).getName());
@@ -192,7 +196,7 @@ class AggregatorTest {
         assertTrue(bestFiles.get(1).delete());
         assertTrue(bestFiles.get(2).delete());
 
-        bestFiles = aggregator.getBestFiles(false);
+        bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(4, bestFiles.size());
         assertEquals(F_1_NDJSON, bestFiles.get(0).getName());
         assertEquals(F_7_NDJSON, bestFiles.get(1).getName());
@@ -203,7 +207,7 @@ class AggregatorTest {
         assertTrue(bestFiles.get(2).delete());
         assertTrue(bestFiles.get(3).delete());
 
-        bestFiles = aggregator.getBestFiles(false);
+        bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(0, bestFiles.size());
     }
 
@@ -213,14 +217,14 @@ class AggregatorTest {
                 FINISHED_DIR, MULTIPLIER);
         String jobDoneStreamDir = tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR;
 
-        assertTrue(aggregator.getBestFiles(false).isEmpty());
+        assertTrue(aggregator.getBestFiles(DATA).isEmpty());
         writeToFile(jobDoneStreamDir + "/" + F_1_NDJSON, 700);
-        List<File> bestFiles = aggregator.getBestFiles(false);
+        List<File> bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(1, bestFiles.size());
         assertEquals(F_1_NDJSON, bestFiles.get(0).getName());
 
         writeToFile(jobDoneStreamDir + "/" + F_2_NDJSON, (1024 * 1024) + 10);
-        bestFiles = aggregator.getBestFiles(false);
+        bestFiles = aggregator.getBestFiles(DATA);
         assertEquals(1, bestFiles.size());
         assertEquals(F_2_NDJSON, bestFiles.get(0).getName());
     }
@@ -266,14 +270,14 @@ class AggregatorTest {
         writeToFile(jobDoneStreamDir + "/f1_error.ndjson", 99);
         writeToFile(jobDoneStreamDir + "/f2_error.ndjson", 9);
 
-        List<FileReferenceHolder> fdsErrors = aggregator.getSortedFileReferences(true);
+        List<FileReferenceHolder> fdsErrors = aggregator.getSortedFileReferences(ERROR);
         assertEquals(2, fdsErrors.size());
 
         FileReferenceHolder f2Error = fdsErrors.get(0);
         assertEquals(9, f2Error.getSize());
         assertEquals("f2_error.ndjson", f2Error.getFile().getName());
 
-        List<FileReferenceHolder> fds = aggregator.getSortedFileReferences(false);
+        List<FileReferenceHolder> fds = aggregator.getSortedFileReferences(DATA);
         assertEquals(8, fds.size());
 
         FileReferenceHolder f5 = fds.get(0);
@@ -318,13 +322,13 @@ class AggregatorTest {
 
         JobHelper.workerFinishJob(tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + STREAMING_DIR);
 
-        aggregator.aggregate(false);
+        aggregator.aggregate(DATA);
 
         assertFalse(aggregator.isJobAggregated());
 
         JobHelper.aggregatorFinishJob(tmpDir.getAbsolutePath() + "/" + JOB_ID + "/" + FINISHED_DIR);
 
-        aggregator.aggregate(true);
+        aggregator.aggregate(ERROR);
 
         assertTrue(aggregator.isJobAggregated());
     }

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 import static gov.cms.ab2d.aggregator.FileOutputType.getFileType;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
@@ -78,20 +80,11 @@ public class FileUtils {
      * Retrieve the data or error files in a driectory and get the total size of all of those files
      *
      * @param dirName - the directory to search
-     * @param error - if we are looking for error files or data files
+     * @param type - type of file
      * @return the total size of the found files
      */
-    public static long getSizeOfFiles(String dirName, boolean error) {
-        List<File> files = listFiles(dirName, error);
-        List<File> newFiles = new ArrayList<>();
-        for (File file : files) {
-            if (error && FileOutputType.getFileType(file) == FileOutputType.NDJSON_ERROR) {
-                newFiles.add(file);
-            } else if (!error && FileOutputType.getFileType(file) == FileOutputType.NDJSON) {
-                newFiles.add(file);
-            }
-        }
-        return getSizeOfFiles(newFiles);
+    public static long getSizeOfFiles(String dirName, FileOutputType type) {
+        return getSizeOfFiles(listFiles(dirName, type));
     }
 
     /**
@@ -122,22 +115,17 @@ public class FileUtils {
      * Given a directory, retrieve either error or data files
      *
      * @param fileLoc - the location
-     * @param error - if we are looking for error or data files
-     * @return the lsit of files
+     * @param type - type of file
+     * @return the list of files
      */
-    public static List<File> listFiles(String fileLoc, boolean error) {
+    public static List<File> listFiles(String fileLoc, FileOutputType type) {
         File dir = new File(fileLoc);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             return new ArrayList<>();
         }
         return Stream.of(files)
-                .filter(f -> {
-                    if (error && getFileType(f.getName()) == FileOutputType.NDJSON_ERROR) {
-                        return true;
-                    }
-                    return !error && getFileType(f.getName()) == FileOutputType.NDJSON;
-                })
+                .filter(f -> type == getFileType(f.getName()))
                 .collect(Collectors.toList());
     }
 

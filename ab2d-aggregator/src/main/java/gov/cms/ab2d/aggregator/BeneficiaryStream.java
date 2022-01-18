@@ -26,14 +26,14 @@ public class BeneficiaryStream implements AutoCloseable {
     private final transient BufferedOutputStream bout;
     private final transient File tmpFile;
     private final transient File completeFile;
-    private final transient boolean error;
+    private final transient FileOutputType type;
     private final transient String jobDir;
     private transient boolean open;
     private final transient FileOutputStream stream;
     private final transient String streamingDir;
 
-    public BeneficiaryStream(String jobId, String baseDir, boolean error, String streamingDir, String finishedDir) throws IOException {
-        this.error = error;
+    public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
+        this.type = type;
         this.open = true;
         this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();
         this.streamingDir = streamingDir;
@@ -82,7 +82,7 @@ public class BeneficiaryStream implements AutoCloseable {
     }
 
     private File createNewFile() throws IOException {
-        String suffix = this.error ? FileOutputType.NDJSON_ERROR.getSuffix() : FileOutputType.NDJSON.getSuffix();
+        String suffix = type.getSuffix();
         File directory = new File(this.jobDir + "/" + this.streamingDir);
         return File.createTempFile(FILE_PREFIX, suffix, directory);
     }

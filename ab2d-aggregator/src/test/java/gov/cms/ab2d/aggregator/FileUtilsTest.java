@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
 import static gov.cms.ab2d.aggregator.FileUtils.deleteAllInDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,16 +32,16 @@ class FileUtilsTest {
     void combineFiles() throws IOException {
         File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/abc");
         try {
-            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
-            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
+            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
+            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
 
             String data1 = "aaaaaaaa";
             String data2 = "bbbbbbbbbbbbbbb";
             String data3 = "ccccc";
 
-            Path p1 = createFile(fulltmpdir, FILE_1 + FileOutputType.NDJSON.getSuffix(), data1);
-            Path p2 = createFile(fulltmpdir, FILE_2 + FileOutputType.NDJSON_ERROR.getSuffix(), data2);
-            Path p3 = createFile(fulltmpdir, "file3" + FileOutputType.NDJSON_ERROR.getSuffix(), data3);
+            Path p1 = createFile(fulltmpdir, FILE_1 + DATA.getSuffix(), data1);
+            Path p2 = createFile(fulltmpdir, FILE_2 + ERROR.getSuffix(), data2);
+            Path p3 = createFile(fulltmpdir, "file3" + ERROR.getSuffix(), data3);
 
             List<File> fileA = new ArrayList<>();
             List<File> fileB = List.of(p1.toFile());
@@ -76,30 +78,30 @@ class FileUtilsTest {
         createADir(fulltmpdir.getAbsolutePath());
         FileUtils.deleteAllInDir(fulltmpdir);
         try {
-            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
-            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
+            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
+            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
 
             String data1 = "aaaaaaaa";
             String data2 = "bbbbbbbbbbbbbbb";
             String data3 = "ccccc";
             String data4 = "ddddddddddddddddddddd";
 
-            createFile(fulltmpdir, FILE_1 + FileOutputType.NDJSON.getSuffix(), data1);
+            createFile(fulltmpdir, FILE_1 + DATA.getSuffix(), data1);
 
-            assertEquals(data1.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
-            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
+            assertEquals(data1.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
+            assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
 
-            createFile(fulltmpdir, FILE_2 + FileOutputType.NDJSON_ERROR.getSuffix(), data2);
+            createFile(fulltmpdir, FILE_2 + ERROR.getSuffix(), data2);
 
-            assertEquals(data1.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
-            assertEquals(data2.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
+            assertEquals(data1.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
+            assertEquals(data2.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
 
-            createFile(fulltmpdir, "file3" + FileOutputType.NDJSON_ERROR.getSuffix(), data3);
+            createFile(fulltmpdir, "file3" + ERROR.getSuffix(), data3);
 
-            createFile(fulltmpdir, "file4" + FileOutputType.NDJSON.getSuffix(), data4);
+            createFile(fulltmpdir, "file4" + DATA.getSuffix(), data4);
 
-            assertEquals(data1.length() + data4.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), false));
-            assertEquals(data2.length() + data3.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), true));
+            assertEquals(data1.length() + data4.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
+            assertEquals(data2.length() + data3.length(), FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
         } finally {
             assertTrue(deleteAllInDir(fulltmpdir));
         }
@@ -118,20 +120,20 @@ class FileUtilsTest {
         File fulltmpdir = createADir(System.getProperty(JAVA_TMPDIR) + "/" + TST_DIR);
 
         try {
-            List<File> fileListEmpty = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), false);
+            List<File> fileListEmpty = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), DATA);
             assertEquals(0, fileListEmpty.size());
 
-            createFile(fulltmpdir, FILE_1 + FileOutputType.NDJSON.getSuffix(),
+            createFile(fulltmpdir, FILE_1 + DATA.getSuffix(),
                     "file 1 data");
 
-            createFile(fulltmpdir, FILE_2 + FileOutputType.NDJSON_ERROR.getSuffix(),
+            createFile(fulltmpdir, FILE_2 + ERROR.getSuffix(),
                     "file 2 data");
 
-            List<File> fileList1 = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), false);
+            List<File> fileList1 = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), DATA);
             assertEquals(1, fileList1.size());
             assertTrue(fileList1.get(0).getName().contains(FILE_1));
 
-            List<File> fileList2 = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), true);
+            List<File> fileList2 = FileUtils.listFiles(fulltmpdir.getAbsolutePath(), ERROR);
             assertEquals(1, fileList2.size());
             assertTrue(fileList2.get(0).getName().contains(FILE_2));
         } finally {
@@ -147,8 +149,8 @@ class FileUtilsTest {
             String data1 = "aaaaaaaa";
             String data2 = "bbbbbbbbbbbbbbb";
 
-            Path p1 = createFile(fulltmpdir, FILE_1 + FileOutputType.NDJSON.getSuffix(), data1);
-            Path p2 = createFile(fulltmpdir, FILE_2 + FileOutputType.NDJSON_ERROR.getSuffix(), data2);
+            Path p1 = createFile(fulltmpdir, FILE_1 + DATA.getSuffix(), data1);
+            Path p2 = createFile(fulltmpdir, FILE_2 + ERROR.getSuffix(), data2);
 
             assertEquals(data1.length(), FileUtils.getSizeOfFileOrDirectory(p1.toFile().getAbsolutePath()));
             assertEquals(data2.length(), FileUtils.getSizeOfFileOrDirectory(p2.toFile().getAbsolutePath()));

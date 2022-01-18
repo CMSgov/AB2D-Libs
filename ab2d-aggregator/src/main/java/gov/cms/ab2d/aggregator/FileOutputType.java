@@ -6,8 +6,8 @@ import java.io.File;
  * Taken from AB2D. Describes the different file endings for the data and error files created by the aggregator
  */
 public enum FileOutputType {
-    NDJSON(".ndjson"),
-    NDJSON_ERROR("_error.ndjson"),
+    DATA(".ndjson"),
+    ERROR("_error.ndjson"),
     UNKNOWN("");
 
     private final String suffix;
@@ -28,11 +28,11 @@ public enum FileOutputType {
         if (file == null) {
             return UNKNOWN;
         }
-        if (file.endsWith(NDJSON.getSuffix())) {
-            if (file.endsWith(NDJSON_ERROR.getSuffix())) {
-                return NDJSON_ERROR;
+        if (file.endsWith(DATA.getSuffix())) {
+            if (file.endsWith(ERROR.getSuffix())) {
+                return ERROR;
             }
-            return NDJSON;
+            return DATA;
         }
         return UNKNOWN;
     }

@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
+import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.NOT_PERFORMED;
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 import static gov.cms.ab2d.aggregator.FileUtils.cleanUpFiles;
 import static gov.cms.ab2d.aggregator.FileUtils.combineFiles;
 import static gov.cms.ab2d.aggregator.FileUtils.getSizeOfFileOrDirectory;
@@ -68,23 +71,26 @@ public class Aggregator {
      * and deletes the temporary files created by the worker. This will only do
      * one aggregation. The goal is to run this method until it returns false
      *
-     * @param error - if we want to aggregate error files or data files
+     * @param fileType - type of file to aggregate
      * @return true if there are enough files to aggregate (or the worker is done writing data)
      *      and we then did aggregate, false if there aren't enough files to aggregate.
      * @throws IOException if one of this file manipulations fails
      */
-    public AggregatorResult aggregate(boolean error) throws IOException {
+    public AggregatorResult aggregate(FileOutputType fileType) throws IOException {
         // remove any empty files
         removeEmptyFiles();
 
-        if (!okayToDoAggregation(error)) {
-            return AggregatorResult.NOT_PERFORMED;
+        if (!okayToDoAggregation(fileType)) {
+            return NOT_PERFORMED;
         }
-        List<File> bestFiles = getBestFiles(error);
+        List<File> bestFiles = getBestFiles(fileType);
         if (bestFiles.isEmpty()) {
-            return AggregatorResult.NOT_PERFORMED;
+            return NOT_PERFORMED;
         }
-        String fileName = getNextFileName(error);
+        String fileName = getNextFileName(fileType);
+        if (fileName == null) {
+            return NOT_PERFORMED;
+        }
         combineFiles(bestFiles, fileName);
         cleanUpFiles(bestFiles);
         return AggregatorResult.PERFORMED;
@@ -93,8 +99,8 @@ public class Aggregator {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     void removeEmptyFiles() {
         String finishedDir = this.mainDirectory + "/" + this.finishedDir;
-        List<File> availableFiles = listFiles(finishedDir, false);
-        availableFiles.addAll(listFiles(finishedDir, true));
+        List<File> availableFiles = listFiles(finishedDir, DATA);
+        availableFiles.addAll(listFiles(finishedDir, ERROR));
         List<File> emptyFiles = availableFiles.stream()
                 .filter(f -> {
                             long size;
@@ -112,22 +118,28 @@ public class Aggregator {
      * Return the name of the next file to create given it is or isn't an error file and the
      * last file index
      *
-     * @param error - if this is an error file
+     * @param type - type of output file
      * @return the name of the next file to aggregate into
      */
-    String getNextFileName(boolean error) {
-        String namePart = error ? getNextErrorFileName() : getNextDataFileName();
-        return Path.of(mainDirectory, namePart).toFile().getAbsolutePath();
+    String getNextFileName(FileOutputType type) {
+        switch (type) {
+            case ERROR:
+                return Path.of(mainDirectory, getNextErrorFileName()).toFile().getAbsolutePath();
+            case DATA:
+                return Path.of(mainDirectory, getNextDataFileName()).toFile().getAbsolutePath();
+            default:
+                return null;
+        }
     }
 
     /**
      * If we should aggregate files
      *
-     * @param error - if we are talking about error files or not
+     * @param type - type of file
      * @return - true if we have enough files or the worker is done writing out files
      */
-    boolean okayToDoAggregation(boolean error) {
-        long size = getSizeOfFiles(this.mainDirectory + "/" + this.finishedDir, error);
+    boolean okayToDoAggregation(FileOutputType type) {
+        long size = getSizeOfFiles(this.mainDirectory + "/" + this.finishedDir, type);
         return (size > ((long) this.multiplier * getMaxFileSize())) || isJobDoneStreamingData();
     }
 
@@ -138,7 +150,7 @@ public class Aggregator {
         return contractNumber +
                 "_" +
                 paddedPartitionNo +
-                FileOutputType.NDJSON.getSuffix();
+                DATA.getSuffix();
     }
 
     String getNextErrorFileName() {
@@ -148,7 +160,7 @@ public class Aggregator {
         return contractNumber +
                 "_" +
                 paddedPartitionNo +
-                FileOutputType.NDJSON_ERROR.getSuffix();
+                ERROR.getSuffix();
     }
 
     /**
@@ -162,13 +174,13 @@ public class Aggregator {
      * wouldn't be more than * 13, but the next value 2 puts us over the top. There are probably
      * better algorithms but this gets the job done in a reasonably efficient manner.
      *
-     * @param error whether we are writing error files
+     * @param type type of file
      * @return the list of "best" files to combine to optimize fullness of individual files
      */
     @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition", "PMD.DataflowAnomalyAnalysis"})
-    List<File> getBestFiles(boolean error) {
+    List<File> getBestFiles(FileOutputType type) {
         // Get all the files and their sizes in sorted order
-        List<FileReferenceHolder> sortedFiles = getSortedFileReferences(error);
+        List<FileReferenceHolder> sortedFiles = getSortedFileReferences(type);
 
         // If there are no files, return an empty list
         if (sortedFiles == null || sortedFiles.isEmpty()) {
@@ -216,12 +228,12 @@ public class Aggregator {
      * Get file descriptors for each file. This allows us to do comparisons and sorting by
      * file size without having to check with the file system each time
      *
-     * @param error - if we are doing error files
+     * @param type - type of file
      * @return the list of file descriptors with the relevant extensions
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    List<FileReferenceHolder> getSortedFileReferences(boolean error) {
-        List<File> availableFiles = listFiles(this.mainDirectory + "/" + this.finishedDir, error);
+    List<FileReferenceHolder> getSortedFileReferences(FileOutputType type) {
+        List<File> availableFiles = listFiles(this.mainDirectory + "/" + this.finishedDir, type);
 
         List<FileReferenceHolder> files = new ArrayList<>();
         availableFiles.forEach(f -> {

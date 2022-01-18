@@ -5,6 +5,8 @@ import lombok.Getter;
 import java.util.concurrent.Callable;
 
 import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.PERFORMED;
+import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 
 /**
  * This Callable allows us to hover over the file directory until all data is streamed out
@@ -40,22 +42,22 @@ public class AggregatorCallable implements Callable<Integer> {
         // While the worker isn't done with streaming files
         while (!aggregator.isJobDoneStreamingData()) {
             // aggregate data files
-            while (aggregator.aggregate(false) == PERFORMED) {
+            while (aggregator.aggregate(DATA) == PERFORMED) {
                 numAggregations++;
             }
             // aggregate error files
-            while (aggregator.aggregate(true) == PERFORMED) {
+            while (aggregator.aggregate(ERROR) == PERFORMED) {
                 numAggregations++;
             }
             // Sleep a little between checks
             Thread.sleep(1000);
         }
         // aggregate the final data files
-        while (aggregator.aggregate(false) == PERFORMED) {
+        while (aggregator.aggregate(DATA) == PERFORMED) {
             numAggregations++;
         }
         // aggregate the final error files
-        while (aggregator.aggregate(true) == PERFORMED) {
+        while (aggregator.aggregate(ERROR) == PERFORMED) {
             numAggregations++;
         }
         // We've taken all the files that the worker has given us, "finish" the job so that
