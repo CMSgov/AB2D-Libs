@@ -21,7 +21,6 @@ import java.nio.file.Path;
  * streams to be written to and when the file is closed, it moves it to the "done" directory, waiting
  * for the aggregator to pick it up
  */
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 public class BeneficiaryStream implements AutoCloseable {
     private static final String FILE_PREFIX = "tmp_";
     private final BufferedOutputStream bout;
@@ -34,6 +33,10 @@ public class BeneficiaryStream implements AutoCloseable {
     private final String streamingDir;
 
     public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
+        this(jobId, baseDir, type, streamingDir, finishedDir, 0);
+    }
+
+    public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir, int bufferSize) throws IOException {
         this.type = type;
         this.open = true;
         this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();
@@ -41,7 +44,12 @@ public class BeneficiaryStream implements AutoCloseable {
         JobHelper.workerSetUpJobDirectories(jobId, baseDir, streamingDir, finishedDir);
         this.tmpFile = createNewFile();
         this.stream = new FileOutputStream(tmpFile);
-        this.bout = new BufferedOutputStream(stream);
+        if (bufferSize > 0) {
+            this.bout = new BufferedOutputStream(stream, bufferSize);
+        } else {
+            // Use the default buffer size
+            this.bout = new BufferedOutputStream(stream);
+        }
         File directory = new File(jobDir + File.separator + finishedDir);
         String file = tmpFile.getName();
         this.completeFile = Path.of(directory.getAbsolutePath(), file).toFile();
@@ -74,8 +82,8 @@ public class BeneficiaryStream implements AutoCloseable {
         return tmpFile.renameTo(completeFile);
     }
 
-    public void write(String val) throws IOException {
-        bout.write(val.getBytes(StandardCharsets.UTF_8));
+    public void write(String eobNdJson) throws IOException {
+        bout.write(eobNdJson.getBytes(StandardCharsets.UTF_8));
     }
 
     public void flush() throws IOException {

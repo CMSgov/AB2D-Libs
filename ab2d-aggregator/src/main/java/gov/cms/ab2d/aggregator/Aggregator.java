@@ -1,6 +1,7 @@
 package gov.cms.ab2d.aggregator;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -10,8 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gov.cms.ab2d.aggregator.Aggregator.AggregatorResult.NOT_PERFORMED;
@@ -27,6 +30,7 @@ import static gov.cms.ab2d.aggregator.FileUtils.listFiles;
  * Does the work of aggregating files
  */
 @Getter
+@Slf4j
 public class Aggregator {
 
     public enum AggregatorResult {
@@ -41,30 +45,46 @@ public class Aggregator {
     private final String contractNumber;
     private final String streamDir;
     private final String finishedDir;
-    private final int maxMegaByes;
+    private final int maxMegaBytes;
     private final int multiplier;
 
-    private int currentFileIndex = 1;
-    private int currentErrorFileIndex = 1;
+    private Map<FileOutputType, Integer> fileCounts = new HashMap<>();
 
     /**
      * Define the Aggregator for the job
      *
      * @param jobId - the job ID
      * @param contractNumber - the contract number (used for naming files)
+     * @param fileDir - The top level location where files are to be placed (before the job ID)
+     * @param maxMegaBytes - The maximum size of a final file to be created
+     * @param streamDir -  The location of the streaming directory
+     * @param finishedDir -  The location of files that have finished streaming (but not yet aggregated)
+     * @param multiplier - When to start aggregating. If the multiplier is 2 for example and the max
+     *                   MegaBytes size is 200, we won't start aggregating files until there are at least
+     *                   400 MB of data in the finished directory.
      */
     public Aggregator(String jobId, String contractNumber, String fileDir, int maxMegaBytes, String streamDir,
-                      String finishedDir, int multiplier) throws IOException {
+                      String finishedDir, int multiplier) {
         this.jobId = jobId;
         this.mainDirectory = Paths.get(fileDir, jobId).toFile().getAbsolutePath();
         this.contractNumber = contractNumber;
         this.streamDir = streamDir;
-        this.maxMegaByes = maxMegaBytes;
+        this.maxMegaBytes = maxMegaBytes;
         this.finishedDir = finishedDir;
         this.multiplier = multiplier;
 
-        // The worker should do this by default, but just in case, set up all the directories
-        JobHelper.workerSetUpJobDirectories(jobId, fileDir, streamDir, finishedDir);
+        FileOutputType[] fileOutputValues = FileOutputType.values();
+        for (FileOutputType type : fileOutputValues) {
+            fileCounts.put(type, 1);
+        }
+
+        // The worker should do this by default, but just in case, set up all the directories. If there is an error
+        // ignore it
+        try {
+            JobHelper.workerSetUpJobDirectories(jobId, fileDir, streamDir, finishedDir);
+        } catch (Exception ex) {
+            log.error("Issue with aggregator creating directories", ex);
+        }
     }
 
     /**
@@ -97,7 +117,10 @@ public class Aggregator {
         return AggregatorResult.PERFORMED;
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    /**
+     * Remove any files in the finished directory that is empty. This happens when the batch of beneficiaries
+     * have no EOBs.
+     */
     void removeEmptyFiles() {
         String fDir = this.mainDirectory + File.separator + this.finishedDir;
         List<File> availableFiles = listFiles(fDir, DATA);
@@ -116,25 +139,35 @@ public class Aggregator {
     }
 
     /**
-     * Return the name of the next file to create given it is or isn't an error file and the
-     * last file index
+     * Return the name of the next file for the type of file it is.
+     * This will provide the full file path
      *
      * @param type - type of output file
      * @return the name of the next file to aggregate into
      */
     String getNextFileName(FileOutputType type) {
-        switch (type) {
-            case ERROR:
-                return Path.of(mainDirectory, getNextErrorFileName()).toFile().getAbsolutePath();
-            case DATA:
-                return Path.of(mainDirectory, getNextDataFileName()).toFile().getAbsolutePath();
-            default:
-                return null;
-        }
+        String fileName = getNextFilePart(type);
+        return Path.of(mainDirectory, fileName).toFile().getAbsolutePath();
     }
 
     /**
-     * If we should aggregate files
+     * Provide the file name (without path) of the next file for a specific file type
+     * @param type - the file output type
+     * @return the file name
+     */
+    String getNextFilePart(FileOutputType type) {
+        int currentVal = fileCounts.get(type);
+        var paddedPartitionNo = StringUtils.leftPad("" + currentVal, 4, '0');
+        fileCounts.put(type, ++currentVal);
+        return contractNumber +
+                "_" +
+                paddedPartitionNo +
+                type.getSuffix();
+    }
+
+    /**
+     * If we should aggregate files. The answer is true if the size of the data in the finished is greater
+     * than the max size of the file times the multiplier or if the worker is done streaming data.
      *
      * @param type - type of file
      * @return - true if we have enough files or the worker is done writing out files
@@ -142,26 +175,6 @@ public class Aggregator {
     boolean okayToDoAggregation(FileOutputType type) {
         long size = getSizeOfFiles(this.mainDirectory + File.separator + this.finishedDir, type);
         return (size > ((long) this.multiplier * getMaxFileSize())) || isJobDoneStreamingData();
-    }
-
-    String getNextDataFileName() {
-        String partName = Integer.toString(currentFileIndex);
-        var paddedPartitionNo = StringUtils.leftPad(partName, 4, '0');
-        currentFileIndex++;
-        return contractNumber +
-                "_" +
-                paddedPartitionNo +
-                DATA.getSuffix();
-    }
-
-    String getNextErrorFileName() {
-        String partName = Integer.toString(currentErrorFileIndex);
-        var paddedPartitionNo = StringUtils.leftPad(partName, 4, '0');
-        currentErrorFileIndex++;
-        return contractNumber +
-                "_" +
-                paddedPartitionNo +
-                ERROR.getSuffix();
     }
 
     /**
@@ -178,7 +191,6 @@ public class Aggregator {
      * @param type type of file
      * @return the list of "best" files to combine to optimize fullness of individual files
      */
-    @SuppressWarnings({"PMD.AvoidLiteralsInIfCondition", "PMD.DataflowAnomalyAnalysis"})
     List<File> getBestFiles(FileOutputType type) {
         // Get all the files and their sizes in sorted order
         List<FileReferenceHolder> sortedFiles = getSortedFileReferences(type);
@@ -218,6 +230,12 @@ public class Aggregator {
         return bestFiles.stream().map(FileReferenceHolder::getFile).collect(Collectors.toList());
     }
 
+    /**
+     * Take the list of files in a directory and order them by size
+     *
+     * @param files - the files to sort
+     * @return - the list of ordered files
+     */
     List<FileReferenceHolder> orderBySize(List<FileReferenceHolder> files) {
         if (files == null) {
             return new ArrayList<>();
@@ -232,7 +250,6 @@ public class Aggregator {
      * @param type - type of file
      * @return the list of file descriptors with the relevant extensions
      */
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     List<FileReferenceHolder> getSortedFileReferences(FileOutputType type) {
         List<File> availableFiles = listFiles(this.mainDirectory + File.separator + this.finishedDir, type);
 
@@ -251,6 +268,12 @@ public class Aggregator {
         return orderBySize(files);
     }
 
+    /**
+     * Returns true if the job has finished streaming data. You know this because the streaming directory
+     * no longer exists
+     *
+     * @return if the job is done writing data
+     */
     public boolean isJobDoneStreamingData() {
         String streamingDir = this.mainDirectory + File.separator + this.streamDir;
         boolean fileExists = dirExists(streamingDir);
@@ -278,6 +301,6 @@ public class Aggregator {
     }
 
     public int getMaxFileSize() {
-        return this.maxMegaByes * ONE_MEGA_BYTE;
+        return this.maxMegaBytes * ONE_MEGA_BYTE;
     }
 }

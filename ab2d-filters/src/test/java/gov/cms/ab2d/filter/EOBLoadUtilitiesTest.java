@@ -165,7 +165,6 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     void testReaderEOB() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json")) {

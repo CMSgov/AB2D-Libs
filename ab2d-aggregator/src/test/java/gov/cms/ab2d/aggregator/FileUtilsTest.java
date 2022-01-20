@@ -1,6 +1,5 @@
 package gov.cms.ab2d.aggregator;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -109,7 +108,6 @@ class FileUtilsTest {
     }
 
     @Test
-    @SuppressFBWarnings
     void testExceptions() {
         assertEquals(0, FileUtils.getSizeOfFiles(null));
         assertEquals(0, FileUtils.getSizeOfFiles(new ArrayList<>()));

@@ -16,12 +16,12 @@ class BeneficiaryStreamTest {
     private static final String JOB_ID = "job1";
     private static final String STREAM_DIR = "streaming";
     private static final String FINISH_DIR = "finished";
+    private static final int MIB = 1048576;
 
     @Test
-    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.CloseResource"})
     void testCreateAndWriteToStream(@TempDir File tmpDirFolder) {
         BeneficiaryStream savedStream = null;
-        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR)) {
+        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {
             savedStream = stream;
             for (int i = 0; i < 1000; i++) {
                 stream.write(AggregatorTest.getAlphaNumericString(1000));

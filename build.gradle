@@ -4,7 +4,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.github.spotbugs' version '4.7.6' apply false
     id 'com.jfrog.artifactory' version '4.24.18' apply false
     id "org.sonarqube" version "3.0"
 }
@@ -22,6 +21,9 @@ ext {
     fhirVersion='1.0'
     bfdVersion='1.0.1'
     filtersVersion='1.2'
+    commonsLangVersion='3.12.0'
+    slf4jVersion='1.7.26'
+    jupiterApi='5.7.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -29,7 +31,6 @@ ext {
 
     lombokVersion = '1.18.22'
     hapiVersion = '5.6.1'
-    spotbugsVersion = '4.5.2'
     springBootVersion='2.6.2'
     newRelicVersion='7.4.3'
     testContainerVersion='1.16.2'
@@ -106,8 +107,6 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'checkstyle'
     apply plugin: 'jacoco'
-    apply plugin: 'pmd'
-    apply plugin: 'com.github.spotbugs'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
         println("Artifactory user not set");
@@ -125,9 +124,6 @@ subprojects {
     group 'gov.cms.ab2d'
 
     dependencies {
-
-        //Libraries that are needed across platform and are used at runtime
-        implementation "com.github.spotbugs:spotbugs-annotations:$spotbugsVersion"
 
         //set dependencies and versions for child projects to use (maven dependency management equivalent)
         implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
@@ -151,7 +147,6 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        processResources.exclude('spotbugs-filter.xml')
         classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
@@ -183,9 +178,6 @@ subprojects {
 
     checkstyle {
         configFile file("$rootDir/config/checkstyle.xml")
-    }
-
-    spotbugs {
     }
 
     publishing {

@@ -22,25 +22,25 @@ import static java.nio.file.StandardOpenOption.WRITE;
 /**
  * We work a lot with files so having a utils class to help with that is useful
  */
-@SuppressWarnings("PMD.DataflowAnomalyAnalysis")
 @Slf4j
 public final class FileUtils {
     private FileUtils() {
     }
 
     /**
-     * Given a list of files, combine them into an outfile and then remove the component files
+     * Given a list of files, combine them into an outfile
      *
-     * @param files - the files to combine
+     * @param filesToCombine - the files to combine
      * @param outFileName - the output file name with location
      * @throws IOException - if we have any IO funny business
      */
-    public static void combineFiles(List<File> files, String outFileName) throws IOException {
+    public static void combineFiles(List<File> filesToCombine, String outFileName) throws IOException {
         Path outFile = Paths.get(outFileName);
         try (FileChannel out = FileChannel.open(outFile, CREATE, WRITE)) {
-            for (File file : files) {
+            for (File file : filesToCombine) {
                 Path inFile = Paths.get(file.getAbsolutePath());
                 try (FileChannel in = FileChannel.open(inFile, READ)) {
+                    // For the length of the file, transfer into the output file
                     for (long p = 0, l = in.size(); p < l;)
                         p += in.transferTo(p, l - p, out);
                 }

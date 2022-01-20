@@ -5,7 +5,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,9 +48,11 @@ class AggregatorTest {
     void nextFile(@TempDir File tmpDir) throws IOException {
         Aggregator aggregator = new Aggregator(JOB_ID, CONTRACT_NUM, tmpDir.getAbsolutePath(), MAX_MEGA, STREAMING_DIR,
                 FINISHED_DIR, MULTIPLIER);
-        assertEquals(aggregator.getContractNumber() + "_0001.ndjson", aggregator.getNextDataFileName());
-        assertEquals(aggregator.getContractNumber() + "_0002.ndjson", aggregator.getNextDataFileName());
-        assertEquals(aggregator.getContractNumber() + "_0001_error.ndjson", aggregator.getNextErrorFileName());
+        assertEquals(aggregator.getContractNumber() + "_0001.ndjson", aggregator.getNextFilePart(DATA));
+        assertEquals(aggregator.getContractNumber() + "_0002.ndjson", aggregator.getNextFilePart(DATA));
+        assertEquals(aggregator.getContractNumber() + "_0001_error.ndjson", aggregator.getNextFilePart(ERROR));
+        assertEquals(aggregator.getContractNumber() + "_0002_error.ndjson", aggregator.getNextFilePart(ERROR));
+        assertEquals(aggregator.getContractNumber() + "_0003_error.ndjson", aggregator.getNextFilePart(ERROR));
     }
 
     @Test
@@ -144,11 +145,6 @@ class AggregatorTest {
         assertEquals(jobDir + File.separator + CONTRACT_NUM + DATA_1_EXT, aggregator.getNextFileName(DATA));
         assertEquals(jobDir + File.separator + CONTRACT_NUM + DATA_2_EXT, aggregator.getNextFileName(DATA));
         assertEquals(jobDir + File.separator + CONTRACT_NUM + "_0001_error.ndjson", aggregator.getNextFileName(ERROR));
-
-        // Reset the index so any other test won't have an invalid file index
-        Field currentFileIndex = aggregator.getClass().getDeclaredField("currentFileIndex");
-        currentFileIndex.setAccessible(true);
-        currentFileIndex.setInt(aggregator, 1);
     }
 
     @Test
@@ -358,7 +354,6 @@ class AggregatorTest {
         Files.write(Path.of(file), val.getBytes(StandardCharsets.UTF_8));
     }
 
-    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     static String getAlphaNumericString(int n) {
 
         String alphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
