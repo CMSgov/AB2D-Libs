@@ -1,6 +1,5 @@
 package gov.cms.ab2d.filter;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
@@ -35,7 +34,6 @@ public final class FilterOutByDate {
      * We only deal with date ranges consisting of months and eliminate the ability to construct other
      * ranges. A date range is from the start of a month to the end of that same or other month only.
      */
-    @SuppressFBWarnings
     @Getter
     public static final class DateRange {
 
@@ -88,7 +86,6 @@ public final class FilterOutByDate {
         return getRanges(monthList, year);
     }
 
-    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidLiteralsInIfCondition"})
     private static List<DateRange> getRanges(List<Integer> monthList, int year) {
         List<DateRange> ranges = new ArrayList<>();
         int startVal = -1;
@@ -158,7 +155,6 @@ public final class FilterOutByDate {
      * @param year - the year, 2 or 4 digits (i.e., 1999 or 99)
      * @return the 4 digit year
      */
-    @SuppressWarnings({"PMD.DataflowAnomalyAnalysis", "PMD.AvoidLiteralsInIfCondition"})
     static int getYearToUse(int year) {
         int yearToUse = year;
         if (year < 100) {
