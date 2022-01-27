@@ -11,8 +11,8 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "maven"
+  - package-ecosystem: "gradle"
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "daily"
     open-pull-requests-limit: 25
