@@ -23,7 +23,7 @@ ext {
     filtersVersion='1.2'
     commonsLangVersion='3.12.0'
     slf4jVersion='1.7.26'
-    jupiterApi='5.7.0'
+    jupiterApi='5.8.2'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
