@@ -43,10 +43,6 @@ ext {
 
 allprojects {
 
-    dependencyLocking {
-        lockAllConfigurations()
-    }
-
     tasks.withType(Test) { testTask ->
 
         testTask.testLogging { logging ->
