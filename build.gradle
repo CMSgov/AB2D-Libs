@@ -32,7 +32,7 @@ ext {
     lombokVersion = '1.18.22'
     hapiVersion = '5.6.1'
     springBootVersion='2.6.2'
-    newRelicVersion='7.4.3'
+    newRelicVersion='7.5.0'
     testContainerVersion='1.16.2'
     mockServerVersion='5.11.2'
 
