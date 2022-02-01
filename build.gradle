@@ -156,23 +156,14 @@ subprojects {
     }
 
     jacocoTestReport {
-        dependsOn test
-        dependsOn jacocoTestCoverageVerification
+        reports {
+            xml.enabled true
+        }
     }
 
     jacoco {
         toolVersion = "0.8.7"
         reportsDirectory = layout.buildDirectory.dir("$buildDir/reports/jacoco")
-    }
-
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                limit {
-                    minimum = 0.80
-                }
-            }
-        }
     }
 
     checkstyle {
