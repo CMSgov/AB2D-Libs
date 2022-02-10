@@ -91,10 +91,10 @@ Used to create all the necessary directories for the job
 
 ```JobHelper.workerFinishJob(efsMount + "/" + jobId + "/" + streamingDir);```
 
-Used to manage writing out data - BeneficiaryStream which handles creating the file in the correct location and when closed, copies that file to the right location
+Used to manage writing out data - ClaimsStream which handles creating the file in the correct location and when closed, copies that file to the right location
 
 ```
-try (BeneficiaryStream stream = new BeneficiaryStream(jobId, efsMount, false, this.streamingDir, this.finishedDir)) {
+try (ClaimsStream stream = new ClaimsStream(jobId, efsMount, false, this.streamingDir, this.finishedDir)) {
     for (CoverageSummary patient : patients) {
         List<IBaseResource> eobs = getEobBundleResources(request, patient);
         for (IBaseResource resource : eobs) {

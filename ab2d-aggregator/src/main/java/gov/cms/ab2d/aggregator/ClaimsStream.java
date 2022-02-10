@@ -9,19 +9,19 @@ import java.nio.file.Path;
 
 /**
  * This manages all the creating and streaming of beneficiary data. To use this, you create a try
- * with resources with the BeneficiaryStream. For example:
+ * with resources with the ClaimsStream. For example:
  *
- * try (BeneficiaryStream stream = new BeneficiaryStream(jobId, false)) {
+ * try (ClaimsStream stream = new ClaimsStream(jobId, false, DATA, "streaming", "finished")) {
  *     for (int i = 0; i < beneBatchSize; i++) {
  *         stream.write(getNdJson(benes.get(i)));
  *     }
  * } catch(Exception ex) { }
  *
  * This does all the work of creating a temporary file in the correct location to stream, allowing
- * streams to be written to and when the file is closed, it moves it to the "done" directory, waiting
+ * streams to be written to and when the file is closed, it moves it to the "finished" directory, waiting
  * for the aggregator to pick it up
  */
-public class BeneficiaryStream implements AutoCloseable {
+public class ClaimsStream implements AutoCloseable {
     private static final String FILE_PREFIX = "tmp_";
     private final BufferedOutputStream bout;
     private final File tmpFile;
@@ -32,11 +32,11 @@ public class BeneficiaryStream implements AutoCloseable {
     private final FileOutputStream stream;
     private final String streamingDir;
 
-    public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
+    public ClaimsStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
         this(jobId, baseDir, type, streamingDir, finishedDir, 0);
     }
 
-    public BeneficiaryStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir, int bufferSize) throws IOException {
+    public ClaimsStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir, int bufferSize) throws IOException {
         this.type = type;
         this.open = true;
         this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();

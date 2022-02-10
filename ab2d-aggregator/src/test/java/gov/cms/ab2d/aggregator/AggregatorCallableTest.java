@@ -39,7 +39,7 @@ class AggregatorCallableTest {
         // For each batch
         for (int i = 0; i < 100; i++) {
             // Create a file for the batch of beneficiaries
-            try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {
+            try (ClaimsStream stream = new ClaimsStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {
                 // For each beneficiary
                 for (int b = 0; b < 250; b++) {
                     int length = RANDOM.nextInt(1000);

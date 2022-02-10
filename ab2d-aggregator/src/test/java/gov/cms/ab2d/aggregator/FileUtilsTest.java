@@ -35,9 +35,9 @@ class FileUtilsTest {
             assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), ERROR));
             assertEquals(0, FileUtils.getSizeOfFiles(fulltmpdir.getAbsolutePath(), DATA));
 
-            String data1 = "aaaaaaaa";
-            String data2 = "bbbbbbbbbbbbbbb";
-            String data3 = "ccccc";
+            String data1 = "aaaaaaaa\n";
+            String data2 = "bbbbbbbbbbbbbbb\n";
+            String data3 = "ccccc\n";
 
             Path p1 = createFile(fulltmpdir, FILE_1 + DATA.getSuffix(), data1);
             Path p2 = createFile(fulltmpdir, FILE_2 + ERROR.getSuffix(), data2);
@@ -59,6 +59,9 @@ class FileUtilsTest {
 
             FileUtils.combineFiles(fileD, fulltmpdir.getAbsolutePath() + "/tst4");
             assertEquals(data1.length() + data2.length() + data3.length(), Files.size(Path.of(fulltmpdir.getAbsolutePath(), "tst4")));
+
+            byte[] bytes = Files.readAllBytes(Path.of(fulltmpdir.getAbsolutePath() + "/tst4"));
+            assertEquals(new String(bytes), data1 + data2 + data3);
 
             assertTrue(FileUtils.cleanUpFiles(fileD));
             assertTrue(FileUtils.cleanUpFiles(null));
