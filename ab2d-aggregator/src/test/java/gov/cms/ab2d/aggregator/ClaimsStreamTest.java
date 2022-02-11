@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-class BeneficiaryStreamTest {
+class ClaimsStreamTest {
 
     private static final String JOB_ID = "job1";
     private static final String STREAM_DIR = "streaming";
@@ -20,8 +20,8 @@ class BeneficiaryStreamTest {
 
     @Test
     void testCreateAndWriteToStream(@TempDir File tmpDirFolder) {
-        BeneficiaryStream savedStream = null;
-        try (BeneficiaryStream stream = new BeneficiaryStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {
+        ClaimsStream savedStream = null;
+        try (ClaimsStream stream = new ClaimsStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {
             savedStream = stream;
             for (int i = 0; i < 1000; i++) {
                 stream.write(AggregatorTest.getAlphaNumericString(1000));
