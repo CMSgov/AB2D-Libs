@@ -116,3 +116,6 @@ gradle-app.setting
 target/
 #Snyk CLI
 .dccache
+
+#VSCode
+.vscode/settings.json
