@@ -221,14 +221,14 @@ public class ExplanationOfBenefitTrimmerR4 {
         /*
          Keep:
               sequence
+              diagnosisSequence
+              procedureSequence
               careTeamSequence
               productOrService
               serviced
               location
               quantity
          */
-        clearOutList(component.getDiagnosisSequence());
-        clearOutList(component.getProcedureSequence());
         clearOutList(component.getInformationSequence());
         component.setExtension(null);
         component.setRevenue(null);

@@ -16,6 +16,7 @@ import org.hl7.fhir.r4.model.Narrative;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Period;
+import org.hl7.fhir.r4.model.PositiveIntType;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.StringType;
@@ -94,7 +95,13 @@ public class ExplanationOfBenefitTrimmerR4Test {
         EOB.setUse(ExplanationOfBenefit.Use.CLAIM);
         EOB.setAdjudication(List.of(new ExplanationOfBenefit.AdjudicationComponent().setAmount(new Money().setValue(11))));
         EOB.setSupportingInfo(List.of(new ExplanationOfBenefit.SupportingInformationComponent().setSequence(3).setReason(new Coding().setCode("code"))));
-        EOB.setItem(List.of(new ExplanationOfBenefit.ItemComponent().setSequence(3).setCategory(new CodeableConcept().setText("category"))));
+        ExplanationOfBenefit.ItemComponent item = new ExplanationOfBenefit.ItemComponent()
+                .setSequence(3)
+                .setCategory(new CodeableConcept().setText("category"))
+                .setDiagnosisSequence(List.of(new PositiveIntType(1)))
+                .setCareTeamSequence(List.of(new PositiveIntType(2)))
+                .setProcedureSequence(List.of(new PositiveIntType(3)));
+        EOB.setItem(List.of(item));
         EOB.setIdentifier(List.of(new Identifier().setType(new CodeableConcept().setText("one")).setValue("value")));
         EOB.setStatus(ExplanationOfBenefit.ExplanationOfBenefitStatus.CANCELLED);
         EOB.setType(new CodeableConcept().setText(DUMMY_TYPE));
@@ -103,6 +110,7 @@ public class ExplanationOfBenefitTrimmerR4Test {
 
         EOB.setCareTeam(List.of(
                 new ExplanationOfBenefit.CareTeamComponent().setResponsible(true)
+                .setSequence(2)
                 .setRole(new CodeableConcept().setText("care"))
                 .setProvider(new Reference("provider"))
         ));
@@ -114,6 +122,7 @@ public class ExplanationOfBenefitTrimmerR4Test {
         ));
         EOB.setProcedure(List.of(
                 new ExplanationOfBenefit.ProcedureComponent()
+                .setSequence(3)
                 .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
                 .setUdi(List.of(new Reference("udi")))
                 .setProcedure(new CodeableConcept().setText("procedure"))
@@ -181,6 +190,9 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertNull(component.getCategory().getText());
         assertEquals(3, component.getSequence());
         assertEquals(1, eobtrim.getIdentifier().size());
+        assertEquals(2, component.getCareTeamSequence().get(0).getValue());
+        assertEquals(1, component.getDiagnosisSequence().get(0).getValue());
+        assertEquals(3, component.getProcedureSequence().get(0).getValue());
         Identifier id = eobtrim.getIdentifier().get(0);
         assertEquals("value", id.getValue());
         assertEquals("one", id.getType().getText());

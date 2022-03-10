@@ -110,13 +110,13 @@ public class ExplanationOfBenefitTrimmerSTU3 {
          Keep:
               sequence
               careTeamLinkId
+              diagnosisLinkId
+              procedureLinkId
               service
               serviced
               location
               quantity
          */
-        clearOutList(component.getDiagnosisLinkId());
-        clearOutList(component.getProcedureLinkId());
         clearOutList(component.getInformationLinkId());
         component.setExtension(null);
         component.setRevenue(null);
