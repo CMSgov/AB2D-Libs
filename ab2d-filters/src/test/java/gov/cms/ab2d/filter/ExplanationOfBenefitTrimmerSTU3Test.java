@@ -92,7 +92,8 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         if (eobCarrier.getItem() != null) {
             for (var item : eobCarrier.getItem()) {
-                assertTrue(isNullOrEmpty(item.getDiagnosisLinkId()));
+                assertFalse(isNullOrEmpty(item.getCareTeamLinkId()));
+                assertFalse(isNullOrEmpty(item.getDiagnosisLinkId()));
                 assertTrue(isNullOrEmpty(item.getProcedureLinkId()));
                 assertTrue(isNullOrEmpty(item.getInformationLinkId()));
                 assertNull(item.getRevenue().getId());
