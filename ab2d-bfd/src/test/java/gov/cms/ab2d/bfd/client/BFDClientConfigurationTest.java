@@ -99,7 +99,7 @@ class BFDClientConfigurationTest {
         Exception exception = assertThrows(FhirClientConnectionException.class,
                 () -> ReflectionTestUtils.invokeMethod(bbc, "getCapabilityStatement", STU3));
 
-        assertEquals(SSLHandshakeException.class, exception.getCause().getCause().getClass());
+        assertEquals(SSLHandshakeException.class, exception.getCause().getClass());
         assertTrue(exception.getCause().getCause()
                 .getMessage().contains("unable to find valid certification path to requested target"));
     }
