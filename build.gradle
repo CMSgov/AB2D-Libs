@@ -31,7 +31,7 @@ ext {
     hapiVersion = '5.7.1'
     springBootVersion='2.6.6'
     newRelicVersion='7.5.0'
-    testContainerVersion='1.16.3'
+    testContainerVersion='1.17.1'
     mockServerVersion='5.13.2'
 
     failedTests = []
