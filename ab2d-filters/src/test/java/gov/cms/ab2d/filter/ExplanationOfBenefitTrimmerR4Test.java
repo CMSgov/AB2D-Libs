@@ -1,5 +1,6 @@
 package gov.cms.ab2d.filter;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Attachment;
 import org.hl7.fhir.r4.model.Claim;
 import org.hl7.fhir.r4.model.ClaimResponse;
@@ -7,6 +8,7 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.ExplanationOfBenefit;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.MedicationRequest;
@@ -26,9 +28,16 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static gov.cms.ab2d.filter.ExplanationOfBenefitTrimmerR4.ANESTHESIA_UNIT_COUNT;
+import static gov.cms.ab2d.filter.ExplanationOfBenefitTrimmerR4.NL_RECORD_IDENTIFICATION;
+import static gov.cms.ab2d.filter.ExplanationOfBenefitTrimmerR4.PRICING_STATE;
+import static gov.cms.ab2d.filter.ExplanationOfBenefitTrimmerR4.SUPPLIER_TYPE;
 import static org.hl7.fhir.r4.model.ExplanationOfBenefit.RemittanceOutcome.COMPLETE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -209,13 +218,109 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertEquals(1, eobtrim.getDiagnosis().size());
         ExplanationOfBenefit.DiagnosisComponent diagnosisComponent = eobtrim.getDiagnosisFirstRep();
         assertEquals(1, diagnosisComponent.getSequence());
-        assertNull(diagnosisComponent.getOnAdmission().getText());
+        assertNotNull(diagnosisComponent.getOnAdmission().getText());
         assertEquals(DUMMY_TYPE, diagnosisComponent.getType().get(0).getText());
         assertEquals(1, eobtrim.getProcedure().size());
         ExplanationOfBenefit.ProcedureComponent procedureComponent = eobtrim.getProcedureFirstRep();
         assertTrue(Math.abs(SAMPLE_DATE.getTime() -  procedureComponent.getDate().getTime()) < 1000);
-        assertEquals(0, procedureComponent.getType().size());
-        assertEquals(0, procedureComponent.getUdi().size());
+        assertNotEquals(0, procedureComponent.getType().size());
+        assertNotEquals(0, procedureComponent.getUdi().size());
         assertEquals("procedure", ((CodeableConcept) procedureComponent.getProcedure()).getText());
+    }
+
+    void giveStats(IBaseResource resource) {
+        ExplanationOfBenefit eob = (ExplanationOfBenefit) resource;
+        System.out.println(eob.getId() + " has " + eob.getExtension().size() + " extensions");
+        System.out.println(eob.getId() + " has " + eob.getSupportingInfo().size() + " supporting info");
+        System.out.println(eob.getId() + " has " + eob.getItem().get(0).getExtension().size() + " item extensions");
+    }
+
+    @Test
+    void extensionCleanupTestCarrier() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Carrier-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestDME() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-DME-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestHHA() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-HHA-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestHospice() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Hospice-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestInpatient() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Inpatient-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestOutpatient() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Outpatient-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    @Test
+    void extensionCleanupTestSNF() {
+        IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-SNF-R4.json");
+        giveStats(eob);
+        ExplanationOfBenefit ab2dEob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit(eob);
+        validateEOB(ab2dEob);
+    }
+
+    void validateEOB(ExplanationOfBenefit eob) {
+        assertNotNull(eob);
+        ExplanationOfBenefit.ItemComponent item = eob.getItem().get(0);
+        List<Extension> itemExtensions = item.getExtension();
+        assertNotNull(itemExtensions);
+
+        assertTrue(itemExtensions.size() <= 3);
+        List<String> urls = itemExtensions.stream().map(Extension::getUrl).collect(Collectors.toList());
+        List<String> validUrls = List.of(PRICING_STATE, ANESTHESIA_UNIT_COUNT, SUPPLIER_TYPE);
+        for (String url : urls) {
+            assertTrue(validUrls.contains(url));
+            System.out.println(eob.getId() + " Item Extension Found: " + url);
+        }
+
+        List<Extension> extensions = eob.getExtension();
+        assertTrue(extensions.size() <= 1);
+        if (extensions.size() == 1) {
+            Extension e = extensions.get(0);
+            assertEquals(NL_RECORD_IDENTIFICATION, e.getUrl());
+            System.out.println(eob.getId() + " Extension Found: " + e.getUrl());
+        }
+
+        List<ExplanationOfBenefit.SupportingInformationComponent> suppInfoComps = eob.getSupportingInfo();
+        assertTrue(suppInfoComps.size() <= 1);
+        if (suppInfoComps.size() == 1) {
+            ExplanationOfBenefit.SupportingInformationComponent component = suppInfoComps.get(0);
+            CodeableConcept concept = component.getCode();
+            Coding code = concept.getCoding().get(0);
+            assertEquals(ExplanationOfBenefitTrimmerR4.RELATED_DIAGNOSIS_GROUP, code.getSystem());
+            System.out.println(eob.getId() + " Supporting Info Found: " + code.getSystem());
+        }
     }
 }

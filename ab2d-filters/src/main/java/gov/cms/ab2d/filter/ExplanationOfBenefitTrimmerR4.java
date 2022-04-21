@@ -1,11 +1,15 @@
 package gov.cms.ab2d.filter;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ExplanationOfBenefit;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -29,9 +33,11 @@ import java.util.stream.Collectors;
  *     . billablePeriod
  *     . item (some of the data)
  *     . status
+ *     . Near Line Record Identification Code (in extension)
  *
  *  Items not kept:
  *     . extension (inherited)
+ *          except for: Near Line Record Identification Code
  *     . modifierExtension (new for R4, inherited)
  *     . patientTarget
  *     . created
@@ -87,6 +93,9 @@ import java.util.stream.Collectors;
  *     . location
  *     . quantity
  *     . extension
+ *          Anesthesia Unit Count
+ *          Pricing State Code
+ *          Supplier Type Code
  *
  *  Items not kept:
  *     . diagnosisSequence
@@ -113,6 +122,12 @@ import java.util.stream.Collectors;
  *
  */
 public class ExplanationOfBenefitTrimmerR4 {
+    public static final String ANESTHESIA_UNIT_COUNT = "https://bluebutton.cms.gov/resources/variables/carr_line_ansthsa_unit_cnt";
+    public static final String RELATED_DIAGNOSIS_GROUP = "https://bluebutton.cms.gov/resources/variables/clm_drg_cd";
+    public static final String PRICING_STATE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_prcng_state_cd";
+    public static final String SUPPLIER_TYPE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_supplr_type_cd";
+    public static final String NL_RECORD_IDENTIFICATION = "https://bluebutton.cms.gov/resources/variables/nch_near_line_rec_ident_cd";
+
     /**
      * Pass in an ExplanationOfBenefit, return the copy without the data
      *
@@ -155,6 +170,10 @@ public class ExplanationOfBenefitTrimmerR4 {
         copy.setLanguage(benefit.getLanguage());
         copy.setImplicitRules(benefit.getImplicitRules());
 
+        copy.setExtension(benefit.getExtensionsByUrl(NL_RECORD_IDENTIFICATION));
+
+        copy.setSupportingInfo(getSupportingInfo(benefit.getSupportingInfo(), RELATED_DIAGNOSIS_GROUP));
+
         // Called out data
         copy.setPatient(benefit.getPatient().copy());
         copy.setProvider(benefit.getProvider().copy());
@@ -188,25 +207,36 @@ public class ExplanationOfBenefitTrimmerR4 {
      * @param benefit - The ExplanationOfBenefit information (the copy)
      */
     private static void cleanOutUnNeededData(ExplanationOfBenefit benefit) {
-
         // Remove items in Item Component data
         if (benefit.getItem() != null) {
             benefit.setItem(benefit.getItem().stream()
                     .map(ExplanationOfBenefitTrimmerR4::cleanOutItemComponent)
                     .collect(Collectors.toList()));
         }
+    }
 
-        // New R4 data I'm not sure we can serve
-        if (!benefit.getDiagnosis().isEmpty()) {
-            benefit.getDiagnosis().forEach(d -> d.setOnAdmission(null));
+    /**
+     * Retrieve specific supporting information in the list based on the specified system
+     *
+     * @param supportingInfo - the list of supporing info
+     * @param system - the system to look for
+     *
+     * @return - Supporting information defined by the passed system
+     */
+    static List<ExplanationOfBenefit.SupportingInformationComponent> getSupportingInfo(
+            List<ExplanationOfBenefit.SupportingInformationComponent> supportingInfo, String system) {
+        List<ExplanationOfBenefit.SupportingInformationComponent> newSupporingInfo = new ArrayList<>();
+        for (ExplanationOfBenefit.SupportingInformationComponent supporintInfoComponent : supportingInfo) {
+            CodeableConcept codeableConcept = supporintInfoComponent.getCode();
+            List<Coding> coding = codeableConcept.getCoding();
+            for (Coding code : coding) {
+                if (system.equalsIgnoreCase(code.getSystem())) {
+                    newSupporingInfo.add(supporintInfoComponent);
+                    break;
+                }
+            }
         }
-        if (!benefit.getProcedure().isEmpty()) {
-            benefit.getProcedure().forEach(d -> {
-                clearOutList(d.getType());
-                clearOutList(d.getUdi());
-                clearOutList(d.getUdiTarget());
-            });
-        }
+        return newSupporingInfo;
     }
 
     /**
@@ -228,9 +258,18 @@ public class ExplanationOfBenefitTrimmerR4 {
               serviced
               location
               quantity
+              item extensions :
+                    Anesthesia Unit Count
+                    Pricing State Code
+                    Supplier Type Code
+              Related Diagnosis Group Code
          */
         clearOutList(component.getInformationSequence());
-        component.setExtension(null);
+
+        // Get the extensions we want to keep
+        component.setExtension(findExtensions(component.getExtension(),
+                ANESTHESIA_UNIT_COUNT, PRICING_STATE, SUPPLIER_TYPE));
+
         component.setRevenue(null);
         component.setCategory(null);
         clearOutList(component.getModifier());
@@ -250,6 +289,26 @@ public class ExplanationOfBenefitTrimmerR4 {
         clearOutList(component.getModifierExtension());
 
         return component;
+    }
+
+    /**
+     * Find specific extensions with the types of url specified by the passed urls
+     *
+     * @param extensions - the list of extensions to search
+     * @param url - the urls we are searching for
+     *
+     * @return the list of matching extensions
+     */
+    static List<Extension> findExtensions(List<Extension> extensions, String... url) {
+        List<Extension> keptExtensions = new ArrayList<>();
+        if (extensions == null || extensions.isEmpty()) {
+            return keptExtensions;
+        }
+        for (String urlItem : url) {
+            Optional<Extension> extension = extensions.stream().filter(e -> e.getUrl().equalsIgnoreCase(urlItem)).findFirst();
+            extension.ifPresent(keptExtensions::add);
+        }
+        return keptExtensions;
     }
 
     /**
