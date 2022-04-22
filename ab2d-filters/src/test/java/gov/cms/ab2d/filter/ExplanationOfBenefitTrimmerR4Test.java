@@ -322,5 +322,11 @@ public class ExplanationOfBenefitTrimmerR4Test {
             assertEquals(ExplanationOfBenefitTrimmerR4.RELATED_DIAGNOSIS_GROUP, code.getSystem());
             System.out.println(eob.getId() + " Supporting Info Found: " + code.getSystem());
         }
+
+        int numExtensions = extensions.size();
+        Extension newExtension = new Extension();
+        newExtension.setUrl("http://ab2d.cms.gov");
+        eob.addExtension(newExtension);
+        assertEquals((numExtensions + 1), eob.getExtension().size());
     }
 }

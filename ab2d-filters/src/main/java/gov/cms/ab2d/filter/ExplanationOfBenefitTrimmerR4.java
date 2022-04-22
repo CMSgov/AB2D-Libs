@@ -170,7 +170,9 @@ public class ExplanationOfBenefitTrimmerR4 {
         copy.setLanguage(benefit.getLanguage());
         copy.setImplicitRules(benefit.getImplicitRules());
 
-        copy.setExtension(benefit.getExtensionsByUrl(NL_RECORD_IDENTIFICATION));
+        List<Extension> extensions = new ArrayList<>();
+        extensions.addAll(benefit.getExtensionsByUrl(NL_RECORD_IDENTIFICATION));
+        copy.setExtension(extensions);
 
         copy.setSupportingInfo(getSupportingInfo(benefit.getSupportingInfo(), RELATED_DIAGNOSIS_GROUP));
 
