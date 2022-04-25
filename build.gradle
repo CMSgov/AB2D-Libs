@@ -20,7 +20,7 @@ ext {
 
     fhirVersion='1.0'
     bfdVersion='1.2'
-    filtersVersion='1.4'
+    filtersVersion='1.5'
     commonsLangVersion='3.12.0'
 
     sourcesRepo = 'ab2d-maven-repo'
