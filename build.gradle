@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.28.1' apply false
+    id 'com.jfrog.artifactory' version '4.28.2' apply false
     id "org.sonarqube" version "3.3"
 }
 
@@ -27,11 +27,11 @@ ext {
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
 
-    lombokVersion = '1.18.22'
-    hapiVersion = '5.7.1'
-    springBootVersion='2.6.6'
-    newRelicVersion='7.7.0'
-    testContainerVersion='1.16.3'
+    lombokVersion = '1.18.24'
+    hapiVersion = '5.7.2'
+    springBootVersion='2.6.7'
+    newRelicVersion='7.5.0'
+    testContainerVersion='1.17.1'
     mockServerVersion='5.13.2'
 
     failedTests = []
