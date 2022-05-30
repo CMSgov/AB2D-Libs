@@ -28,7 +28,7 @@ ext {
     resolverRepo = 'ab2d-main'
 
     lombokVersion = '1.18.22'
-    hapiVersion = '5.7.1'
+    hapiVersion = '6.0.1'
     springBootVersion='2.6.6'
     newRelicVersion='7.5.0'
     testContainerVersion='1.16.3'
