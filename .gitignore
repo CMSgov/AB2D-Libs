@@ -78,8 +78,11 @@ fabric.properties
 ## Gradle gitignore
 
 gradle.properties
-
+.gradle
+gradle
 .gradlea
+gradlew
+gradlew.bat
 **/build/
 !ab2d-filters/src/**/build/
 
