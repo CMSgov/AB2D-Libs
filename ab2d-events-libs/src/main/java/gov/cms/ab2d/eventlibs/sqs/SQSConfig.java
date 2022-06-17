@@ -70,22 +70,6 @@ public class SQSConfig {
 
     @Primary
     @Bean
-    public AmazonSQS amazonSQS() {
-        log.info("Locakstack url" + url);
-        if (null != url) {
-            return createQueue(AmazonSQSClientBuilder
-                    .standard()
-                    .withEndpointConfiguration(getEndpointConfig(url))
-                    .withCredentials(credentials)
-                    .build());
-        }
-        return AmazonSQSClientBuilder
-                .standard()
-                .build();
-    }
-
-    @Primary
-    @Bean
     public SendSQSEvent amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper) throws JsonProcessingException {
         return new SendSQSEvent(amazonSQS, objectMapper);
     }
