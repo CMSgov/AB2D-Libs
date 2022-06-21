@@ -1,14 +1,16 @@
 package gov.cms.ab2d.eventlibs.events;
 
 
-import gov.cms.ab2d.eventlibs.utils.UtilMethods;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Log events that happen to files such as when they are open, closed or deleted
@@ -45,7 +47,7 @@ public class FileEvent extends LoggableEvent {
 
     private String generateChecksum(File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            return UtilMethods.hashIt(fileInputStream);
+            return hashIt(fileInputStream);
         } catch (IOException e) {
             return "";
         }
@@ -54,5 +56,9 @@ public class FileEvent extends LoggableEvent {
     @Override
     public String asMessage() {
         return String.format("(%s): %s %s", getJobId(), status, fileName);
+    }
+
+    public static String hashIt(InputStream stream) throws IOException {
+        return Hex.encodeHexString(DigestUtils.sha256(stream));
     }
 }

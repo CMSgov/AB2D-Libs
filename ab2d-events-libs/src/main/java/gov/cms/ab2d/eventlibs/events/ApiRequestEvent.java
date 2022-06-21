@@ -2,10 +2,11 @@ package gov.cms.ab2d.eventlibs.events;
 
 
 
-import gov.cms.ab2d.eventlibs.utils.UtilMethods;
 import java.time.OffsetDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Class to create and log an API request coming from a user
@@ -30,7 +31,7 @@ public class ApiRequestEvent extends LoggableEvent {
         this.url = url;
         this.ipAddress = ipAddress;
         if (token != null) {
-            this.tokenHash = UtilMethods.hashIt(token);
+            this.tokenHash = hashIt(token);
         }
         this.requestId = requestId;
     }
@@ -38,5 +39,12 @@ public class ApiRequestEvent extends LoggableEvent {
     @Override
     public String asMessage() {
         return String.format("request to %s from %s", url, ipAddress);
+    }
+
+    public static String hashIt(String val) {
+        if (val == null) {
+            return null;
+        }
+        return Hex.encodeHexString(DigestUtils.sha256(val));
     }
 }

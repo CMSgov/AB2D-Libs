@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventlibs.utils;
+package gov.cms.ab2d.eventlibs.config;
 
 
 import org.junit.jupiter.api.Test;

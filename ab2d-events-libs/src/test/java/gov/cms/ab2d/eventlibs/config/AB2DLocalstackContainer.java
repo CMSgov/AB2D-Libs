@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventlibs.utils;
+package gov.cms.ab2d.eventlibs.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.localstack.LocalStackContainer;
