@@ -30,7 +30,7 @@ ext {
 
     lombokVersion = '1.18.22'
     hapiVersion = '5.7.1'
-    springBootVersion='2.6.6'
+    springBootVersion='2.7.0'
     springCloudVersion='2021.0.3'
     newRelicVersion='7.5.0'
     testContainerVersion='1.16.3'
