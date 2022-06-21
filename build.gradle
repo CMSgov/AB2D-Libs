@@ -28,7 +28,7 @@ ext {
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
 
-    lombokVersion = '1.18.22'
+    lombokVersion = '1.18.24'
     hapiVersion = '5.7.1'
     springBootVersion='2.6.6'
     springCloudVersion='2021.0.3'
