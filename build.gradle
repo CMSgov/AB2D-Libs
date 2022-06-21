@@ -22,6 +22,7 @@ ext {
     bfdVersion='1.2'
     filtersVersion='1.5'
     commonsLangVersion='3.12.0'
+    eventLibsVersion='1.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -30,9 +31,16 @@ ext {
     lombokVersion = '1.18.22'
     hapiVersion = '5.7.1'
     springBootVersion='2.6.6'
+    springCloudVersion='2021.0.3'
     newRelicVersion='7.5.0'
     testContainerVersion='1.16.3'
     mockServerVersion='5.13.2'
+    jacksonVersion='2.13.3'
+    liquibaseVersion="4.11.0"
+    jacksonVersion = "2.13.3"
+    slackAPIVersion='1.22.3'
+
+
 
     failedTests = []
     skippedTests = []
@@ -130,9 +138,12 @@ subprojects {
         implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-dstu3:$hapiVersion"))
         implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-client:$hapiVersion"))
         implementation(platform("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:$hapiVersion"))
+        implementation(platform("org.liquibase:liquibase-core:$liquibaseVersion"))
         implementation(platform("com.newrelic.agent.java:newrelic-api:$newRelicVersion"))
         implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
         implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
+        implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
+        implementation(platform("org.testcontainers:localstack:$testContainerVersion"))
         implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
         implementation(platform("org.mock-server:mockserver-netty:$mockServerVersion"))
         implementation(platform("org.mock-server:mockserver-client-java:$mockServerVersion"))
@@ -140,6 +151,8 @@ subprojects {
         implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
         implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
         implementation(platform(annotationProcessor("org.projectlombok:lombok:$lombokVersion")))
+        implementation(platform(annotationProcessor("com.slack.api:slack-api-client:$slackAPIVersion")))
+
     }
 
     jar {
