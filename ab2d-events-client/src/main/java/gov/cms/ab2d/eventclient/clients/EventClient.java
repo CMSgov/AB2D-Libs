@@ -4,5 +4,5 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
 
 public interface EventClient {
-    void send(LoggableEvent requestEvent) throws JsonProcessingException;
+    void send(LoggableEvent requestEvent);
 }
