@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventclient.sqs;
+package gov.cms.ab2d.eventclient.clients;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -69,8 +69,8 @@ public class SQSConfig {
 
     @Primary
     @Bean
-    public SendSQSEvent amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper) throws JsonProcessingException {
-        return new SendSQSEvent(amazonSQS, objectMapper);
+    public SQSEventClient amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper) throws JsonProcessingException {
+        return new SQSEventClient(amazonSQS, objectMapper);
     }
 
     @Bean

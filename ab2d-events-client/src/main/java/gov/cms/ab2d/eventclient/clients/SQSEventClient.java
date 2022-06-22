@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventclient.sqs;
+package gov.cms.ab2d.eventclient.clients;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
@@ -9,18 +9,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 
-import static gov.cms.ab2d.eventclient.sqs.SQSConfig.EVENTS_QUEUE;
+import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 
 @Slf4j
 @Component
-public class SendSQSEvent {
+public class SQSEventClient implements EventClient {
     private AmazonSQS amazonSQS;
     private ObjectMapper mapper;
 
-    public SendSQSEvent(AmazonSQS amazonSQS, ObjectMapper mapper) {
+    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper) {
         this.amazonSQS = amazonSQS;
         this.mapper = mapper;
     }
+
+    @Override
     public void send(LoggableEvent requestEvent) throws JsonProcessingException {
         String queueUrl = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
 

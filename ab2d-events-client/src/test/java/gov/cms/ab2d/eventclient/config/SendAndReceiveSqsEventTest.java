@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.cms.ab2d.eventclient.events.ApiRequestEvent;
 import gov.cms.ab2d.eventclient.events.ApiResponseEvent;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
-import gov.cms.ab2d.eventclient.sqs.SendSQSEvent;
+import gov.cms.ab2d.eventclient.clients.SQSEventClient;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
-import static gov.cms.ab2d.eventclient.sqs.SQSConfig.EVENTS_QUEUE;
+import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
@@ -38,7 +38,7 @@ public class SendAndReceiveSqsEventTest {
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();
 
     @Autowired
-    private SendSQSEvent sendSQSEvent;
+    private SQSEventClient SQSEventClient;
 
     @Autowired
     private AmazonSQS amazonSQS;
@@ -57,14 +57,14 @@ public class SendAndReceiveSqsEventTest {
     @Test
     void testSendAndReceiveMessages() throws JsonProcessingException, InterruptedException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        sendSQSEvent = new SendSQSEvent(amazonSQSSpy, mapper);
+        SQSEventClient = new SQSEventClient(amazonSQSSpy, mapper);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
         ApiResponseEvent sentApiResponseEvent = new ApiResponseEvent("organization", "jobId", HttpStatus.I_AM_A_TEAPOT, "ipAddress", "token", "requestId");
 
-        sendSQSEvent.send(sentApiRequestEvent);
-        sendSQSEvent.send(sentApiResponseEvent);
+        SQSEventClient.send(sentApiRequestEvent);
+        SQSEventClient.send(sentApiResponseEvent);
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
