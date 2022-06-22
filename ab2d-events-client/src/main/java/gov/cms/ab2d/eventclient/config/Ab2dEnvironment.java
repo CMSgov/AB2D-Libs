@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventlibs.config;
+package gov.cms.ab2d.eventclient.config;
 
 import java.util.List;
 import java.util.stream.Stream;

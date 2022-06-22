@@ -1,4 +1,4 @@
-package gov.cms.ab2d.eventlibs.events;
+package gov.cms.ab2d.eventclient.events;
 
 /**
  * All slack events that AB2D reports. These events may be reported to

@@ -1,14 +1,14 @@
-package gov.cms.ab2d.eventlibs.config;
+package gov.cms.ab2d.eventclient.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.cms.ab2d.eventlibs.events.ApiRequestEvent;
-import gov.cms.ab2d.eventlibs.events.ApiResponseEvent;
-import gov.cms.ab2d.eventlibs.events.LoggableEvent;
-import gov.cms.ab2d.eventlibs.sqs.SendSQSEvent;
+import gov.cms.ab2d.eventclient.events.ApiRequestEvent;
+import gov.cms.ab2d.eventclient.events.ApiResponseEvent;
+import gov.cms.ab2d.eventclient.events.LoggableEvent;
+import gov.cms.ab2d.eventclient.sqs.SendSQSEvent;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
-import static gov.cms.ab2d.eventlibs.sqs.SQSConfig.EVENTS_QUEUE;
+import static gov.cms.ab2d.eventclient.sqs.SQSConfig.EVENTS_QUEUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;

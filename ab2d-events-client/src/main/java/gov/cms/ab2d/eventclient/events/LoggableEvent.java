@@ -1,6 +1,6 @@
-package gov.cms.ab2d.eventlibs.events;
+package gov.cms.ab2d.eventclient.events;
 
-import gov.cms.ab2d.eventlibs.config.Ab2dEnvironment;
+import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.time.OffsetDateTime;
 import lombok.Data;
 
