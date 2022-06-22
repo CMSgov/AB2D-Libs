@@ -1,6 +1,7 @@
 package gov.cms.ab2d.eventclient.clients;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.InvalidMessageContentsException;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,12 +24,22 @@ public class SQSEventClient implements EventClient {
     }
 
     @Override
-    public void send(LoggableEvent requestEvent) throws JsonProcessingException {
+    public void send(LoggableEvent requestEvent) {
         String queueUrl = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
 
-        SendMessageRequest sendMessageRequest = new SendMessageRequest()
-                .withQueueUrl(queueUrl)
-                .withMessageBody(mapper.writeValueAsString(requestEvent));
-        amazonSQS.sendMessage(sendMessageRequest);
+        SendMessageRequest sendMessageRequest = null;
+        try {
+            sendMessageRequest = new SendMessageRequest()
+                    .withQueueUrl(queueUrl)
+                    .withMessageBody(mapper.writeValueAsString(requestEvent));
+        } catch (JsonProcessingException e) {
+            log.info("error mapping event");
+        }
+        try {
+            amazonSQS.sendMessage(sendMessageRequest);
+        }
+        catch(UnsupportedOperationException | InvalidMessageContentsException e){
+            log.info(e.getMessage());
+        }
     }
 }
