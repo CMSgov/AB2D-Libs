@@ -27,14 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 
-@SpringBootTest
+@SpringBootTest(properties = { "spring.liquibase.enabled=false", "feature.sqs.enabled=false"})
 @Testcontainers
 public class SendSqsFeatureFlagTest {
-
-    static {
-        System.setProperty("spring.liquibase.enabled", "false");
-        System.setProperty("feature.sqs.enabled", "false");
-    }
 
     @Container
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();

@@ -52,6 +52,7 @@ public class SQSConfig {
         return new QueueMessagingTemplate(amazonSQSAsync);
     }
 
+    @Primary
     @Bean
     public AmazonSQSAsync amazonSQSAsync() {
         log.info("Locakstack url " + url);
@@ -67,9 +68,8 @@ public class SQSConfig {
                 .build();
     }
 
-//    @Primary
     @Bean
-    public SQSEventClient amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper, @Value("${feature.sqs.enabled:false}") boolean enabled) throws JsonProcessingException {
+    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS, ObjectMapper objectMapper, @Value("${feature.sqs.enabled:false}") boolean enabled) throws JsonProcessingException {
         return new SQSEventClient(amazonSQS, objectMapper, enabled);
     }
 
