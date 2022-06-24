@@ -67,10 +67,10 @@ public class SQSConfig {
                 .build();
     }
 
-    @Primary
+//    @Primary
     @Bean
-    public SQSEventClient amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper) throws JsonProcessingException {
-        return new SQSEventClient(amazonSQS, objectMapper);
+    public SQSEventClient amazonSQS(AmazonSQS amazonSQS, ObjectMapper objectMapper, @Value("${feature.sqs.enabled:false}") boolean enabled) throws JsonProcessingException {
+        return new SQSEventClient(amazonSQS, objectMapper, enabled);
     }
 
     @Bean

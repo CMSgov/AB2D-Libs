@@ -13,33 +13,36 @@ import org.springframework.stereotype.Component;
 import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 
 @Slf4j
-@Component
 public class SQSEventClient implements EventClient {
     private AmazonSQS amazonSQS;
     private ObjectMapper mapper;
 
-    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper) {
+    private boolean enabled;
+
+    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, boolean enabled) {
         this.amazonSQS = amazonSQS;
         this.mapper = mapper;
+        this.enabled = enabled;
     }
 
     @Override
     public void send(LoggableEvent requestEvent) {
-        String queueUrl = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
+        if (enabled) {
+            String queueUrl = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
 
-        SendMessageRequest sendMessageRequest = null;
-        try {
-            sendMessageRequest = new SendMessageRequest()
-                    .withQueueUrl(queueUrl)
-                    .withMessageBody(mapper.writeValueAsString(requestEvent));
-        } catch (JsonProcessingException e) {
-            log.info("error mapping event");
-        }
-        try {
-            amazonSQS.sendMessage(sendMessageRequest);
-        }
-        catch(UnsupportedOperationException | InvalidMessageContentsException e){
-            log.info(e.getMessage());
+            SendMessageRequest sendMessageRequest = null;
+            try {
+                sendMessageRequest = new SendMessageRequest()
+                        .withQueueUrl(queueUrl)
+                        .withMessageBody(mapper.writeValueAsString(requestEvent));
+            } catch (JsonProcessingException e) {
+                log.info("error mapping event");
+            }
+            try {
+                amazonSQS.sendMessage(sendMessageRequest);
+            } catch (UnsupportedOperationException | InvalidMessageContentsException e) {
+                log.info(e.getMessage());
+            }
         }
     }
 }
