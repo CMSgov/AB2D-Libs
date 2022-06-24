@@ -33,8 +33,6 @@ public class SendSqsEventTest {
     @Container
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();
 
-    private SQSEventClient SQSEventClient;
-
     @Autowired
     private AmazonSQS amazonSQS;
 
@@ -52,14 +50,14 @@ public class SendSqsEventTest {
     @Test
     void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
         ApiResponseEvent sentApiResponseEvent = new ApiResponseEvent("organization", "jobId", HttpStatus.I_AM_A_TEAPOT, "ipAddress", "token", "requestId");
 
-        SQSEventClient.send(sentApiRequestEvent);
-        SQSEventClient.send(sentApiResponseEvent);
+        sqsEventClient.send(sentApiRequestEvent);
+        sqsEventClient.send(sentApiResponseEvent);
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
