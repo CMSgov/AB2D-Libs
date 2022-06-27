@@ -1,4 +1,4 @@
-# AB2D LIBS
+# Events Client
 
 This provides all the tools to send Events to the Event Service.
 
