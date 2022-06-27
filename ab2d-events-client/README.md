@@ -1,6 +1,6 @@
 # Events Client
 
-This library allow other services can send Events to the Event Service.
+This library allow other services to send Events into the Event Service.
 
 #Apply Client
 
