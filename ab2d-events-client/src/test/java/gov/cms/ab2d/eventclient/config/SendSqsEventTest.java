@@ -26,19 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 
-@SpringBootTest
+@SpringBootTest(properties = { "spring.liquibase.enabled=false"})
 @Testcontainers
-public class SendAndReceiveSqsEventTest {
-
-    static {
-        System.setProperty("spring.liquibase.enabled", "false");
-    }
+public class SendSqsEventTest {
 
     @Container
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();
-
-    @Autowired
-    private SQSEventClient SQSEventClient;
 
     @Autowired
     private AmazonSQS amazonSQS;
@@ -55,16 +48,16 @@ public class SendAndReceiveSqsEventTest {
     }
 
     @Test
-    void testSendAndReceiveMessages() throws JsonProcessingException, InterruptedException {
+    void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient = new SQSEventClient(amazonSQSSpy, mapper);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
         ApiResponseEvent sentApiResponseEvent = new ApiResponseEvent("organization", "jobId", HttpStatus.I_AM_A_TEAPOT, "ipAddress", "token", "requestId");
 
-        SQSEventClient.send(sentApiRequestEvent);
-        SQSEventClient.send(sentApiResponseEvent);
+        sqsEventClient.send(sentApiRequestEvent);
+        sqsEventClient.send(sentApiResponseEvent);
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
