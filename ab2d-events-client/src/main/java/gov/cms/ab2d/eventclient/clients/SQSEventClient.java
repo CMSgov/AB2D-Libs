@@ -14,10 +14,10 @@ import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 
 @Slf4j
 public class SQSEventClient implements EventClient {
-    private AmazonSQS amazonSQS;
-    private ObjectMapper mapper;
+    private final AmazonSQS amazonSQS;
+    private final ObjectMapper mapper;
 
-    private boolean enabled;
+    private final boolean enabled;
 
     public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, boolean enabled) {
         this.amazonSQS = amazonSQS;
