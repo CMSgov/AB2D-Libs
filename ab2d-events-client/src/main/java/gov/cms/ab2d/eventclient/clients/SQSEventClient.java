@@ -32,7 +32,6 @@ public class SQSEventClient implements EventClient {
 
             GeneralSQSMessage message = new GeneralSQSMessage(requestEvent);
             try {
-                String test = mapper.writeValueAsString(message);
                 SendMessageRequest sendMessageRequest = new SendMessageRequest()
                         .withQueueUrl(queueUrl)
                         .withMessageBody(mapper.writeValueAsString(message));
