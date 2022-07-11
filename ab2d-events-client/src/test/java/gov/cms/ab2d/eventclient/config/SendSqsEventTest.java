@@ -84,13 +84,13 @@ public class SendSqsEventTest {
 
         when(amazonSQSMock.getQueueUrl(anyString())).thenReturn(queueURL);
         when(queueURL.getQueueUrl()).thenReturn("localhost:4321");
-        when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("I am a failure"));
+        when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true);
 
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
 
         sqsEventClient.sendLogs(sentApiRequestEvent);
-        Assertions.assertTrue(output.getOut().contains("I am a failure"));
+        Assertions.assertTrue(output.getOut().contains("foobar"));
     }
 
     @Test
