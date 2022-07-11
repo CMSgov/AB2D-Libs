@@ -56,7 +56,7 @@ public class SendSqsEventTest {
     }
 
     @Test
-    void testSendMessages() {
+    void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
 
