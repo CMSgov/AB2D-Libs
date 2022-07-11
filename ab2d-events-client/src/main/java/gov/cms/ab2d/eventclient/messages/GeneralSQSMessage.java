@@ -6,7 +6,14 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class GeneralMessage extends SQSMessages {
+public class GeneralSQSMessage extends SQSMessages {
 
     LoggableEvent loggableEvent;
+
+    public GeneralSQSMessage() { }
+
+    public GeneralSQSMessage(LoggableEvent loggableEvent) {
+        super();
+        this.loggableEvent = loggableEvent;
+    }
 }

@@ -23,6 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 
@@ -43,8 +44,8 @@ public class SendSqsEventTest {
     @Test
     void testQueueUrl() {
         String url = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
-        Assertions.assertTrue(url.contains("localhost:"));
-        Assertions.assertTrue(url.contains(EVENTS_QUEUE));
+        assertTrue(url.contains("localhost:"));
+        assertTrue(url.contains(EVENTS_QUEUE));
     }
 
     @Test
@@ -56,8 +57,8 @@ public class SendSqsEventTest {
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
         ApiResponseEvent sentApiResponseEvent = new ApiResponseEvent("organization", "jobId", HttpStatus.I_AM_A_TEAPOT, "ipAddress", "token", "requestId");
 
-        sqsEventClient.send(sentApiRequestEvent);
-        sqsEventClient.send(sentApiResponseEvent);
+        sqsEventClient.sendLogs(sentApiRequestEvent);
+        sqsEventClient.sendLogs(sentApiResponseEvent);
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
@@ -65,7 +66,7 @@ public class SendSqsEventTest {
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
 
 
-        assertEquals(mapper.writeValueAsString(sentApiRequestEvent), message1.get(0).getBody());
-        assertEquals(mapper.writeValueAsString(sentApiResponseEvent), message2.get(0).getBody());
+        assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
+        assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
     }
 }
