@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class GeneralSQSMessage extends SQSMessages {
 
-    LoggableEvent loggableEvent;
+    private LoggableEvent loggableEvent;
 
     public GeneralSQSMessage() { }
 
