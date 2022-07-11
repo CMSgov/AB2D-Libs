@@ -9,7 +9,6 @@ import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
 import lombok.extern.slf4j.Slf4j;
 
-
 import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 
 @Slf4j
