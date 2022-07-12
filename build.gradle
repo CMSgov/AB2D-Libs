@@ -24,7 +24,7 @@ ext {
     aggregatorVersion='1.2'
     filtersVersion='1.6'
     eventLibsVersion='1.1'
-    eventClientVersion='1.1'
+    eventClientVersion='1.2'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -39,7 +39,7 @@ ext {
     testContainerVersion='1.17.2'
     mockServerVersion='5.13.2'
     jacksonVersion='2.13.3'
-    liquibaseVersion="4.12.0"
+    liquibaseVersion="4.13.0"
     jacksonVersion = "2.13.3"
     slackAPIVersion='1.23.0'
 
