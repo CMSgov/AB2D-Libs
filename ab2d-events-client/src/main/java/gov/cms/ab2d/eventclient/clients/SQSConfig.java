@@ -68,8 +68,8 @@ public class SQSConfig {
     }
 
     @Bean
-    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS, ObjectMapper objectMapper, @Value("${feature.sqs.enabled:false}") boolean enabled) {
-        return new SQSEventClient(amazonSQS, objectMapper, enabled);
+    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS, @Value("${feature.sqs.enabled:false}") boolean enabled) {
+        return new SQSEventClient(amazonSQS, objectMapper(), enabled);
     }
 
     @Bean
@@ -79,8 +79,10 @@ public class SQSConfig {
         return factory;
     }
 
-    @Bean
-    protected ObjectMapper objectMapper() {
+    /*
+        This is a static method to avoid breaking existing projects mapping.
+     */
+    public static ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -90,9 +92,9 @@ public class SQSConfig {
     }
 
     @Bean
-    protected MessageConverter messageConverter(ObjectMapper objectMapper) {
+    protected MessageConverter messageConverter() {
         MappingJackson2MessageConverter jacksonMessageConverter = new MappingJackson2MessageConverter();
-        jacksonMessageConverter.setObjectMapper(objectMapper);
+        jacksonMessageConverter.setObjectMapper(objectMapper());
         jacksonMessageConverter.setSerializedPayloadClass(String.class);
         jacksonMessageConverter.setStrictContentTypeMatch(false);
         return jacksonMessageConverter;
