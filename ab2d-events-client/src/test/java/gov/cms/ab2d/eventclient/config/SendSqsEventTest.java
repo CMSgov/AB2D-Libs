@@ -6,6 +6,7 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.ab2d.eventclient.clients.SQSConfig;
 import gov.cms.ab2d.eventclient.events.ApiRequestEvent;
 import gov.cms.ab2d.eventclient.events.ApiResponseEvent;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
@@ -44,8 +45,7 @@ public class SendSqsEventTest {
     @Autowired
     private AmazonSQS amazonSQS;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper = SQSConfig.objectMapper();
 
 
     @Test
@@ -75,6 +75,7 @@ public class SendSqsEventTest {
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
+
     }
 
     @Test
