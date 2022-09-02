@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.28.3' apply false
+    id 'com.jfrog.artifactory' version '4.29.0' apply false
     id "org.sonarqube" version "3.4.0.2513"
 }
 
@@ -19,11 +19,11 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.1'
-    bfdVersion='1.3'
-    aggregatorVersion='1.2'
-    filtersVersion='1.6'
-    eventClientVersion='1.3'
+    fhirVersion='1.1.1'
+    bfdVersion='1.3.1'
+    aggregatorVersion='1.2.1'
+    filtersVersion='1.6.1'
+    eventClientVersion='1.3.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -31,16 +31,16 @@ ext {
 
     commonsLangVersion='3.12.0'
     lombokVersion = '1.18.24'
-    hapiVersion = '6.0.2'
-    springBootVersion='2.7.1'
+    hapiVersion = '6.1.0'
+    springBootVersion='2.7.3'
     springCloudVersion='2021.0.3'
-    newRelicVersion='7.5.0'
-    testContainerVersion='1.17.2'
-    mockServerVersion='5.13.2'
+    newRelicVersion='7.7.0'
+    testContainerVersion='1.17.3'
+    mockServerVersion='5.14.0'
     jacksonVersion='2.13.3'
-    liquibaseVersion="4.12.0"
+    liquibaseVersion="4.15.0"
     jacksonVersion = "2.13.3"
-    slackAPIVersion='1.23.0'
+    slackAPIVersion='1.25.0'
 
     failedTests = []
     skippedTests = []
