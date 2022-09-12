@@ -53,7 +53,7 @@ public class TestContext implements Context {
     }
 
     public LambdaLogger getLogger() {
-        return new TestLogger();
+        return (LambdaLogger) log;
     }
 
 }
