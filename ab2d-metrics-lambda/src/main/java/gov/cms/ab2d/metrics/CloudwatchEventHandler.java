@@ -5,7 +5,6 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.ScheduledEvent;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
@@ -20,18 +19,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.events.MetricsEvent;
 import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
+import software.amazon.awssdk.services.cloudwatch.model.StateValue;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.util.Objects;
-import java.util.Optional;
+import java.time.ZoneOffset;
+
 
 // Handler value: example.HandlerCWLogs
 @Slf4j
-public class CloudwatchEventHandler implements RequestHandler<ScheduledEvent, String> {
+public class CloudwatchEventHandler implements RequestHandler<MetricAlarm, String> {
     private static final AmazonSQS AMAZON_SQS;
 
     static {
@@ -56,25 +55,20 @@ public class CloudwatchEventHandler implements RequestHandler<ScheduledEvent, St
             .activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY);
 
     @Override
-    public String handleRequest(ScheduledEvent event, Context context) {
+    public String handleRequest(MetricAlarm event, Context context) {
 
-        String service = Optional.ofNullable(event.getDetail())
-                .filter(Objects::nonNull)
-                .map(detail -> detail.get("service"))
-                .stream()
-                .findFirst()
-                .map(String::valueOf)
-                .orElseThrow(() -> new RuntimeException("Invalid service"));
+        String service = event.alarmName() + event.namespace();
+
 
         try {
-            OffsetDateTime time = event.getTime() != null ? OffsetDateTime.ofInstant(Instant.ofEpochMilli(event.getTime()
-                    .getMillis()), ZoneId.of(event.getTime()
-                    .getZone()
-                    .getID())) : OffsetDateTime.now();
+            OffsetDateTime time = event.stateUpdatedTimestamp() != null ? event.stateUpdatedTimestamp()
+                    .atOffset(ZoneOffset.of("America/New_York")) : OffsetDateTime.now();
             GetQueueUrlResult queue = AMAZON_SQS.getQueueUrl("ab2d-events");
             AMAZON_SQS.sendMessage(queue.getQueueUrl(), objectMapper.writeValueAsString(new GeneralSQSMessage(MetricsEvent.builder()
                     .service(service)
                     .timeOfEvent(time)
+                    .stateType(String.valueOf(!event.stateValue()
+                            .equals(StateValue.OK) ? StateValue.ALARM : StateValue.OK))
                     .build())
             ));
         } catch (Exception e) {

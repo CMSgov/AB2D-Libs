@@ -1,11 +1,10 @@
 package gov.cms.ab2d.metrics;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.events.ScheduledEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
+import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
+import software.amazon.awssdk.services.cloudwatch.model.StateValue;
 
 @Slf4j
 class InvokeTest {
@@ -13,8 +12,11 @@ class InvokeTest {
     @Test
     void invokeTest() {
         log.info("Invoke TEST");
-        ScheduledEvent event = new ScheduledEvent();
-        event.setDetail(Map.of("service", "api_efs"));
+        MetricAlarm event = MetricAlarm.builder()
+                .alarmName("ab2d-east-impl-healthy-host")
+                .namespace("AWS/ApplicationELB")
+                .stateValue(StateValue.ALARM)
+                .build();
         Context context = new TestContext();
         CloudwatchEventHandler handler = new CloudwatchEventHandler();
         handler.handleRequest(event, context);
