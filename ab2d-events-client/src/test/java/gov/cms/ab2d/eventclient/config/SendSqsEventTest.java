@@ -75,7 +75,6 @@ public class SendSqsEventTest {
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
-
     }
 
     @Test
