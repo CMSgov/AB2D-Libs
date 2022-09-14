@@ -75,9 +75,6 @@ public class SQSEventClient implements EventClient {
             TraceAndAlertSQSMessage sqsMessage = new TraceAndAlertSQSMessage(event, environments);
             sendMessage(sqsMessage);
         }
-//        sendLogs(event);
-
-//        slackLogger.logAlert(event, environments);
     }
 
     /**
