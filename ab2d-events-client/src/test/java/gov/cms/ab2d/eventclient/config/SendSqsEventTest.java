@@ -6,11 +6,14 @@ import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.cms.ab2d.eventclient.clients.EventClient;
 import gov.cms.ab2d.eventclient.clients.SQSConfig;
 import gov.cms.ab2d.eventclient.events.ApiRequestEvent;
 import gov.cms.ab2d.eventclient.events.ApiResponseEvent;
+import gov.cms.ab2d.eventclient.events.ErrorEvent;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import gov.cms.ab2d.eventclient.clients.SQSEventClient;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -78,6 +81,48 @@ public class SendSqsEventTest {
     }
 
     @Test
+    void logWithSQS() {
+        AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
+
+        ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
+                "File Deleted");
+
+        ArrayList<Ab2dEnvironment> enviroments = new ArrayList<>();
+        enviroments.add(Ab2dEnvironment.LOCAL);
+        sqsEventClient.sendLogs(event);
+        sqsEventClient.trace(event.getDescription(), enviroments);
+        sqsEventClient.alert(event.getDescription(), enviroments);
+        sqsEventClient.log(EventClient.LogType.SQL, event);
+        sqsEventClient.log(EventClient.LogType.KINESIS, event);
+        sqsEventClient.logAndAlert(event, enviroments);
+        sqsEventClient.logAndTrace(event, enviroments);
+
+        Mockito.verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
+
+        List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("GeneralSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("TraceSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("AlertSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("SlackSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("KinesisSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("TraceAndAlertSQSMessage"));
+
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        assertTrue(message.get(0).getBody().contains("LogAndTraceSQSMessage"));
+    }
+
+    @Test
     void testFailedMapping(CapturedOutput output) {
         AmazonSQS amazonSQSMock = Mockito.mock(AmazonSQS.class);
         GetQueueUrlResult queueURL = Mockito.mock(GetQueueUrlResult.class);
@@ -105,4 +150,5 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, never()).sendMessage(any(SendMessageRequest.class));
     }
+
 }
