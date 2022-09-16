@@ -17,6 +17,10 @@ configurations {
         configuration.exclude   group: 'commons-codec'
         configuration.exclude   group: 'com.squareup.okio'
         configuration.exclude   group: 'org.springframework.cloud'
+        configuration.exclude   group: 'org.mock-server'
+        configuration.exclude   group: 'software.amazon.awssdk:netty-nio-client'
+        configuration.exclude   group: 'io.netty'
+        configuration.exclude   group: 'org.testcontainers:testcontainers'
     }
 }
 
@@ -31,14 +35,11 @@ repositories {
 
 dependencies {
 
+    implementation project(":ab2d-events-client")
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
     implementation 'software.amazon.awssdk:cloudwatch:2.17.271'
-    implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.296'
-    implementation project(":ab2d-events-client")
-    implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
-    implementation 'org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0'
+    implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.300'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.13.4'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
@@ -47,6 +48,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
     testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
 }
 
 test {

@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.CognitoIdentity;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import lombok.extern.slf4j.Slf4j;
+import org.mockito.Mockito;
 
 @Slf4j
 public class TestContext implements Context {
@@ -53,7 +54,7 @@ public class TestContext implements Context {
     }
 
     public LambdaLogger getLogger() {
-        return (LambdaLogger) log;
+        return Mockito.mock(LambdaLogger.class);
     }
 
 }

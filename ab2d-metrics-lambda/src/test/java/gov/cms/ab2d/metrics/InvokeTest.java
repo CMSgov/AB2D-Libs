@@ -1,25 +1,107 @@
 package gov.cms.ab2d.metrics;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.events.SNSEvent;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.GetQueueUrlResult;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
-import software.amazon.awssdk.services.cloudwatch.model.StateValue;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.mockito.Mockito;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @Slf4j
 class InvokeTest {
 
+    @BeforeEach
+    public void before() {
+        setEnv("IS_LOCALSTACK", "");
+    }
+
     @Test
-    void invokeTest() {
-        log.info("Invoke TEST");
-        MetricAlarm event = MetricAlarm.builder()
-                .alarmName("ab2d-east-impl-healthy-host")
-                .namespace("AWS/ApplicationELB")
-                .stateValue(StateValue.ALARM)
+    void invokeTest() throws Exception {
+        invoke("test", "2022-09-14T19:03:51.523+0100");
+    }
+
+    @Test
+    void invokeTestFail() throws Exception {
+        invoke(null, null);
+    }
+
+
+    private void invoke(String state, String time) throws IllegalAccessException {
+        MetricAlarm metricAlarm = MetricAlarm.builder()
+                .AlarmName("test")
+                .StateChangeTime(time)
+                .NewStateValue(state)
+                .Trigger(Trigger.builder()
+                        .Namespace("test")
+                        .build())
                 .build();
+        log.info("Invoke TEST");
+        SNSEvent event = new SNSEvent();
+        SNSEvent.SNSRecord record = new SNSEvent.SNSRecord();
+        SNSEvent.SNS sns = new SNSEvent.SNS();
+        sns.setMessage(new Gson().toJson(metricAlarm));
+        record.setSns(sns);
+        event.setRecords(List.of(record));
         Context context = new TestContext();
+        Field sqs = ReflectionUtils.findFields(CloudwatchEventHandler.class, (f) -> f.getName()
+                        .equals("AMAZON_SQS"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Field not found"));
         CloudwatchEventHandler handler = new CloudwatchEventHandler();
-        handler.handleRequest(event, context);
+        sqs.setAccessible(true);
+        AmazonSQSClient mockedSQS = Mockito.mock(AmazonSQSClient.class);
+        sqs.set(handler, mockedSQS);
+        Mockito.when(mockedSQS.getQueueUrl(anyString()))
+                .thenReturn(new GetQueueUrlResult());
+        String result = handler.handleRequest(event, context);
+        assertEquals(result, "OK");
+    }
+
+    @Test
+    void setupTest() throws NoSuchMethodException {
+        CloudwatchEventHandler handler = new CloudwatchEventHandler();
+        Method setup = ReflectionUtils.makeAccessible(CloudwatchEventHandler.class.getDeclaredMethod("setup"));
+        assertDoesNotThrow(() -> {
+            ReflectionUtils.invokeMethod(setup, handler);
+        });
+    }
+
+    @Test
+    void setupTestLocalstack() throws NoSuchMethodException {
+        setEnv("IS_LOCALSTACK", "true");
+        assertEquals(System.getenv("IS_LOCALSTACK"), "true");
+        CloudwatchEventHandler handler = new CloudwatchEventHandler();
+        Method setup = ReflectionUtils.makeAccessible(CloudwatchEventHandler.class.getDeclaredMethod("setup"));
+        assertDoesNotThrow(() -> {
+            ReflectionUtils.invokeMethod(setup, handler);
+        });
+    }
+
+    public static void setEnv(String key, String value) {
+        try {
+            Map<String, String> env = System.getenv();
+            Class<?> cl = env.getClass();
+            Field field = cl.getDeclaredField("m");
+            field.setAccessible(true);
+            Map<String, String> writableEnv = (Map<String, String>) field.get(env);
+            writableEnv.put(key, value);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to set environment variable", e);
+        }
     }
 
 }

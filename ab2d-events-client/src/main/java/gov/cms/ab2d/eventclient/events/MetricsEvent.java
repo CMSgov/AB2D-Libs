@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -26,34 +27,31 @@ public class MetricsEvent extends LoggableEvent {
         if (!super.equals(o)) return false;
         MetricsEvent that = (MetricsEvent) o;
         return service.equals(that.service)
-                && timeOfEvent.equals(that.timeOfEvent)
                 && stateType.equals(that.stateType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), service, timeOfEvent, stateType);
+        return Objects.hash(super.hashCode(), service, stateType);
     }
 
     @Builder
     public MetricsEvent(@NotNull String service, @NotNull OffsetDateTime timeOfEvent, @NotNull String stateType) {
         super();
+        super.setTimeOfEvent(timeOfEvent);
         this.service = service;
-        this.timeOfEvent = timeOfEvent;
         this.stateType = stateType;
     }
 
     @Override
     public String asMessage() {
-        return String.format("(%s) %s %s", service, timeOfEvent, stateType);
+        return String.format("(%s) %s", service, stateType);
     }
 
     @NonNull
     private String service;
 
     @NonNull
-    private OffsetDateTime timeOfEvent;
-
-    @NonNull
     private String stateType;
+
 }
