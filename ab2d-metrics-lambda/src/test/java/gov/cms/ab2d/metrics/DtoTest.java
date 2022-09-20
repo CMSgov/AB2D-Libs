@@ -22,26 +22,26 @@ public class DtoTest {
     @Test
     void MetricAlarmTest() {
         MetricAlarm metricAlarm = MetricAlarm.builder()
-                .AlarmName("")
-                .AlarmDescription("")
-                .AWSAccountId("")
-                .AlarmConfigurationUpdatedTimestamp("")
-                .NewStateValue("")
-                .NewStateReason("")
-                .StateChangeTime("")
-                .Region("")
-                .AlarmArn("")
-                .OldStateValue("")
-                .AlarmActions(new ArrayList<>())
-                .OKActions(new ArrayList<>())
-                .InsufficientDataActions(new ArrayList<>())
-                .Trigger(Trigger.builder()
+                .alarmName("")
+                .alarmDescription("")
+                .awsAccountId("")
+                .alarmConfigurationUpdatedTimestamp("")
+                .newStateValue("")
+                .newStateReason("")
+                .stateChangeTime("")
+                .region("")
+                .alarmArn("")
+                .oldStateValue("")
+                .alarmActions(new ArrayList<>())
+                .okActions(new ArrayList<>())
+                .insufficientDataActions(new ArrayList<>())
+                .trigger(Trigger.builder()
                         .build())
                 .build();
 
         metricAlarm.setAlarmName("");
         metricAlarm.setAlarmDescription("");
-        metricAlarm.setAWSAccountId("");
+        metricAlarm.setAwsAccountId("");
         metricAlarm.setAlarmConfigurationUpdatedTimestamp("");
         metricAlarm.setNewStateValue("");
         metricAlarm.setNewStateReason("");
@@ -50,13 +50,13 @@ public class DtoTest {
         metricAlarm.setAlarmArn("");
         metricAlarm.setOldStateValue("");
         metricAlarm.setAlarmActions(new ArrayList<>());
-        metricAlarm.setOKActions(new ArrayList<>());
+        metricAlarm.setOkActions(new ArrayList<>());
         metricAlarm.setInsufficientDataActions(new ArrayList<>());
         metricAlarm.setTrigger(new Trigger());
 
         assertEquals("", metricAlarm.getAlarmName());
         assertEquals("", metricAlarm.getAlarmDescription());
-        assertEquals("", metricAlarm.getAWSAccountId());
+        assertEquals("", metricAlarm.getAwsAccountId());
         assertEquals("", metricAlarm.getAlarmConfigurationUpdatedTimestamp());
         assertEquals("", metricAlarm.getNewStateValue());
         assertEquals("", metricAlarm.getNewStateReason());
@@ -65,7 +65,7 @@ public class DtoTest {
         assertEquals("", metricAlarm.getAlarmArn());
         assertEquals("", metricAlarm.getOldStateValue());
         assertEquals(new ArrayList<>(), metricAlarm.getAlarmActions());
-        assertEquals(new ArrayList<>(), metricAlarm.getOKActions());
+        assertEquals(new ArrayList<>(), metricAlarm.getOkActions());
         assertEquals(new ArrayList<>(), metricAlarm.getInsufficientDataActions());
         assertEquals(new Trigger(), metricAlarm.getTrigger());
     }
@@ -74,19 +74,19 @@ public class DtoTest {
     void TriggerTest() {
         Dimensions[] dimensions = new Dimensions[]{};
         Trigger trigger = Trigger.builder()
-                .Dimensions(dimensions)
-                .MetricName("")
-                .Statistic("")
-                .StatisticType("")
-                .Unit("")
-                .Period(1)
-                .EvaluationPeriods("")
-                .ComparisonOperator("")
-                .Threshold(1)
-                .TreatMissingData("")
-                .EvaluateLowSampleCountPercentile("")
-                .Namespace("")
-                .ComparisonOperator("")
+                .dimensions(dimensions)
+                .metricName("")
+                .statistic("")
+                .statisticType("")
+                .unit("")
+                .period(1)
+                .evaluationPeriods("")
+                .comparisonOperator("")
+                .threshold(1)
+                .treatMissingData("")
+                .evaluateLowSampleCountPercentile("")
+                .namespace("")
+                .comparisonOperator("")
                 .build();
 
         trigger.setDimensions(dimensions);

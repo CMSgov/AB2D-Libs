@@ -4,7 +4,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.SNSEvent;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +27,11 @@ import static org.mockito.ArgumentMatchers.anyString;
 @Slf4j
 class InvokeTest {
 
+    ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .registerModule(new JodaModule())
+            .registerModule(new JavaTimeModule());
+
     @BeforeEach
     public void before() {
         setEnv("IS_LOCALSTACK", "");
@@ -39,20 +48,20 @@ class InvokeTest {
     }
 
 
-    private void invoke(String state, String time) throws IllegalAccessException {
+    private void invoke(String state, String time) throws IllegalAccessException, JsonProcessingException {
         MetricAlarm metricAlarm = MetricAlarm.builder()
-                .AlarmName("test")
-                .StateChangeTime(time)
-                .NewStateValue(state)
-                .Trigger(Trigger.builder()
-                        .Namespace("test")
+                .alarmName("test")
+                .stateChangeTime(time)
+                .newStateValue(state)
+                .trigger(Trigger.builder()
+                        .namespace("test")
                         .build())
                 .build();
         log.info("Invoke TEST");
         SNSEvent event = new SNSEvent();
         SNSEvent.SNSRecord record = new SNSEvent.SNSRecord();
         SNSEvent.SNS sns = new SNSEvent.SNS();
-        sns.setMessage(new Gson().toJson(metricAlarm));
+        sns.setMessage(objectMapper.writeValueAsString(metricAlarm));
         record.setSns(sns);
         event.setRecords(List.of(record));
         Context context = new TestContext();
@@ -103,5 +112,7 @@ class InvokeTest {
             throw new IllegalStateException("Failed to set environment variable", e);
         }
     }
+
+
 
 }

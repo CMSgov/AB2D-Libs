@@ -1,5 +1,6 @@
 package gov.cms.ab2d.metrics;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,16 +11,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Trigger {
-    private Dimensions[] Dimensions;
-    private String MetricName;
-    private String Namespace;
-    private String StatisticType;
-    private String Statistic;
-    private String Unit;
-    private int Period;
-    private String EvaluationPeriods;
-    private String ComparisonOperator;
-    private int Threshold;
-    private String TreatMissingData;
-    private String EvaluateLowSampleCountPercentile;
+    @JsonProperty("Dimensions")
+    private Dimensions[] dimensions;
+    @JsonProperty("MetricName")
+    private String metricName;
+    @JsonProperty("Namespace")
+    private String namespace;
+    @JsonProperty("StatisticType")
+    private String statisticType;
+    @JsonProperty("Statistic")
+    private String statistic;
+    @JsonProperty("Unit")
+    private String unit;
+    @JsonProperty("Period")
+    private int period;
+    @JsonProperty("EvaluationPeriods")
+    private String evaluationPeriods;
+    @JsonProperty("ComparisonOperator")
+    private String comparisonOperator;
+    @JsonProperty("Threshold")
+    private int threshold;
+    @JsonProperty("TreatMissingData")
+    private String treatMissingData;
+    @JsonProperty("EvaluateLowSampleCountPercentile")
+    private String evaluateLowSampleCountPercentile;
 }
