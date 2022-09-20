@@ -62,7 +62,7 @@ class InvokeTest {
         event.setRecords(List.of(record));
         Context context = new TestContext();
         Field sqs = ReflectionUtils.findFields(CloudwatchEventHandler.class, (f) -> f.getName()
-                        .equals("AMAZON_SQS"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+                        .equals("amazonSQS"), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Field not found"));
