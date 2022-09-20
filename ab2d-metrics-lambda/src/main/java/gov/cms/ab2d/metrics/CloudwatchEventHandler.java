@@ -87,6 +87,7 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
             service = removeEnvironment(alarm.getAlarmName());
             request.setMessageBody(outputMapper.writeValueAsString(new GeneralSQSMessage(MetricsEvent.builder()
                     .service(service)
+                    .eventDescription(alarm.getAlarmDescription())
                     .timeOfEvent(time)
                     .stateType(String.valueOf(!alarm.getNewStateValue()
                             .equals(StateValue.OK.toString()) ? StateValue.ALARM : StateValue.OK))

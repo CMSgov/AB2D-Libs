@@ -26,7 +26,8 @@ public class MetricsEvent extends LoggableEvent {
         if (!super.equals(o)) return false;
         MetricsEvent that = (MetricsEvent) o;
         return service.equals(that.service)
-                && stateType.equals(that.stateType);
+                && stateType.equals(that.stateType)
+                && eventDescription.equals(that.eventDescription);
     }
 
     @Override
@@ -35,10 +36,11 @@ public class MetricsEvent extends LoggableEvent {
     }
 
     @Builder
-    public MetricsEvent(@NotNull String service, @NotNull OffsetDateTime timeOfEvent, @NotNull String stateType) {
+    public MetricsEvent(@NotNull String service, @NotNull String eventDescription, @NotNull OffsetDateTime timeOfEvent, @NotNull String stateType) {
         super();
         super.setTimeOfEvent(timeOfEvent);
         this.service = service;
+        this.eventDescription = eventDescription;
         this.stateType = stateType;
     }
 
@@ -49,6 +51,9 @@ public class MetricsEvent extends LoggableEvent {
 
     @NonNull
     private String service;
+
+    @NonNull
+    private String eventDescription;
 
     @NonNull
     private String stateType;
