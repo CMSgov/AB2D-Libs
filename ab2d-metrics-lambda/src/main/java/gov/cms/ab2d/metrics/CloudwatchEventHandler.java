@@ -20,7 +20,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import gov.cms.ab2d.eventclient.events.MetricsEvent;
 import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
-import lombok.SneakyThrows;
 import software.amazon.awssdk.services.cloudwatch.model.StateValue;
 
 import java.io.PrintWriter;
@@ -63,11 +62,10 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
         }
     }
 
-    @SneakyThrows
     @Override
     public String handleRequest(SNSEvent snsEvent, Context context) {
         final LambdaLogger log = context.getLogger();
-        log.log(inputMapper.writeValueAsString(snsEvent));
+        log.log(snsEvent.toString());
         snsEvent.getRecords()
                 .forEach(record -> sendMetric(record, log));
         return "OK";

@@ -1,15 +1,7 @@
 package gov.cms.ab2d.metrics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 public class Trigger {
     @JsonProperty("Dimensions")
     private Dimensions[] dimensions;
@@ -35,4 +27,118 @@ public class Trigger {
     private String treatMissingData;
     @JsonProperty("EvaluateLowSampleCountPercentile")
     private String evaluateLowSampleCountPercentile;
+
+    public Trigger(Dimensions[] dimensions, String metricName, String namespace, String statisticType, String statistic, String unit, int period, String evaluationPeriods, String comparisonOperator, int threshold, String treatMissingData, String evaluateLowSampleCountPercentile) {
+        this.dimensions = dimensions;
+        this.metricName = metricName;
+        this.namespace = namespace;
+        this.statisticType = statisticType;
+        this.statistic = statistic;
+        this.unit = unit;
+        this.period = period;
+        this.evaluationPeriods = evaluationPeriods;
+        this.comparisonOperator = comparisonOperator;
+        this.threshold = threshold;
+        this.treatMissingData = treatMissingData;
+        this.evaluateLowSampleCountPercentile = evaluateLowSampleCountPercentile;
+    }
+
+    public Trigger() {
+    }
+
+    public Dimensions[] getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(Dimensions[] dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getMetricName() {
+        return metricName;
+    }
+
+    public void setMetricName(String metricName) {
+        this.metricName = metricName;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getStatisticType() {
+        return statisticType;
+    }
+
+    public void setStatisticType(String statisticType) {
+        this.statisticType = statisticType;
+    }
+
+    public String getStatistic() {
+        return statistic;
+    }
+
+    public void setStatistic(String statistic) {
+        this.statistic = statistic;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
+    }
+
+    public String getEvaluationPeriods() {
+        return evaluationPeriods;
+    }
+
+    public void setEvaluationPeriods(String evaluationPeriods) {
+        this.evaluationPeriods = evaluationPeriods;
+    }
+
+    public String getComparisonOperator() {
+        return comparisonOperator;
+    }
+
+    public void setComparisonOperator(String comparisonOperator) {
+        this.comparisonOperator = comparisonOperator;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public String getTreatMissingData() {
+        return treatMissingData;
+    }
+
+    public void setTreatMissingData(String treatMissingData) {
+        this.treatMissingData = treatMissingData;
+    }
+
+    public String getEvaluateLowSampleCountPercentile() {
+        return evaluateLowSampleCountPercentile;
+    }
+
+    public void setEvaluateLowSampleCountPercentile(String evaluateLowSampleCountPercentile) {
+        this.evaluateLowSampleCountPercentile = evaluateLowSampleCountPercentile;
+    }
 }

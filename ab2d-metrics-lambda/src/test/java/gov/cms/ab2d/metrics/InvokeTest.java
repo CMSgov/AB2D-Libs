@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
-@Slf4j
 class InvokeTest {
 
     ObjectMapper objectMapper = new ObjectMapper()
@@ -49,15 +47,13 @@ class InvokeTest {
 
 
     private void invoke(String state, String time) throws IllegalAccessException, JsonProcessingException {
-        MetricAlarm metricAlarm = MetricAlarm.builder()
-                .alarmName("test")
-                .stateChangeTime(time)
-                .newStateValue(state)
-                .trigger(Trigger.builder()
-                        .namespace("test")
-                        .build())
-                .build();
-        log.info("Invoke TEST");
+        MetricAlarm metricAlarm = new MetricAlarm();
+                metricAlarm.setAlarmName("test");
+        metricAlarm.setStateChangeTime(time);
+        metricAlarm.setNewStateValue(state);
+        Trigger trigger = new Trigger();
+        trigger.setNamespace("test");
+        metricAlarm.setTrigger(trigger);
         SNSEvent event = new SNSEvent();
         SNSEvent.SNSRecord record = new SNSEvent.SNSRecord();
         SNSEvent.SNS sns = new SNSEvent.SNS();

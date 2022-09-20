@@ -8,11 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DtoTest {
     @Test
+    void DimensionsAllArgTest() {
+        Dimensions dimensions = new Dimensions("a", "a");
+        assertEquals("a", dimensions.getName());
+        assertEquals("a", dimensions.getValue());
+    }
+
+    @Test
     void DimensionsTest() {
-        Dimensions dimensions = Dimensions.builder()
-                .name("")
-                .value("")
-                .build();
+        Dimensions dimensions = new Dimensions();
         dimensions.setName("a");
         dimensions.setValue("a");
         assertEquals("a", dimensions.getName());
@@ -21,23 +25,8 @@ public class DtoTest {
 
     @Test
     void MetricAlarmTest() {
-        MetricAlarm metricAlarm = MetricAlarm.builder()
-                .alarmName("")
-                .alarmDescription("")
-                .awsAccountId("")
-                .alarmConfigurationUpdatedTimestamp("")
-                .newStateValue("")
-                .newStateReason("")
-                .stateChangeTime("")
-                .region("")
-                .alarmArn("")
-                .oldStateValue("")
-                .alarmActions(new ArrayList<>())
-                .okActions(new ArrayList<>())
-                .insufficientDataActions(new ArrayList<>())
-                .trigger(Trigger.builder()
-                        .build())
-                .build();
+        Trigger trigger = new Trigger();
+        MetricAlarm metricAlarm = new MetricAlarm();
 
         metricAlarm.setAlarmName("");
         metricAlarm.setAlarmDescription("");
@@ -52,7 +41,7 @@ public class DtoTest {
         metricAlarm.setAlarmActions(new ArrayList<>());
         metricAlarm.setOkActions(new ArrayList<>());
         metricAlarm.setInsufficientDataActions(new ArrayList<>());
-        metricAlarm.setTrigger(new Trigger());
+        metricAlarm.setTrigger(trigger);
 
         assertEquals("", metricAlarm.getAlarmName());
         assertEquals("", metricAlarm.getAlarmDescription());
@@ -67,27 +56,13 @@ public class DtoTest {
         assertEquals(new ArrayList<>(), metricAlarm.getAlarmActions());
         assertEquals(new ArrayList<>(), metricAlarm.getOkActions());
         assertEquals(new ArrayList<>(), metricAlarm.getInsufficientDataActions());
-        assertEquals(new Trigger(), metricAlarm.getTrigger());
+        assertEquals(trigger, metricAlarm.getTrigger());
     }
 
     @Test
     void TriggerTest() {
         Dimensions[] dimensions = new Dimensions[]{};
-        Trigger trigger = Trigger.builder()
-                .dimensions(dimensions)
-                .metricName("")
-                .statistic("")
-                .statisticType("")
-                .unit("")
-                .period(1)
-                .evaluationPeriods("")
-                .comparisonOperator("")
-                .threshold(1)
-                .treatMissingData("")
-                .evaluateLowSampleCountPercentile("")
-                .namespace("")
-                .comparisonOperator("")
-                .build();
+        Trigger trigger = new Trigger(dimensions, "", "", "", "", "", 1, "", "", 1, "", "");
 
         trigger.setDimensions(dimensions);
         trigger.setMetricName("test");
