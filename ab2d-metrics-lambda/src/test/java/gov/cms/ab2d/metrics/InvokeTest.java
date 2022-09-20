@@ -73,7 +73,7 @@ class InvokeTest {
         Mockito.when(mockedSQS.getQueueUrl(anyString()))
                 .thenReturn(new GetQueueUrlResult());
         String result = handler.handleRequest(event, context);
-        assertEquals(result, "OK");
+        assertEquals( "OK", result);
     }
 
     @Test
@@ -88,7 +88,7 @@ class InvokeTest {
     @Test
     void setupTestLocalstack() throws NoSuchMethodException {
         setEnv("IS_LOCALSTACK", "true");
-        assertEquals(System.getenv("IS_LOCALSTACK"), "true");
+        assertEquals( "true", System.getenv("IS_LOCALSTACK"));
         CloudwatchEventHandler handler = new CloudwatchEventHandler();
         Method setup = ReflectionUtils.makeAccessible(CloudwatchEventHandler.class.getDeclaredMethod("setup"));
         assertDoesNotThrow(() -> {

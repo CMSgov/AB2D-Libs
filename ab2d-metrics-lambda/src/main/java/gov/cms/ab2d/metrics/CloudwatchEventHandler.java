@@ -30,7 +30,7 @@ import java.util.Optional;
 
 // Catches cloudwatch alerts, extracts what we care about, then send an event to the ab2d-event sqs queue
 public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> {
-    private static AmazonSQS AMAZON_SQS;
+    private static AmazonSQS amazonSQS;
 
     // AWS sends an object that's not wrapped with type info. The event service expects the wrapper.
     // Since there's not an easy way to enable/disable type wrapper just have 2 mappers.
@@ -45,7 +45,7 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
             .registerModule(new JavaTimeModule());
 
     static {
-        AMAZON_SQS = setup();
+        amazonSQS = setup();
     }
 
     private static AmazonSQS setup() {
@@ -67,22 +67,22 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
         final LambdaLogger log = context.getLogger();
         log.log(snsEvent.toString());
         snsEvent.getRecords()
-                .forEach(record -> sendMetric(record, log));
+                .forEach(snsRecord -> sendMetric(snsRecord, log));
         return "OK";
     }
 
-    private void sendMetric(SNSEvent.SNSRecord record, LambdaLogger log) {
+    private void sendMetric(SNSEvent.SNSRecord snsRecord, LambdaLogger log) {
         SendMessageRequest request = new SendMessageRequest();
         String service;
         try {
-            MetricAlarm alarm = inputMapper.readValue(Optional.ofNullable(record.getSNS())
+            MetricAlarm alarm = inputMapper.readValue(Optional.ofNullable(snsRecord.getSNS())
                     .orElse(new SNSEvent.SNS())
                     .getMessage(), MetricAlarm.class);
             OffsetDateTime time = alarm.getStateChangeTime() != null
                     ? OffsetDateTime.parse(fixDate(alarm.getStateChangeTime()))
                     : OffsetDateTime.now();
             log.log(time.toString());
-            request.setQueueUrl(AMAZON_SQS.getQueueUrl("ab2d-events")
+            request.setQueueUrl(amazonSQS.getQueueUrl("ab2d-events")
                     .getQueueUrl());
             service = removeEnvironment(alarm.getAlarmName());
             request.setMessageBody(outputMapper.writeValueAsString(new GeneralSQSMessage(MetricsEvent.builder()
@@ -95,7 +95,7 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
             log.log(String.format("Handling lambda failed %s", exceptionToString(e)));
             return;
         }
-        AMAZON_SQS.sendMessage(request);
+        amazonSQS.sendMessage(request);
 
         log.log(String.format("Event %s sent to ab2d-events", service));
     }

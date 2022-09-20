@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DtoTest {
+class DtoTest {
     @Test
     void DimensionsAllArgTest() {
         Dimensions dimensions = new Dimensions("a", "a");
@@ -62,7 +62,7 @@ public class DtoTest {
     @Test
     void TriggerTest() {
         Dimensions[] dimensions = new Dimensions[]{};
-        Trigger trigger = new Trigger(dimensions, "", "", "", "", "", 1, "", "", 1, "", "");
+        Trigger trigger = new Trigger();
 
         trigger.setDimensions(dimensions);
         trigger.setMetricName("test");

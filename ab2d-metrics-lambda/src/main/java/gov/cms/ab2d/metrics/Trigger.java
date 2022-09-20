@@ -28,22 +28,8 @@ public class Trigger {
     @JsonProperty("EvaluateLowSampleCountPercentile")
     private String evaluateLowSampleCountPercentile;
 
-    public Trigger(Dimensions[] dimensions, String metricName, String namespace, String statisticType, String statistic, String unit, int period, String evaluationPeriods, String comparisonOperator, int threshold, String treatMissingData, String evaluateLowSampleCountPercentile) {
-        this.dimensions = dimensions;
-        this.metricName = metricName;
-        this.namespace = namespace;
-        this.statisticType = statisticType;
-        this.statistic = statistic;
-        this.unit = unit;
-        this.period = period;
-        this.evaluationPeriods = evaluationPeriods;
-        this.comparisonOperator = comparisonOperator;
-        this.threshold = threshold;
-        this.treatMissingData = treatMissingData;
-        this.evaluateLowSampleCountPercentile = evaluateLowSampleCountPercentile;
-    }
-
     public Trigger() {
+        //default constructor for Jackson
     }
 
     public Dimensions[] getDimensions() {

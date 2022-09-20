@@ -10,6 +10,7 @@ public class Dimensions {
     }
 
     public Dimensions() {
+        //default constructor for Jackson
     }
 
     public String getValue() {

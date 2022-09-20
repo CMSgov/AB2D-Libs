@@ -36,6 +36,7 @@ public class MetricAlarm {
     private Trigger trigger;
 
     public MetricAlarm() {
+        //default constructor for Jackson
     }
 
     @JsonProperty("Namespace")
