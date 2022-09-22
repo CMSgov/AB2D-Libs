@@ -1,15 +1,15 @@
-# Events Client
+# Ab2d Events Client
 
-This library allow other services to send Events into the Event Service.
+This library allow other services to send Events into the Event SQS Queue.
 
-#Apply Client
+### Apply Client to Service
 
-Gradle
+### Gradle
 ```
 implementation 'gov.cms.ab2d:ab2d-events-client:1.0'
 ```
 
-Maven
+### Maven
 ```
 <dependency>
     <groupId>gov.cms.ab2d</groupId>
@@ -17,11 +17,30 @@ Maven
     <version>1.0</version>
 </dependency>
 ```
-\
-#Enable
-
+### Enable in your Service
 By default the ability to send sqs messages is disabled. To enable all you have to do is set the property.
 ```
 feature.sqs.enabled=true
 ```
+
+### Add New Message type for ab2d-events-client
+1. Add a message object in gov/cms/ab2d/eventclient/messages
+```
+@Data
+public class MyMessageExample extends SQSMessages
+
+# All events/logs variables you want to send to the event service.
+private LoggableEvent exampleObject;
+```
+
+2. Add a new method to send messages to SQS in SQSEventClient.java (see java file for examples)
+3. Upgrade the event client version in /AB2D-Filters/build.gradle to build changes
+```
+# Increase current version
+eventClientVersion='1.0'
+```
+4. Modify the [Event Service Repo](https://github.com/CMSgov/ab2d-events) to absorb message.
+
+
+
 
