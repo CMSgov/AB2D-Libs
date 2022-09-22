@@ -24,6 +24,7 @@ ext {
     aggregatorVersion='1.2.1'
     filtersVersion='1.6.1'
     eventClientVersion='1.5.1'
+    eventClientVersion='1.5-2'
     metricsVersion='0.0.1'
 
     sourcesRepo = 'ab2d-maven-repo'
@@ -156,7 +157,7 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        //classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 

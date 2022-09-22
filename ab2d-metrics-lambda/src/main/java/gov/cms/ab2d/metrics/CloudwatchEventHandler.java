@@ -20,12 +20,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import gov.cms.ab2d.eventclient.events.MetricsEvent;
 import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
-import software.amazon.awssdk.services.cloudwatch.model.StateValue;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static gov.cms.ab2d.eventclient.events.MetricsEvent.State.END;
+import static gov.cms.ab2d.eventclient.events.MetricsEvent.State.START;
+import static software.amazon.awssdk.services.cloudwatch.model.StateValue.ALARM;
+import static software.amazon.awssdk.services.cloudwatch.model.StateValue.OK;
 
 
 // Catches cloudwatch alerts, extracts what we care about, then send an event to the ab2d-event sqs queue
@@ -89,8 +95,8 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
                     .service(service)
                     .eventDescription(alarm.getAlarmDescription())
                     .timeOfEvent(time)
-                    .stateType(String.valueOf(!alarm.getNewStateValue()
-                            .equals(StateValue.OK.toString()) ? StateValue.ALARM : StateValue.OK))
+                    //This might need more work later if AWS is sending unknown states regularly
+                    .stateType(from(alarm.getNewStateValue()))
                     .build())));
         } catch (Exception e) {
             log.log(String.format("Handling lambda failed %s", exceptionToString(e)));
@@ -116,11 +122,28 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
     }
 
     private String removeEnvironment(String alarmName) {
-        return alarmName.replaceAll(Ab2dEnvironment.ALL.stream()
+        if (alarmName == null) {
+            throw new RuntimeException("Service was not defined");
+        }
+        return cleanUpService(alarmName.replaceAll(Ab2dEnvironment.ALL.stream()
                 .map(Ab2dEnvironment::getName)
                 .filter(alarmName::contains)
                 .findFirst()
-                .orElse(""), "");
+                .orElse(""), ""));
+    }
 
+    private String cleanUpService(String service) {
+        return service.length() > 1 && service.charAt(0) == '-'
+                ? service.substring(1)
+                : service; // clean up service
+    }
+
+    private MetricsEvent.State from(String stateValue) {
+        return Stream.of(stateValue)
+                .filter(value1 -> List.of(OK.toString(), ALARM.toString())
+                        .contains(value1))
+                .map(state -> stateValue.equals(OK.toString()) ? END : START)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("AWS provided Unknown State %s", stateValue)));
     }
 }

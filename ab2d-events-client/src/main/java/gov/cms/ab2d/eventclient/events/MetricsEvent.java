@@ -7,6 +7,7 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -36,7 +37,7 @@ public class MetricsEvent extends LoggableEvent {
     }
 
     @Builder
-    public MetricsEvent(@NotNull String service, @NotNull String eventDescription, @NotNull OffsetDateTime timeOfEvent, @NotNull String stateType) {
+    public MetricsEvent(@NotNull String service, @NotNull String eventDescription, @NotNull OffsetDateTime timeOfEvent, @NotNull State stateType) {
         super();
         super.setTimeOfEvent(timeOfEvent);
         this.service = service;
@@ -56,6 +57,14 @@ public class MetricsEvent extends LoggableEvent {
     private String eventDescription;
 
     @NonNull
-    private String stateType;
+    private State stateType;
+
+    //
+    public enum State{
+        //use start and stop for services that track those states for us. For example cloudwatch.
+        START, END,
+        // Otherwise, use continue. We can infer rough start and stop times
+        CONTINUE;
+    }
 
 }
