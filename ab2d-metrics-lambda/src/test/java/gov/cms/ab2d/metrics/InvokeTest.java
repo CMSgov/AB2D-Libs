@@ -36,19 +36,34 @@ class InvokeTest {
     }
 
     @Test
+    void invokeTestOk() throws Exception {
+        invoke("ab2d-dev-test","OK", "2022-09-14T19:03:51.523+0100");
+    }
+
+    @Test
+    void invokeTestAlarm() throws Exception {
+        invoke("ab2d-dev-test","ALARM", "2022-09-14T19:03:51.523+0100");
+    }
+
+    @Test
+    void invokeTestAlarmNameFail() throws Exception {
+        invoke(null,"OK", "2022-09-14T19:03:51.523+0100");
+    }
+
+    @Test
     void invokeTest() throws Exception {
-        invoke("ALARM", "2022-09-14T19:03:51.523+0100");
+        invoke("test","OK", "2022-09-14T19:03:51.523+0100");
     }
 
     @Test
     void invokeTestFail() throws Exception {
-        invoke(null, null);
+        invoke("test",null, null);
     }
 
 
-    private void invoke(String state, String time) throws IllegalAccessException, JsonProcessingException {
+    private void invoke(String alarmName, String state, String time) throws IllegalAccessException, JsonProcessingException {
         MetricAlarm metricAlarm = new MetricAlarm();
-                metricAlarm.setAlarmName("test");
+                metricAlarm.setAlarmName(alarmName);
         metricAlarm.setStateChangeTime(time);
         metricAlarm.setNewStateValue(state);
         Trigger trigger = new Trigger();
