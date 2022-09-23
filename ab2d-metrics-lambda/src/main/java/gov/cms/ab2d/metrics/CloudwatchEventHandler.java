@@ -123,7 +123,7 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
 
     private String removeEnvironment(String alarmName) {
         if (alarmName == null) {
-            throw new RuntimeException("Service was not defined");
+            throw new EventDataException("Service was not defined");
         }
         return cleanUpService(alarmName.replaceAll(Ab2dEnvironment.ALL.stream()
                 .map(Ab2dEnvironment::getName)
