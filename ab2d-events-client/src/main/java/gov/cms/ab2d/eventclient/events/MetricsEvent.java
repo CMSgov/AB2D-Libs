@@ -59,7 +59,6 @@ public class MetricsEvent extends LoggableEvent {
     @NonNull
     private State stateType;
 
-    //
     public enum State{
         //use start and stop for services that track those states for us. For example cloudwatch.
         START, END,
