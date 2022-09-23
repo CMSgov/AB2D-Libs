@@ -135,7 +135,7 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
     private String cleanUpService(String service) {
         return service.length() > 1 && service.charAt(0) == '-'
                 ? service.substring(1)
-                : service; // clean up service
+                : service;
     }
 
     private MetricsEvent.State from(String stateValue) {
