@@ -37,7 +37,7 @@ class InvokeTest {
 
     @Test
     void invokeTest() throws Exception {
-        invoke("test", "2022-09-14T19:03:51.523+0100");
+        invoke("ALARM", "2022-09-14T19:03:51.523+0100");
     }
 
     @Test

@@ -144,6 +144,6 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
                         .contains(value1))
                 .map(state -> stateValue.equals(OK.toString()) ? END : START)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("AWS provided Unknown State %s", stateValue)));
+                .orElseThrow(() -> new EventDataException(String.format("AWS provided Unknown State %s", stateValue)));
     }
 }
