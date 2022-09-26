@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DtoTest {
     @Test
@@ -91,6 +92,13 @@ class DtoTest {
         assertEquals("test", trigger.getEvaluateLowSampleCountPercentile());
         assertEquals("test", trigger.getNamespace());
         assertEquals("test", trigger.getComparisonOperator());
+    }
+
+    @Test
+    void eventDataException() {
+        assertThrows(EventDataException.class, () -> {
+            throw new EventDataException("test");
+        });
     }
 
 }
