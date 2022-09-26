@@ -29,7 +29,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
-import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,15 +52,15 @@ public class SendSqsEventTest {
 
     @Test
     void testQueueUrl() {
-        String url = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
+        String url = amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl();
         assertTrue(url.contains("localhost:"));
-        assertTrue(url.contains(EVENTS_QUEUE));
+        assertTrue(url.contains("local-event-sqs"));
     }
 
     @Test
     void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "local-event-sqs");
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
@@ -72,8 +71,8 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
-        List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
+        List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
 
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
@@ -83,7 +82,7 @@ public class SendSqsEventTest {
     @Test
     void logWithSQS() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "local-event-sqs");
 
         ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
                 "File Deleted");
@@ -100,25 +99,25 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("GeneralSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("TraceSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("AlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("SlackSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("KinesisSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("TraceAndAlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-event-sqs").getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("LogAndTraceSQSMessage"));
     }
 
@@ -130,7 +129,7 @@ public class SendSqsEventTest {
         when(amazonSQSMock.getQueueUrl(anyString())).thenReturn(queueURL);
         when(queueURL.getQueueUrl()).thenReturn("localhost:4321");
         when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true, "local-event-sqs");
 
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
 
@@ -141,7 +140,7 @@ public class SendSqsEventTest {
     @Test
     void testSendMessagesWhenDisabled() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, false);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, false, "local-event-sqs");
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
