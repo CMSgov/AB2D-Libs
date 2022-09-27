@@ -49,6 +49,10 @@ public class SQSConfig {
         this.url = url;
         this.credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(access, secret));
         this.sqsQueueName = ab2dEnvironment.getName() + EVENTS_QUEUE;
+
+        // This is needed so the sqsListener can get the queue name.
+        // It only accepts constance and this is a way to get around that while dynamically setting a sqs name
+        System.setProperty("sqs.queue-name", sqsQueueName);
     }
 
 
@@ -117,8 +121,5 @@ public class SQSConfig {
         return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
     }
 
-    public String getSqsQueueName() {
-        return sqsQueueName;
-    }
 
 }
