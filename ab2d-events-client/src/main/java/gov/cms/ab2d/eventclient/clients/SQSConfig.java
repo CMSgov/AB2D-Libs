@@ -55,7 +55,6 @@ public class SQSConfig {
         System.setProperty("sqs.queue-name", sqsQueueName);
     }
 
-
     @Primary
     @Bean
     public AmazonSQSAsync amazonSQSAsync() {
@@ -120,6 +119,4 @@ public class SQSConfig {
     private AwsClientBuilder.EndpointConfiguration getEndpointConfig(String localstackURl) {
         return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
     }
-
-
 }
