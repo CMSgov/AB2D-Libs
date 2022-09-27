@@ -46,6 +46,8 @@ public class SendSqsEventTest {
 
     @Container
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();
+    public static final String LOCAL_EVENTS_SQS = "local-events-sqs";
+    public static final String DEV_EVENTS_SQS = "dev-events-sqs";
 
     @Autowired
     private AmazonSQS amazonSQS;
@@ -55,22 +57,22 @@ public class SendSqsEventTest {
 
     @Test
     void testQueueUrl() {
-        String url = amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl();
+        String url = amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl();
         assertTrue(url.contains("localhost:"));
-        assertTrue(url.contains("local-events-sqs"));
+        assertTrue(url.contains(LOCAL_EVENTS_SQS));
     }
 
     @Test
     void testQueueUrlNoExistingQueue() {
         Assertions.assertThrows(QueueDoesNotExistException.class, () -> {
-            amazonSQS.getQueueUrl("dev-events-sqs").getQueueUrl();
+            amazonSQS.getQueueUrl(DEV_EVENTS_SQS);
         });
     }
 
     @Test
     void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "local-events-sqs");
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, LOCAL_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
@@ -81,8 +83,8 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
-        List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
+        List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
 
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
@@ -115,7 +117,7 @@ public class SendSqsEventTest {
     @Test
     void logWithSQS() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "local-events-sqs");
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, LOCAL_EVENTS_SQS);
 
         ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
                 "File Deleted");
@@ -132,25 +134,25 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("GeneralSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("TraceSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("AlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("SlackSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("KinesisSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("TraceAndAlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+        message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("LogAndTraceSQSMessage"));
     }
 
@@ -162,7 +164,7 @@ public class SendSqsEventTest {
         when(amazonSQSMock.getQueueUrl(anyString())).thenReturn(queueURL);
         when(queueURL.getQueueUrl()).thenReturn("localhost:4321");
         when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true, "local-events-sqs");
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true, LOCAL_EVENTS_SQS);
 
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
 
@@ -182,7 +184,7 @@ public class SendSqsEventTest {
     @Test
     void testSendMessagesWhenDisabled() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, false, "local-events-sqs");
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, false, LOCAL_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
