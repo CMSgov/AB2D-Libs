@@ -3,6 +3,7 @@ package gov.cms.ab2d.eventclient.config;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,7 +39,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(properties = { "spring.liquibase.enabled=false"})
+@SpringBootTest(properties = {"spring.liquibase.enabled=false"})
 @ExtendWith(OutputCaptureExtension.class)
 @Testcontainers
 public class SendSqsEventTest {
@@ -58,6 +61,13 @@ public class SendSqsEventTest {
     }
 
     @Test
+    void testQueueUrlNoExistingQueue() {
+        Assertions.assertThrows(QueueDoesNotExistException.class, () -> {
+            amazonSQS.getQueueUrl("dev-events-sqs").getQueueUrl();
+        });
+    }
+
+    @Test
     void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "local-events-sqs");
@@ -73,6 +83,29 @@ public class SendSqsEventTest {
 
         List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("local-events-sqs").getQueueUrl()).getMessages();
+
+
+        assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
+        assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
+    }
+
+    @Test
+    void testSendMessagesDifferentQueue() throws JsonProcessingException {
+        amazonSQS.createQueue("ab2d-dev-events-sqs");
+        AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "ab2d-dev-events-sqs");
+
+        final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
+        ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
+        ApiResponseEvent sentApiResponseEvent = new ApiResponseEvent("organization", "jobId", HttpStatus.I_AM_A_TEAPOT, "ipAddress", "token", "requestId");
+
+        sqsEventClient.sendLogs(sentApiRequestEvent);
+        sqsEventClient.sendLogs(sentApiResponseEvent);
+
+        Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
+
+        List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
+        List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
 
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
@@ -135,6 +168,15 @@ public class SendSqsEventTest {
 
         sqsEventClient.sendLogs(sentApiRequestEvent);
         Assertions.assertTrue(output.getOut().contains("foobar"));
+    }
+
+    @Test
+    void testAB2DEEnvironment() {
+        new SQSConfig("", "", "", "", Ab2dEnvironment.DEV);
+        assertEquals(System.getProperty("sqs.queue-name"), "ab2d-dev-events-sqs");
+
+        new SQSConfig("", "", "", "", Ab2dEnvironment.SANDBOX);
+        assertEquals(System.getProperty("sqs.queue-name"), "ab2d-sbx-sandbox-events-sqs");
     }
 
     @Test
