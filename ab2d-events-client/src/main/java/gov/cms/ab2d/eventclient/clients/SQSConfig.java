@@ -32,7 +32,7 @@ import org.springframework.messaging.converter.MessageConverter;
 public class SQSConfig {
 
     private final String sqsQueueName;
-    private static final String EVENTS_QUEUE = "-event-sqs";
+    private static final String EVENTS_QUEUE = "-events-sqs";
 
     @Value("${cloud.aws.region.static}")
     private String region;
