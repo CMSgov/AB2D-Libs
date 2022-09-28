@@ -18,18 +18,19 @@ import gov.cms.ab2d.eventclient.messages.TraceSQSMessage;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
-import static gov.cms.ab2d.eventclient.clients.SQSConfig.EVENTS_QUEUE;
-
 @Slf4j
 public class SQSEventClient implements EventClient {
     private final AmazonSQS amazonSQS;
     private final ObjectMapper mapper;
     private final boolean enabled;
 
-    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, boolean enabled) {
+    private final String queueName;
+
+    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, boolean enabled, String queueName) {
         this.amazonSQS = amazonSQS;
         this.mapper = mapper;
         this.enabled = enabled;
+        this.queueName = queueName;
     }
 
     @Override
@@ -115,7 +116,7 @@ public class SQSEventClient implements EventClient {
     }
 
     private void sendMessage(SQSMessages message) {
-        String queueUrl = amazonSQS.getQueueUrl(EVENTS_QUEUE).getQueueUrl();
+        String queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
         try {
             SendMessageRequest sendMessageRequest = new SendMessageRequest()
                     .withQueueUrl(queueUrl)

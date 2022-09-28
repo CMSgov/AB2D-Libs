@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,9 @@ import org.springframework.messaging.converter.MessageConverter;
 @Configuration
 @Slf4j
 public class SQSConfig {
-    public static final String EVENTS_QUEUE = "ab2d-events";
+
+    private final String sqsQueueName;
+    private static final String EVENTS_QUEUE = "-events-sqs";
 
     @Value("${cloud.aws.region.static}")
     private String region;
@@ -39,16 +42,17 @@ public class SQSConfig {
 
     private AWSStaticCredentialsProvider credentials;
 
-    public SQSConfig(@Value("${cloud.aws.credentials.access-key}") String access, @Value("${cloud.aws.credentials.secret-key}") String secret, @Value("${cloud.aws.region.static}") String region, @Value("${cloud.aws.end-point.uri}") String url) {
+    public SQSConfig(@Value("${cloud.aws.credentials.access-key}") String access,
+                     @Value("${cloud.aws.credentials.secret-key}") String secret, @Value("${cloud.aws.region.static}") String region,
+                     @Value("${cloud.aws.end-point.uri}") String url, Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
         this.credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(access, secret));
-    }
+        this.sqsQueueName = ab2dEnvironment.getName() + EVENTS_QUEUE;
 
-    @Bean
-    public QueueMessagingTemplate queueMessagingTemplate(
-            AmazonSQSAsync amazonSQSAsync) {
-        return new QueueMessagingTemplate(amazonSQSAsync);
+        // This is needed so the sqsListener can get the queue name.
+        // It only accepts constance and this is a way to get around that while dynamically setting a sqs name
+        System.setProperty("sqs.queue-name", sqsQueueName);
     }
 
     @Primary
@@ -69,7 +73,7 @@ public class SQSConfig {
 
     @Bean
     public SQSEventClient sqsEventClient(AmazonSQS amazonSQS, @Value("${feature.sqs.enabled:false}") boolean enabled) {
-        return new SQSEventClient(amazonSQS, objectMapper(), enabled);
+        return new SQSEventClient(amazonSQS, objectMapper(), enabled, sqsQueueName);
     }
 
     @Bean
@@ -103,10 +107,10 @@ public class SQSConfig {
     // Until localstack is built out more, create the queue here when running locally
     private AmazonSQS createQueue(AmazonSQS amazonSQS) {
         try {
-            amazonSQS.getQueueUrl(EVENTS_QUEUE);
+            amazonSQS.getQueueUrl(sqsQueueName);
             log.info("Queue already exists");
         } catch (QueueDoesNotExistException e) {
-            amazonSQS.createQueue(EVENTS_QUEUE);
+            amazonSQS.createQueue(sqsQueueName);
             log.info("Queue created");
         }
         return amazonSQS;
@@ -115,5 +119,4 @@ public class SQSConfig {
     private AwsClientBuilder.EndpointConfiguration getEndpointConfig(String localstackURl) {
         return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
     }
-
 }
