@@ -38,7 +38,8 @@ public class SQSConfig {
     private String url;
 
     public SQSConfig(@Value("${cloud.aws.region.static}") String region,
-                     @Value("${cloud.aws.end-point.uri}") String url, Ab2dEnvironment ab2dEnvironment) {
+                     @Value("${cloud.aws.end-point.uri}") String url,
+                     Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
         this.sqsQueueName = ab2dEnvironment.getName() + EVENTS_QUEUE;
@@ -102,8 +103,6 @@ public class SQSConfig {
             amazonSQS.getQueueUrl(sqsQueueName);
             log.info("Queue already exists");
         } catch (QueueDoesNotExistException e) {
-            log.error(e.getMessage());
-            log.error("Test URL INFO: " + sqsQueueName);
             amazonSQS.createQueue(sqsQueueName);
             log.info("Queue created");
         }
