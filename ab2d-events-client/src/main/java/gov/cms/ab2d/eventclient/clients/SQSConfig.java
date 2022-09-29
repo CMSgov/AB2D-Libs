@@ -1,7 +1,5 @@
 package gov.cms.ab2d.eventclient.clients;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -19,7 +17,6 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.aws.messaging.config.QueueMessageHandlerFactory;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.cloud.aws.messaging.support.NotificationMessageArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,14 +37,10 @@ public class SQSConfig {
     @Value("${cloud.aws.end-point.uri}")
     private String url;
 
-    private AWSStaticCredentialsProvider credentials;
-
-    public SQSConfig(@Value("${cloud.aws.credentials.access-key}") String access,
-                     @Value("${cloud.aws.credentials.secret-key}") String secret, @Value("${cloud.aws.region.static}") String region,
+    public SQSConfig(@Value("${cloud.aws.region.static}") String region,
                      @Value("${cloud.aws.end-point.uri}") String url, Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
-        this.credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(access, secret));
         this.sqsQueueName = ab2dEnvironment.getName() + EVENTS_QUEUE;
 
         // This is needed so the sqsListener can get the queue name.
@@ -63,7 +56,6 @@ public class SQSConfig {
             return (AmazonSQSAsync) createQueue(AmazonSQSAsyncClientBuilder
                     .standard()
                     .withEndpointConfiguration(getEndpointConfig(url))
-                    .withCredentials(credentials)
                     .build());
         }
         return AmazonSQSAsyncClientBuilder
