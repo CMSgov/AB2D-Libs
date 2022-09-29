@@ -174,10 +174,10 @@ public class SendSqsEventTest {
 
     @Test
     void testAB2DEEnvironment() {
-        new SQSConfig("", "", "", "", Ab2dEnvironment.DEV);
+        new SQSConfig("", "", Ab2dEnvironment.DEV);
         assertEquals(System.getProperty("sqs.queue-name"), "ab2d-dev-events-sqs");
 
-        new SQSConfig("", "", "", "", Ab2dEnvironment.SANDBOX);
+        new SQSConfig("", "", Ab2dEnvironment.SANDBOX);
         assertEquals(System.getProperty("sqs.queue-name"), "ab2d-sbx-sandbox-events-sqs");
     }
 

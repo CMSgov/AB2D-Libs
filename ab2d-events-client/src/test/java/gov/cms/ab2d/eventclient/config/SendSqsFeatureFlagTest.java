@@ -8,7 +8,6 @@ import gov.cms.ab2d.eventclient.clients.SQSEventClient;
 import gov.cms.ab2d.eventclient.events.ApiRequestEvent;
 import gov.cms.ab2d.eventclient.events.ApiResponseEvent;
 import gov.cms.ab2d.eventclient.events.ErrorEvent;
-import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -20,10 +19,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest(properties = { "spring.liquibase.enabled=false", "feature.sqs.enabled=false"})
 @Testcontainers
