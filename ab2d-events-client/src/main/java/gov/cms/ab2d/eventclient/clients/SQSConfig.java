@@ -102,6 +102,8 @@ public class SQSConfig {
             amazonSQS.getQueueUrl(sqsQueueName);
             log.info("Queue already exists");
         } catch (QueueDoesNotExistException e) {
+            log.error(e.getMessage());
+            log.error("Test URL INFO: " + sqsQueueName);
             amazonSQS.createQueue(sqsQueueName);
             log.info("Queue created");
         }
