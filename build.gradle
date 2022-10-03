@@ -36,7 +36,7 @@ ext {
     springBootVersion='2.7.3'
     springCloudVersion='2021.0.3'
     newRelicVersion='7.7.0'
-    testContainerVersion='1.17.3'
+    testContainerVersion='1.17.4'
     mockServerVersion='5.14.0'
     jacksonVersion='2.13.3'
     liquibaseVersion="4.15.0"
