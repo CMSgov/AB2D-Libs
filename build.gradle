@@ -24,7 +24,7 @@ ext {
     aggregatorVersion='1.2.1'
     filtersVersion='1.6.1'
     eventClientVersion='1.8'
-    metricsVersion='0.0.1'
+    metricsVersion='1.0.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'

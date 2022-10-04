@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import gov.cms.ab2d.eventclient.events.MetricsEvent;
 import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
 
@@ -38,14 +37,17 @@ import static software.amazon.awssdk.services.cloudwatch.model.StateValue.OK;
 public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> {
     private static AmazonSQS amazonSQS;
 
+    private final String environment = Optional.ofNullable(System.getenv("PARENT_ENV"))
+            .orElse("local") + "-";
+
     // AWS sends an object that's not wrapped with type info. The event service expects the wrapper.
     // Since there's not an easy way to enable/disable type wrapper just have 2 mappers.
-    ObjectMapper inputMapper = new ObjectMapper()
+    private final ObjectMapper inputMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .registerModule(new JodaModule())
             .registerModule(new JavaTimeModule());
 
-    ObjectMapper outputMapper = new ObjectMapper()
+    private final ObjectMapper outputMapper = new ObjectMapper()
             .activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_ARRAY)
             .registerModule(new JodaModule())
             .registerModule(new JavaTimeModule());
@@ -71,26 +73,27 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
     @Override
     public String handleRequest(SNSEvent snsEvent, Context context) {
         final LambdaLogger log = context.getLogger();
-        log.log(snsEvent.toString());
         snsEvent.getRecords()
                 .forEach(snsRecord -> sendMetric(snsRecord, log));
         return "OK";
     }
 
     private void sendMetric(SNSEvent.SNSRecord snsRecord, LambdaLogger log) {
-        SendMessageRequest request = new SendMessageRequest();
-        String service;
+        final SendMessageRequest request = new SendMessageRequest();
+        final String queue = environment + "events-sqs";
+        final String service;
         try {
-            MetricAlarm alarm = inputMapper.readValue(Optional.ofNullable(snsRecord.getSNS())
+            final MetricAlarm alarm = inputMapper.readValue(Optional.ofNullable(snsRecord.getSNS())
                     .orElse(new SNSEvent.SNS())
                     .getMessage(), MetricAlarm.class);
             OffsetDateTime time = alarm.getStateChangeTime() != null
                     ? OffsetDateTime.parse(fixDate(alarm.getStateChangeTime()))
                     : OffsetDateTime.now();
-            log.log(time.toString());
-            request.setQueueUrl(amazonSQS.getQueueUrl("ab2d-events")
+            request.setQueueUrl(amazonSQS.getQueueUrl(queue)
                     .getQueueUrl());
-            service = removeEnvironment(alarm.getAlarmName());
+            service = Optional.ofNullable(alarm.getAlarmName())
+                    .orElseThrow(() -> new EventDataException("AlarmName is null"))
+                    .replace(environment, "");
             request.setMessageBody(outputMapper.writeValueAsString(new GeneralSQSMessage(MetricsEvent.builder()
                     .service(service)
                     .eventDescription(alarm.getAlarmDescription())
@@ -102,9 +105,8 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
             log.log(String.format("Handling lambda failed %s", exceptionToString(e)));
             return;
         }
+        log.log(String.format("Sending %s to %s", service, queue));
         amazonSQS.sendMessage(request);
-
-        log.log(String.format("Event %s sent to ab2d-events", service));
     }
 
     private String exceptionToString(Exception exception) {
@@ -121,22 +123,6 @@ public class CloudwatchEventHandler implements RequestHandler<SNSEvent, String> 
                 .toString();
     }
 
-    private String removeEnvironment(String alarmName) {
-        if (alarmName == null) {
-            throw new EventDataException("Service was not defined");
-        }
-        return cleanUpService(alarmName.replaceAll(Ab2dEnvironment.ALL.stream()
-                .map(Ab2dEnvironment::getName)
-                .filter(alarmName::contains)
-                .findFirst()
-                .orElse(""), ""));
-    }
-
-    private String cleanUpService(String service) {
-        return service.length() > 1 && service.charAt(0) == '-'
-                ? service.substring(1)
-                : service;
-    }
 
     private MetricsEvent.State from(String stateValue) {
         return Stream.of(stateValue)
