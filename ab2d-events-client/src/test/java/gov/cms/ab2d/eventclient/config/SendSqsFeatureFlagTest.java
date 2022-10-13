@@ -21,7 +21,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 
-@SpringBootTest(properties = { "spring.liquibase.enabled=false", "feature.sqs.enabled=false"})
+@SpringBootTest(properties = {"spring.liquibase.enabled=false"})
 @Testcontainers
 public class SendSqsFeatureFlagTest {
 

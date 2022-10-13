@@ -17,11 +17,6 @@ implementation 'gov.cms.ab2d:ab2d-events-client:1.0'
     <version>1.0</version>
 </dependency>
 ```
-### Enable in your Service
-By default the ability to send sqs messages is disabled. To enable all you have to do is set the property.
-```
-feature.sqs.enabled=true
-```
 
 ### Add New Message type for ab2d-events-client
 1. Add a message object in gov/cms/ab2d/eventclient/messages

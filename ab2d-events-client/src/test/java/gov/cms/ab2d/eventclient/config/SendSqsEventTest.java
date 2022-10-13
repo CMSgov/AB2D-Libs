@@ -72,7 +72,7 @@ public class SendSqsEventTest {
     @Test
     void testSendMessages() throws JsonProcessingException {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, LOCAL_EVENTS_SQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
@@ -95,7 +95,7 @@ public class SendSqsEventTest {
     void testSendMessagesDifferentQueue() throws JsonProcessingException {
         amazonSQS.createQueue("ab2d-dev-events-sqs");
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, "ab2d-dev-events-sqs");
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, "ab2d-dev-events-sqs");
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
@@ -117,7 +117,7 @@ public class SendSqsEventTest {
     @Test
     void logWithSQS() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, true, LOCAL_EVENTS_SQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
         ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
                 "File Deleted");
@@ -164,7 +164,7 @@ public class SendSqsEventTest {
         when(amazonSQSMock.getQueueUrl(anyString())).thenReturn(queueURL);
         when(queueURL.getQueueUrl()).thenReturn("localhost:4321");
         when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, true, LOCAL_EVENTS_SQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, LOCAL_EVENTS_SQS);
 
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
 
@@ -184,7 +184,7 @@ public class SendSqsEventTest {
     @Test
     void testSendMessagesWhenDisabled() {
         AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, false, LOCAL_EVENTS_SQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");

@@ -22,31 +22,25 @@ import lombok.extern.slf4j.Slf4j;
 public class SQSEventClient implements EventClient {
     private final AmazonSQS amazonSQS;
     private final ObjectMapper mapper;
-    private final boolean enabled;
 
     private final String queueName;
 
-    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, boolean enabled, String queueName) {
+    public SQSEventClient(AmazonSQS amazonSQS, ObjectMapper mapper, String queueName) {
         this.amazonSQS = amazonSQS;
         this.mapper = mapper;
-        this.enabled = enabled;
         this.queueName = queueName;
     }
 
     @Override
     public void sendLogs(LoggableEvent requestEvent) {
-        if (enabled) {
-            GeneralSQSMessage sqsMessage = new GeneralSQSMessage(requestEvent);
-            sendMessage(sqsMessage);
-        }
+        GeneralSQSMessage sqsMessage = new GeneralSQSMessage(requestEvent);
+        sendMessage(sqsMessage);
     }
 
     @Override
     public void alert(String message, List<Ab2dEnvironment> environments) {
-        if (enabled) {
-            AlertSQSMessage sqsMessage = new AlertSQSMessage(message, environments);
-            sendMessage(sqsMessage);
-        }
+        AlertSQSMessage sqsMessage = new AlertSQSMessage(message, environments);
+        sendMessage(sqsMessage);
     }
 
     /**
@@ -57,10 +51,8 @@ public class SQSEventClient implements EventClient {
      */
     @Override
     public void trace(String message, List<Ab2dEnvironment> environments) {
-        if (enabled) {
-            TraceSQSMessage sqsMessage = new TraceSQSMessage(message, environments);
-            sendMessage(sqsMessage);
-        }
+        TraceSQSMessage sqsMessage = new TraceSQSMessage(message, environments);
+        sendMessage(sqsMessage);
     }
 
     /**
@@ -72,10 +64,8 @@ public class SQSEventClient implements EventClient {
      */
     @Override
     public void logAndAlert(LoggableEvent event, List<Ab2dEnvironment> environments) {
-        if (enabled) {
-            TraceAndAlertSQSMessage sqsMessage = new TraceAndAlertSQSMessage(event, environments);
-            sendMessage(sqsMessage);
-        }
+        TraceAndAlertSQSMessage sqsMessage = new TraceAndAlertSQSMessage(event, environments);
+        sendMessage(sqsMessage);
     }
 
     /**
@@ -87,10 +77,8 @@ public class SQSEventClient implements EventClient {
      */
     @Override
     public void logAndTrace(LoggableEvent event, List<Ab2dEnvironment> environments) {
-        if (enabled) {
-            LogAndTraceSQSMessage sqsMessage = new LogAndTraceSQSMessage(event, environments);
-            sendMessage(sqsMessage);
-        }
+        LogAndTraceSQSMessage sqsMessage = new LogAndTraceSQSMessage(event, environments);
+        sendMessage(sqsMessage);
     }
 
     /**
@@ -101,17 +89,15 @@ public class SQSEventClient implements EventClient {
      */
     @Override
     public void log(LogType type, LoggableEvent event) {
-        if (enabled) {
-            switch (type) {
-                case SQL:
-                    sendMessage(new SlackSQSMessage(event));
-                    break;
-                case KINESIS:
-                    sendMessage(new KinesisSQSMessage(event));
-                    break;
-                default:
-                    break;
-            }
+        switch (type) {
+            case SQL:
+                sendMessage(new SlackSQSMessage(event));
+                break;
+            case KINESIS:
+                sendMessage(new KinesisSQSMessage(event));
+                break;
+            default:
+                break;
         }
     }
 
