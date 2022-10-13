@@ -180,18 +180,4 @@ public class SendSqsEventTest {
         new SQSConfig("", "", Ab2dEnvironment.SANDBOX);
         assertEquals(System.getProperty("sqs.queue-name"), "ab2d-sbx-sandbox-events-sqs");
     }
-
-    @Test
-    void testSendMessagesWhenDisabled() {
-        AmazonSQS amazonSQSSpy = Mockito.spy(amazonSQS);
-        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
-
-        final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
-        ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
-
-        sqsEventClient.sendLogs(sentApiRequestEvent);
-
-        Mockito.verify(amazonSQSSpy, never()).sendMessage(any(SendMessageRequest.class));
-    }
-
 }
