@@ -23,7 +23,7 @@ ext {
     bfdVersion='1.3.2'
     aggregatorVersion='1.2.2'
     filtersVersion='1.6.2'
-    eventClientVersion='1.8.1'
+    eventClientVersion='1.9-SNAPSHOT'
     metricsVersion='1.0.1'
 
     sourcesRepo = 'ab2d-maven-repo'
