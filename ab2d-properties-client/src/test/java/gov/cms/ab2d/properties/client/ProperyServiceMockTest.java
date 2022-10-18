@@ -59,6 +59,11 @@ public class ProperyServiceMockTest {
         assertThrows(PropertyNotFoundException.class, () -> impl.getProperty("bogus"));
 
         impl.deleteProperty("one");
+        Property p = new Property();
+        p.setKey("key");
+        p.setValue("value");
+        assertEquals("key", p.getKey());
+        assertEquals("value", p.getValue());
 
         wireMockServer.stop();
     }
