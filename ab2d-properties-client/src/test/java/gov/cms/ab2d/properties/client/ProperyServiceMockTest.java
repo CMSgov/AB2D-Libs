@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ProperyServiceMockTest {
     class PropertiesClientImplMock extends PropertiesClientImpl {
         @Override
-        String getFromEnvironment() {
+        public String getFromEnvironment() {
             return "http://localhost:8065";
         }
     }

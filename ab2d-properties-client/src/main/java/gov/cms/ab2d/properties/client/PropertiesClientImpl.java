@@ -16,11 +16,11 @@ public class PropertiesClientImpl implements PropertiesClient {
     private static final String JSON = "application/json";
     private static final String ACCEPT = "accept";
 
-    PropertiesClientImpl(String url) {
+    public PropertiesClientImpl(String url) {
         this.url = url;
     }
 
-    PropertiesClientImpl() {
+    public PropertiesClientImpl() {
         String envUrl = getFromEnvironment();
         if (StringUtils.isNotEmpty(envUrl)) {
             url = envUrl;
@@ -38,7 +38,7 @@ public class PropertiesClientImpl implements PropertiesClient {
         }
     }
 
-    String getFromEnvironment() {
+    public String getFromEnvironment() {
         return System.getenv("PROPERTIES_SERVICE_URL");
     }
 
