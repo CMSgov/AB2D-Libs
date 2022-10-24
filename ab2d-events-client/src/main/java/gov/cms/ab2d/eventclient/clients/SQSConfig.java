@@ -65,8 +65,8 @@ public class SQSConfig {
     }
 
     @Bean
-    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS, @Value("${feature.sqs.enabled:false}") boolean enabled) {
-        return new SQSEventClient(amazonSQS, objectMapper(), enabled, sqsQueueName);
+    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS) {
+        return new SQSEventClient(amazonSQS, objectMapper(), sqsQueueName);
     }
 
     @Bean
