@@ -1,9 +1,7 @@
 package gov.cms.ab2d.eventclient.config;
 
 
-import com.amazonaws.services.sqs.AmazonSQSAsync;
 import org.junit.jupiter.api.Test;
-import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 
 

@@ -26,6 +26,7 @@ ext {
     eventClientVersion='1.9'
     metricsVersion='1.0.1'
     propertiesClientVersion='1.1.0'
+    contractClientVersion='0.0.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
