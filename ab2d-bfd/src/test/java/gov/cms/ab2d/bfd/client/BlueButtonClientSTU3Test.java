@@ -183,7 +183,7 @@ public class BlueButtonClientSTU3Test {
     @Test
     public void shouldGetTimedOutOnSlowResponse() {
         var exception = Assertions.assertThrows(SocketTimeoutException.class, () -> {
-            bbc.requestEOBFromServer(STU3, TEST_SLOW_PATIENT_ID);
+            bbc.requestEOBFromServer(STU3, TEST_SLOW_PATIENT_ID, CONTRACT);
         });
 
         var rootCause = ExceptionUtils.getRootCause(exception);
@@ -194,7 +194,7 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     public void shouldGetEOBFromPatientID() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertEquals(32, response.getTotal(), "The demo patient should have exactly 32 EOBs");
@@ -203,7 +203,7 @@ public class BlueButtonClientSTU3Test {
     @Test
     public void shouldGetEOBFromPatientIDSince() {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, OffsetDateTime.parse(
-                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME));
+                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertEquals(32, response.getTotal(), "The demo patient should have exactly 32 EOBs");
@@ -211,19 +211,19 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     public void shouldGetEOBPatientNoRecords() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_NO_RECORD_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_NO_RECORD_PATIENT_ID, CONTRACT);
         assertFalse(response.hasEntry());
     }
 
     @Test
     public void shouldGetEOBPatientNoRecordsMBI() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_NO_RECORD_PATIENT_ID_MBI);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_NO_RECORD_PATIENT_ID_MBI, CONTRACT);
         assertFalse(response.hasEntry());
     }
 
     @Test
     public void shouldNotHaveNextBundle() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertEquals(1, response.getTotal(), "The demo patient should have exactly 1 EOBs");
@@ -233,7 +233,7 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     public void shouldHaveNextBundle() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertNotNull(response.getLink(org.hl7.fhir.dstu3.model.Bundle.LINK_NEXT),
@@ -245,14 +245,14 @@ public class BlueButtonClientSTU3Test {
             link.setUrl(url);
         });
 
-        org.hl7.fhir.dstu3.model.Bundle nextResponse = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestNextBundleFromServer(STU3, response);
+        org.hl7.fhir.dstu3.model.Bundle nextResponse = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestNextBundleFromServer(STU3, response, CONTRACT);
         assertNotNull(nextResponse, "Should have a next bundle");
         assertEquals(10, nextResponse.getEntry().size());
     }
 
     @Test
     public void shouldReturnBundleContainingOnlyEOBs() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, CONTRACT);
 
         response.getEntry().forEach((entry) -> assertEquals(
                 entry.getResource().getResourceType(),
@@ -263,7 +263,7 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     public void shouldHandlePatientsWithOnlyOneEOB() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID, CONTRACT);
         assertEquals(1, response.getTotal(), "This demo patient should have exactly 1 EOB");
     }
 
@@ -271,7 +271,7 @@ public class BlueButtonClientSTU3Test {
     public void shouldThrowExceptionWhenResourceNotFound() {
         assertThrows(
                 ResourceNotFoundException.class,
-                () -> bbc.requestEOBFromServer(STU3, TEST_NONEXISTENT_PATIENT_ID),
+                () -> bbc.requestEOBFromServer(STU3, TEST_NONEXISTENT_PATIENT_ID, CONTRACT),
                 "BlueButton client should throw exceptions when asked to retrieve EOBs for a " +
                         "non-existent patient"
         );

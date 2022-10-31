@@ -48,7 +48,7 @@ public class BFDSearchImpl implements BFDSearch {
      */
     @Trace
     @Override
-    public IBaseBundle searchEOB(long patientId, OffsetDateTime since, int pageSize, String bulkJobId, FhirVersion version) throws IOException {
+    public IBaseBundle searchEOB(long patientId, OffsetDateTime since, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
 
         String urlLocation = bfdClientVersions.getUrl(version);
         StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
@@ -69,7 +69,7 @@ public class BFDSearchImpl implements BFDSearch {
 
         request.addHeader(HttpHeaders.ACCEPT, "gzip");
         request.addHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
-        request.addHeader(BFDClient.BFD_HDR_BULK_CLIENTID, BFDClient.BFD_CLIENT_ID);
+        request.addHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum);
         request.addHeader(BFDClient.BFD_HDR_BULK_JOBID, bulkJobId);
 
         byte[] responseBytes = getEOBSFromBFD(patientId, request);

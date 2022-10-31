@@ -90,7 +90,7 @@ public class BlueButtonClientR4Test {
 
     @Test
     public void shouldGetEOBFromPatientID() {
-        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID);
+        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertEquals(260, response.getTotal(), "The demo patient should have exactly 260 EOBs");
@@ -98,7 +98,7 @@ public class BlueButtonClientR4Test {
 
     @Test
     public void shouldHaveNextBundle() {
-        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID);
+        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertNotNull(response.getLink(org.hl7.fhir.r4.model.Bundle.LINK_NEXT),
@@ -107,7 +107,7 @@ public class BlueButtonClientR4Test {
 
     @Test
     public void shouldReturnBundleContainingOnlyEOBs() {
-        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID);
+        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         response.getEntry().forEach((entry) -> assertEquals(
                 entry.getResource().getResourceType(),
