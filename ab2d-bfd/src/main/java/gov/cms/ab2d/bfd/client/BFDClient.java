@@ -8,12 +8,11 @@ import org.hl7.fhir.instance.model.api.IBaseBundle;
 
 public interface BFDClient {
     String BFD_HDR_BULK_CLIENTID = "BULK-CLIENTID";
-    String BFD_CLIENT_ID = "AB2D";
     String BFD_HDR_BULK_JOBID = "BULK-JOBID";
 
-    IBaseBundle requestEOBFromServer(FhirVersion version, long patientID);
-    IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime);
-    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle);
+    IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, String contractNum);
+    IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, String contractNum);
+    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum);
 
     /**
      * Request BFD for a list of all active patients in a contract for a specific month

@@ -75,13 +75,13 @@ public class BFDClientImpl implements BFDClient {
             backoff = @Backoff(delayExpression = "${bfd.retry.backoffDelay:250}", multiplier = 2),
             exclude = { ResourceNotFoundException.class }
     )
-    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID) {
-        return requestEOBFromServer(version, patientID, null);
+    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, String contractNum) {
+        return requestEOBFromServer(version, patientID, null, contractNum);
     }
 
     /**
      * Queries Blue Button server for Explanations of Benefit associated with a given patient
-     * similar to {@link #requestEOBFromServer(FhirVersion, Long)} but includes a date filter in which the
+     * similar to {@link #requestEOBFromServer(FhirVersion, long, String)} but includes a date filter in which the
      * _lastUpdated date must be after
      * <p>
      *
@@ -100,12 +100,12 @@ public class BFDClientImpl implements BFDClient {
             backoff = @Backoff(delayExpression = "${bfd.retry.backoffDelay:250}", multiplier = 2),
             exclude = { ResourceNotFoundException.class }
     )
-    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime) {
+    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, String contractNum) {
         final Segment bfdSegment = NewRelic.getAgent().getTransaction().startSegment("BFD Call for patient with patient ID " + patientID +
                 " using since " + sinceTime);
         bfdSegment.setMetricName("RequestEOB");
 
-        IBaseBundle result = bfdSearch.searchEOB(patientID, sinceTime, pageSize, getJobId(), version);
+        IBaseBundle result = bfdSearch.searchEOB(patientID, sinceTime, pageSize, getJobId(), version, contractNum);
 
         bfdSegment.end();
 
@@ -119,11 +119,11 @@ public class BFDClientImpl implements BFDClient {
             backoff = @Backoff(delayExpression = "${bfd.retry.backoffDelay:250}", multiplier = 2),
             exclude = { ResourceNotFoundException.class }
     )
-    public IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle) {
+    public IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum) {
         return bfdClientVersions.getClient(version)
                 .loadPage()
                 .next(bundle)
-                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, BFDClient.BFD_CLIENT_ID)
+                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader("IncludeIdentifiers", "mbi")
                 .encodedJson()
@@ -155,7 +155,7 @@ public class BFDClientImpl implements BFDClient {
         return bfdClientVersions.getClient(version).search()
                 .forResource(version.getPatientClass())
                 .where(monthCriterion)
-                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, BFDClient.BFD_CLIENT_ID)
+                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader("IncludeIdentifiers", "mbi")
                 .count(contractToBenePageSize)
@@ -183,7 +183,7 @@ public class BFDClientImpl implements BFDClient {
                 .forResource(version.getPatientClass())
                 .where(monthCriterion)
                 .and(yearCriterion)
-                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, BFDClient.BFD_CLIENT_ID)
+                .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader("IncludeIdentifiers", "mbi")
                 .count(contractToBenePageSize)
