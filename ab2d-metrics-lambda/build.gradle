@@ -37,7 +37,7 @@ dependencies {
     implementation project(":ab2d-events-client")
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.0'
-    implementation 'software.amazon.awssdk:cloudwatch:2.18.6'
+    implementation 'software.amazon.awssdk:cloudwatch:2.18.16'
     implementation 'com.amazonaws:aws-java-sdk-sqs:1.12.331'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.13.4'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
