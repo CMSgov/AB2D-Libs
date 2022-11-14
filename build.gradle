@@ -6,6 +6,7 @@ plugins {
     id 'java-library'
     id 'com.jfrog.artifactory' version '4.29.2' apply false
     id "org.sonarqube" version "3.5.0.2730"
+    id 'org.cyclonedx.bom' version '1.7.2'
 }
 
 ext {
@@ -116,6 +117,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'checkstyle'
     apply plugin: 'jacoco'
+    apply plugin: 'org.cyclonedx.bom'
 
     if (artifactory_user == null || artifactory_user.isEmpty()) {
         println("Artifactory user not set");
@@ -123,9 +125,6 @@ subprojects {
     if (artifactory_password == null || artifactory_password.isEmpty()) {
         println("Artifactory password not set");
     }
-    println("Artifactory loc? " + project.getProperty('artifactoryLoc'))
-
-    println("Branch is " + gitBranch())
 
     sourceCompatibility = 11
     targetCompatibility = 11
@@ -213,6 +212,27 @@ subprojects {
                 maven = true
             }
         }
+    }
+
+    cyclonedxBom {
+        // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+        includeConfigs = ["runtimeClasspath"]
+        // skipConfigs is a list of configuration names to exclude when generating the BOM
+        skipConfigs = ["compileClasspath", "testCompileClasspath"]
+        // Specified the type of project being built. Defaults to 'library'
+        projectType = "library"
+        // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+        schemaVersion = "1.4"
+        // Boms destination directory (defaults to build/reports)
+        destination = file("build/reports")
+        // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+        outputName = "bom"
+        // The file format generated, can be xml, json or all for generating both
+        outputFormat = "all"
+        // Exclude BOM Serial Number
+        includeBomSerialNumber = false
+        // Override component version
+        componentVersion = "2.0.0"
     }
 }
 
