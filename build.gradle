@@ -27,7 +27,7 @@ ext {
     bfdVersion='2.0.0'
     aggregatorVersion='1.2.3'
     filtersVersion='1.6.3'
-    eventClientVersion='1.10'
+    eventClientVersion='1.10.1'
     metricsVersion='1.0.2'
     propertiesClientVersion='1.1.1'
 
