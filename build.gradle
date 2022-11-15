@@ -9,6 +9,9 @@ plugins {
     id 'org.cyclonedx.bom' version '1.7.2'
 }
 
+version = "1.0"
+group = "gov.cms.abd"
+
 ext {
     artifactoryLoc = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
             : System.getenv()['ARTIFACTORY_URL']

@@ -59,8 +59,7 @@ pipeline {
 
         stage("Generate SBOM") {
             steps {
-                sh 'gradle ab2d-aggregator:cyclonedxBom ab2d-bfd:cyclonedxBom ab2d-events-client:cyclonedxBom ab2d-fhir:cyclonedxBom ab2d-filters:cyclonedxBom ab2d-properties-client:cyclonedxBom'
-
+                sh 'gradle cyclonedxBom'
             }
         }
 
