@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 import org.testcontainers.utility.DockerImageName;
 
-
 @Slf4j
 public class AB2DLocalstackContainer extends LocalStackContainer {
 
