@@ -23,12 +23,12 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.1.4'
-    bfdVersion='2.0.1'
-    aggregatorVersion='1.2.4'
-    filtersVersion='1.6.4'
-    eventClientVersion='1.11.1'
-    propertiesClientVersion='1.1.2'
+    fhirVersion='1.1.5'
+    bfdVersion='2.0.2'
+    aggregatorVersion='1.2.5'
+    filtersVersion='1.6.5'
+    eventClientVersion='1.11.2'
+    propertiesClientVersion='1.1.3'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -46,6 +46,7 @@ ext {
     liquibaseVersion="4.17.2"
     jacksonVersion = "2.14.0"
     slackAPIVersion='1.27.0'
+    jupiterVersion='5.9.1'
 
     failedTests = []
     skippedTests = []
