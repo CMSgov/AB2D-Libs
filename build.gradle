@@ -23,10 +23,11 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
+
     fhirVersion='1.1.5'
     bfdVersion='2.0.2'
     aggregatorVersion='1.2.5'
-    filtersVersion='1.6.5'
+    filtersVersion='1.7'
     eventClientVersion='1.11.2'
     propertiesClientVersion='1.1.3'
 

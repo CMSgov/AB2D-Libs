@@ -177,7 +177,6 @@ public class ExplanationOfBenefitTrimmerR4 {
 
         // Called out data
         copy.setPatient(benefit.getPatient().copy());
-        copy.setProvider(benefit.getProvider().copy());
         copy.setFacility(benefit.getFacility().copy());
 
         List<ExplanationOfBenefit.CareTeamComponent> newCars = new ArrayList<>();

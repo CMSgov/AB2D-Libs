@@ -156,8 +156,6 @@ public class ExplanationOfBenefitTrimmerR4Test {
         assertNull(eobtrim.getEntererTarget());
         assertNull(eobtrim.getInsurer().getReference());
         assertNull(eobtrim.getInsurerTarget().getName());
-        assertEquals(DUMMY_REF, eobtrim.getProvider().getReference());
-        assertNull(eobtrim.getProviderTarget());
         assertNull(eobtrim.getReferral().getReference());
         assertNull(eobtrim.getReferralTarget().getId());
         assertEquals(DUMMY_REF, eobtrim.getFacility().getReference());
