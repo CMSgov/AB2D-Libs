@@ -12,21 +12,21 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 import static gov.cms.ab2d.contracts.utils.DateUtil.getESTOffset;
-
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Table(name = "contract", schema = "contract")
 public class Contract extends TimestampBase {
 
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd H:m:s Z");
@@ -92,9 +92,9 @@ public class Contract extends TimestampBase {
 
     public boolean hasChanges(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName) {
         boolean allEqual = Objects.equals(hmpsContractName, contractName) &&
-                        Objects.equals(parentOrgId, hpmsParentOrgId) &&
-                        Objects.equals(parentOrgName, hpmsParentOrg) &&
-                        Objects.equals(orgMarketingName, hpmsOrgMarketingName);
+                Objects.equals(parentOrgId, hpmsParentOrgId) &&
+                Objects.equals(parentOrgName, hpmsParentOrg) &&
+                Objects.equals(orgMarketingName, hpmsOrgMarketingName);
 
         return !allEqual;
     }
@@ -141,8 +141,8 @@ public class Contract extends TimestampBase {
     }
 
 
-//    public ContractDTO toDTO() {
-//        return new ContractDTO(getContractNumber(), getContractName(),
-//            getAttestedOn(), getContractType());
-//    }
+    public ContractDTO toDTO() {
+        return new ContractDTO(getContractNumber(), getContractName(),
+                getAttestedOn(), getContractType());
+    }
 }

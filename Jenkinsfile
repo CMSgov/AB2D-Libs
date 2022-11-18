@@ -57,6 +57,12 @@ pipeline {
             }
         }
 
+        stage("Generate SBOM") {
+            steps {
+                sh 'gradle cyclonedxBom'
+            }
+        }
+
         stage ('Publish Libraries') {
             when {
                 branch 'main'

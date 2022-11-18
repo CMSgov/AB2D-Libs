@@ -4,7 +4,6 @@ package gov.cms.ab2d.eventclient.config;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
