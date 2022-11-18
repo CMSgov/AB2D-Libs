@@ -214,7 +214,6 @@ public class ExplanationOfBenefitTrimmerR4Test {
         ExplanationOfBenefit.CareTeamComponent careTeamComponent = eobtrim.getCareTeamFirstRep();
         assertTrue(careTeamComponent.getResponsible());
         assertEquals("care", careTeamComponent.getRole().getText());
-        assertEquals("provider", careTeamComponent.getProvider().getReference());
         assertEquals(1, eobtrim.getDiagnosis().size());
         ExplanationOfBenefit.DiagnosisComponent diagnosisComponent = eobtrim.getDiagnosisFirstRep();
         assertEquals(1, diagnosisComponent.getSequence());
