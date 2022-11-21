@@ -1,7 +1,6 @@
 package gov.cms.ab2d.contracts.model;
 
 import gov.cms.ab2d.contracts.utils.DateUtil;
-import gov.cms.ab2d.contracts.utils.TimestampBase;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

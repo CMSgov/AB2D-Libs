@@ -1,4 +1,4 @@
-package gov.cms.ab2d.contracts.utils;
+package gov.cms.ab2d.contracts.model;
 
 import java.time.OffsetDateTime;
 import javax.persistence.MappedSuperclass;
