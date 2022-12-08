@@ -13,7 +13,7 @@ public interface ContractAPI {
     List<ContractDTO> getContracts(@RequestParam("contractId") Optional<Long> contractId);
 
     @PutMapping("/contract")
-    void updateContract(@RequestBody Contract ContractDTO);
+    void updateContract(@RequestBody ContractDTO contract);
 
     @GetMapping("/contract/{contractNumber}")
     List<ContractDTO> getContractByNumber(@PathVariable("contractNumber") Optional<String> contractNumber);
