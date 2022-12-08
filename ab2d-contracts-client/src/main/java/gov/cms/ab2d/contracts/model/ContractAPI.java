@@ -15,7 +15,7 @@ public interface ContractAPI {
     List<ContractDTO> getContracts(@RequestParam("contractId") Optional<Long> contractId);
 
     @PutMapping("/contract")
-    void updateContract(@RequestBody Contract contract);
+    void updateContract(@RequestBody Contract ContractDTO);
 
     @GetMapping("/contract/{contractNumber}")
     List<ContractDTO> getContractByNumber(@PathVariable("contractNumber") Optional<String> contractNumber);
