@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface ContractAPI {
     @GetMapping("/contract")
-    List<Contract> getContracts(@RequestParam("contractId") Optional<Long> contractId);
+    List<ContractDTO> getContracts(@RequestParam("contractId") Optional<Long> contractId);
 
     @PutMapping("/contract")
     void updateContract(@RequestBody Contract contract);
 
     @GetMapping("/contract/{contractNumber}")
-    List<Contract> getContractByNumber(@PathVariable("contractNumber") Optional<String> contractNumber);
+    List<ContractDTO> getContractByNumber(@PathVariable("contractNumber") Optional<String> contractNumber);
 }
 
