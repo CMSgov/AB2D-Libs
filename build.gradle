@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.29.3' apply false
+    id 'com.jfrog.artifactory' version '4.29.4' apply false
     id "org.sonarqube" version "3.5.0.2730"
     id 'org.cyclonedx.bom' version '1.7.2'
 }
@@ -37,18 +37,18 @@ ext {
 
     commonsLangVersion='3.12.0'
     lombokVersion = '1.18.24'
-    hapiVersion = '6.2.0'
-    springBootVersion='2.7.5'
+    hapiVersion = '6.2.2'
+    springBootVersion='2.7.6'
     springCloudVersion='2021.0.3'
-    newRelicVersion='7.11.0'
-    testContainerVersion='1.17.5'
+    newRelicVersion='7.11.1'
+    testContainerVersion='1.17.6'
     mockServerVersion='5.14.0'
-    jacksonVersion='2.14.0'
+    jacksonVersion='2.14.1'
     liquibaseVersion="4.17.2"
     jacksonVersion = "2.14.0"
-    slackAPIVersion='1.27.0'
+    slackAPIVersion='1.27.2'
     jupiterVersion='5.9.1'
-    hl7Version = '5.6.76'
+    hl7Version = '5.6.84'
 
     failedTests = []
     skippedTests = []
