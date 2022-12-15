@@ -141,7 +141,7 @@ public class Contract extends TimestampBase {
 
 
     public ContractDTO toDTO() {
-        return new ContractDTO(getContractNumber(), getContractName(),
+        return new ContractDTO(getId(), getContractNumber(), getContractName(),
                 getAttestedOn(), getContractType());
     }
 }

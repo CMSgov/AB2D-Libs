@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ContractDTO {
     @NotNull
+    private Long id;
+
+    @NotNull
     private String contractNumber;
 
     @NotNull
