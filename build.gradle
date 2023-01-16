@@ -48,7 +48,7 @@ ext {
     jacksonVersion = "2.14.1"
     slackAPIVersion='1.27.2'
     jupiterVersion='5.9.1'
-    hl7Version = '5.6.88'
+    hl7Version = '5.6.90'
 
     failedTests = []
     skippedTests = []
