@@ -44,7 +44,7 @@ ext {
     testContainerVersion='1.17.6'
     mockServerVersion='5.14.0'
     jacksonVersion='2.14.1'
-    liquibaseVersion="4.18.0"
+    liquibaseVersion="4.19.0"
     jacksonVersion = "2.14.1"
     slackAPIVersion='1.27.3'
     jupiterVersion='5.9.2'
