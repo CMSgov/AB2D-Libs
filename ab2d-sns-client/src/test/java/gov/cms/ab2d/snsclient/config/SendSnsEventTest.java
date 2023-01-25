@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false"})
 @Testcontainers
-public class SendSqsEventTest {
+public class SendSnsEventTest {
 
     public static final String LOCAL_EVENTS_SQS = "local-events-sqs";
     public static final String DEV_EVENTS_SQS = "dev-events-sqs";

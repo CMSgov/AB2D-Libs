@@ -1,6 +1,6 @@
 package gov.cms.ab2d.snsclient.messages;
 
-enum Services {
+public enum AB2DServices {
     AB2D,
     BFD,
     HPMS
