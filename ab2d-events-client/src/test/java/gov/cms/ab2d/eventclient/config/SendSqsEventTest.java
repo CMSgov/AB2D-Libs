@@ -20,10 +20,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
@@ -33,13 +30,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false"})
@@ -56,6 +50,7 @@ public class SendSqsEventTest {
     private AmazonSQS amazonSQS;
 
     private final ObjectMapper mapper = SQSConfig.objectMapper();
+
 
     @Test
     void testQueueUrl() {
@@ -83,7 +78,7 @@ public class SendSqsEventTest {
         sqsEventClient.sendLogs(sentApiRequestEvent);
         sqsEventClient.sendLogs(sentApiResponseEvent);
 
-        verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
+        Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
         List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
@@ -106,7 +101,7 @@ public class SendSqsEventTest {
         sqsEventClient.sendLogs(sentApiRequestEvent);
         sqsEventClient.sendLogs(sentApiResponseEvent);
 
-        verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
+        Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
         List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
@@ -134,7 +129,7 @@ public class SendSqsEventTest {
         sqsEventClient.logAndAlert(event, enviroments);
         sqsEventClient.logAndTrace(event, enviroments);
 
-        verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
+        Mockito.verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
 
         List<Message> message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("GeneralSQSMessage"));
@@ -171,7 +166,6 @@ public class SendSqsEventTest {
         ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
 
         sqsEventClient.sendLogs(sentApiRequestEvent);
-
         Assertions.assertTrue(output.getOut().contains("foobar"));
     }
 
