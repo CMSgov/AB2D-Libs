@@ -150,8 +150,6 @@ subprojects {
         implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
         implementation(platform("org.testcontainers:localstack:$testContainerVersion"))
         implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))
-        implementation(platform("org.mock-server:mockserver-netty:$mockServerVersion"))
-        implementation(platform("org.mock-server:mockserver-client-java:$mockServerVersion"))
         implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
         implementation(platform("org.testcontainers:postgresql:$testContainerVersion"))
         implementation(platform("org.testcontainers:junit-jupiter:$testContainerVersion"))

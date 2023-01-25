@@ -1,6 +1,7 @@
 package gov.cms.ab2d.eventclient.config;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
@@ -19,19 +20,27 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpStatus;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false"})
 @ExtendWith(OutputCaptureExtension.class)
@@ -47,7 +56,6 @@ public class SendSqsEventTest {
     private AmazonSQS amazonSQS;
 
     private final ObjectMapper mapper = SQSConfig.objectMapper();
-
 
     @Test
     void testQueueUrl() {
@@ -148,6 +156,23 @@ public class SendSqsEventTest {
 
         message = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         assertTrue(message.get(0).getBody().contains("LogAndTraceSQSMessage"));
+    }
+
+    @Test
+    void testFailedMapping(CapturedOutput output) {
+        AmazonSQS amazonSQSMock = Mockito.mock(AmazonSQS.class);
+        GetQueueUrlResult queueURL = Mockito.mock(GetQueueUrlResult.class);
+
+        when(amazonSQSMock.getQueueUrl(anyString())).thenReturn(queueURL);
+        when(queueURL.getQueueUrl()).thenReturn("localhost:4321");
+        when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, LOCAL_EVENTS_SQS);
+
+        ApiRequestEvent sentApiRequestEvent = new ApiRequestEvent("organization", "jobId", "url", "ipAddress", "token", "requestId");
+
+        sqsEventClient.sendLogs(sentApiRequestEvent);
+
+        Assertions.assertTrue(output.getOut().contains("foobar"));
     }
 
     @Test
