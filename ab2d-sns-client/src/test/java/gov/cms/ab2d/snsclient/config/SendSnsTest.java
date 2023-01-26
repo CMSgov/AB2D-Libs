@@ -46,7 +46,7 @@ class SendSnsTest {
         System.clearProperty("cloud.aws.end-point.uri");
         assertDoesNotThrow(() -> {
             try (MockedStatic<AmazonSNSClientBuilder> utilities = Mockito.mockStatic(AmazonSNSClientBuilder.class)) {
-                AmazonSNSClientBuilder builder = Mockito.mock( AmazonSNSClientBuilder.class);
+                AmazonSNSClientBuilder builder = Mockito.mock(AmazonSNSClientBuilder.class);
                 utilities.when(AmazonSNSClientBuilder::standard)
                         .thenReturn(builder);
                 Mockito.when(builder.build())

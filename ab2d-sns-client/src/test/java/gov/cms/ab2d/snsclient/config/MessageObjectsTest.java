@@ -35,7 +35,7 @@ class MessageObjectsTest {
     }
 
     @Test
-    void AB2DServices() {
+    void aB2DServices() {
         assertEquals("AB2D", AB2D.toString());
         assertEquals("BFD", BFD.toString());
         assertEquals("HPMS", HPMS.toString());
