@@ -23,14 +23,12 @@ public class SNSConfig {
     @Bean
     public AmazonSNSClient amazonSNS() {
         log.info("Locakstack url " + url);
-        if (null != url) {
-            return (AmazonSNSClient) AmazonSNSClient.builder()
-                    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region))
-                    .build();
-        }
-        return (AmazonSNSClient) AmazonSNSClientBuilder
-                .standard()
-                .build();
+        return (AmazonSNSClient) (
+                null != url
+                        ? AmazonSNSClient.builder()
+                            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region))
+                        : AmazonSNSClientBuilder.standard()
+        ).build();
     }
 
     @Bean

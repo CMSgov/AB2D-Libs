@@ -24,7 +24,13 @@ public class SNSClientImpl implements SNSClient {
         this.ab2dEnvironment = ab2dEnvironment;
     }
 
-
+    /***
+     * Serializes and sends objects to the specified topic
+     * @param topicName Name of topic without the environment appended. This method handles adding the environment
+     * @param message Any object that can be serialized. SNS imposes size limitations that this method does not check for.
+     *Although any object CAN be sent, it's preferable to add your object(s) in /snsclent/messages to promote code sharing
+     * @throws JsonProcessingException Thrown when the provided object cannot be serialized
+     */
     @Override
     public void sendMessage(String topicName, Object message) throws JsonProcessingException {
         PublishRequest request = new PublishRequest();

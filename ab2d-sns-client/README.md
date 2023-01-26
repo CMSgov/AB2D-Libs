@@ -1,13 +1,15 @@
 # Ab2d Events Client
 
-This library allow other services to send Events into the Event SQS Queue.
-
-### Apply Client to Service
+This is a thin wrapper around the AWS SNS client to make using Localstack easier. 
+It also 
+ * Provides a central location so share DTO classes
+ * Topics enum contains all known topics  
+ * Handles appending enviroment to topic name
 
 ### Gradle
 
 ```
-implementation 'gov.cms.ab2d:ab2d-events-client:1.0'
+implementation 'gov.cms.ab2d:ab2d-sns-client:1.0'
 ```
 
 ### Maven
@@ -15,32 +17,16 @@ implementation 'gov.cms.ab2d:ab2d-events-client:1.0'
 ```
 <dependency>
     <groupId>gov.cms.ab2d</groupId>
-    <artifactId>ab2d-events-client</artifactId>
-    <version>1.0</version>
+    <artifactId>ab2d-sns-client</artifactId>
+    <version>${version}</version>
 </dependency>
 ```
 
-### Add New Message type for ab2d-events-client
+### Add New Message type or topic for ab2d-sns-client
 
-1. Add a message object in gov/cms/ab2d/eventclient/messages
+ * Add a message object in gov/cms/ab2d/snsclient/messages
+ * Add a new topics in gov/cms/ab2d/snsclient/messages/Topics
 
-```
-@Data
-public class MyMessageExample extends SQSMessages
-
-# All events/logs variables you want to send to the event service.
-private LoggableEvent exampleObject;
-```
-
-2. Add a new method to send messages to SQS in SQSEventClient.java (see java file for examples)
-3. Upgrade the event client version in /AB2D-Filters/build.gradle to build changes
-
-```
-# Increase current version
-eventClientVersion='1.0'
-```
-
-4. Modify the [Event Service Repo](https://github.com/CMSgov/ab2d-events) to absorb message.
 
 
 
