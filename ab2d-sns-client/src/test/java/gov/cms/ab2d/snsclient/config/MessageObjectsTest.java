@@ -10,6 +10,7 @@ import static gov.cms.ab2d.snsclient.messages.AB2DServices.AB2D;
 import static gov.cms.ab2d.snsclient.messages.AB2DServices.BFD;
 import static gov.cms.ab2d.snsclient.messages.AB2DServices.HPMS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class MessageObjectsTest {
 
@@ -30,6 +31,7 @@ class MessageObjectsTest {
         assertEquals(coverage.getYear(), coverageConst.getYear());
         assertEquals(coverage.getMonth(), coverageConst.getMonth());
         assertEquals(coverage.getCountedAt(), coverageConst.getCountedAt());
+        assertNotEquals(coverage.toString(), "");
     }
 
     @Test
