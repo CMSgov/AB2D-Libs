@@ -31,7 +31,7 @@ class MessageObjectsTest {
         assertEquals(coverage.getYear(), coverageConst.getYear());
         assertEquals(coverage.getMonth(), coverageConst.getMonth());
         assertEquals(coverage.getCountedAt(), coverageConst.getCountedAt());
-        assertNotEquals(coverage.toString(), "");
+        assertNotEquals("", coverage.toString());
     }
 
     @Test
