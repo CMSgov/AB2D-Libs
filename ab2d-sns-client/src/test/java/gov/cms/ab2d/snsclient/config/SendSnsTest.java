@@ -17,9 +17,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@SpringBootTest//(classes = {SNSClient.class, SNSConfig.class, SNSClientImpl.class})
+@SpringBootTest
 @Testcontainers
-public class SendSnsTest {
+class SendSnsTest {
 
     @Container
     private static final AB2DLocalstackContainer LOCALSTACK_CONTAINER = new AB2DLocalstackContainer();
