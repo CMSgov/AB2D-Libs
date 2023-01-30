@@ -17,7 +17,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
     testImplementation "uk.org.webcompere:system-stubs-core:2.0.1"
-    testImplementation "uk.org.webcompere:system-stubs-jupiter:2.0.1"
+    testImplementation "uk.org.webcompere:system-stubs-jupiter:2.0.2"
     testImplementation "com.github.tomakehurst:wiremock:2.27.2"
     annotationProcessor  "org.projectlombok:lombok:$lombokVersion"
 }
