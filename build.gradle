@@ -36,16 +36,16 @@ ext {
     resolverRepo = 'ab2d-main'
 
     commonsLangVersion='3.12.0'
-    lombokVersion = '1.18.24'
-    hapiVersion = '6.2.4'
+    lombokVersion = '1.18.26'
+    hapiVersion = '6.2.5'
     springBootVersion='2.7.6'
     springCloudVersion='2021.0.3'
-    newRelicVersion='7.11.1'
+    newRelicVersion='8.0.0'
     testContainerVersion='1.17.6'
     mockServerVersion='5.15.0'
     jacksonVersion='2.14.1'
     liquibaseVersion="4.19.0"
-    jacksonVersion = "2.14.1"
+    jacksonVersion = "2.14.2"
     slackAPIVersion='1.27.3'
     jupiterVersion='5.9.2'
     hl7Version = '5.6.92'
