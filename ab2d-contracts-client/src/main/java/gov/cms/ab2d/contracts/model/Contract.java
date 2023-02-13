@@ -98,13 +98,13 @@ public class Contract extends TimestampBase {
     }
 
     public boolean hasChanges(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName,
-                              Integer hpmsTotalEnrollment, Integer medicareEligible) {
+                              Integer hpmsTotalEnrollment, Integer hpmsMedicareEligible) {
         boolean allEqual = Objects.equals(hmpsContractName, contractName) &&
                 Objects.equals(parentOrgId, hpmsParentOrgId) &&
                 Objects.equals(parentOrgName, hpmsParentOrg) &&
                 Objects.equals(orgMarketingName, hpmsOrgMarketingName) &&
                 Objects.equals(totalEnrollment, hpmsTotalEnrollment) &&
-                Objects.equals(medicareEligible, medicareEligible);
+                Objects.equals(medicareEligible, hpmsMedicareEligible);
 
         return !allEqual;
     }
