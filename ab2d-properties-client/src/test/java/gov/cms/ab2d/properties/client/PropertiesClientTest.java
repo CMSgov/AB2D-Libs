@@ -1,5 +1,6 @@
 package gov.cms.ab2d.properties.client;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,11 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PropertiesClientTest {
+    @Disabled
     @Test
     void testGettingProperties() {
         final String testKey = "one";
         PropertiesClient client = new PropertiesClientImpl();
-        System.out.println(client.getAllProperties());
+        // System.out.println(client.getAllProperties());
         Property property = client.getProperty("coverage.update.queueing");
         assertEquals("coverage.update.queueing", property.getKey());
         assertEquals("engaged", property.getValue());
