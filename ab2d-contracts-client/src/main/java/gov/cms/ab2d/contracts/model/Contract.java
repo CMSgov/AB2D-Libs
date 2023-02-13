@@ -65,13 +65,21 @@ public class Contract extends TimestampBase {
     @Enumerated(EnumType.STRING)
     private ContractType contractType = ContractType.NORMAL;
 
+    @Column(name = "total_enrollment")
+    private Integer totalEnrollment;
+
+    @Column(name = "medicare_eligible")
+    private Integer medicareEligible;
+
     public Contract(@NotNull String contractNumber, String contractName, Long hpmsParentOrgId, String hpmsParentOrg,
-                    String hpmsOrgMarketingName) {
+                    String hpmsOrgMarketingName, Integer totalEnrollment, Integer medicareEligible) {
         this.contractNumber = contractNumber;
         this.contractName = contractName;
         this.hpmsParentOrgId = hpmsParentOrgId;
         this.hpmsParentOrg = hpmsParentOrg;
         this.hpmsOrgMarketingName = hpmsOrgMarketingName;
+        this.totalEnrollment = totalEnrollment;
+        this.medicareEligible = medicareEligible;
     }
 
     @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
@@ -89,20 +97,26 @@ public class Contract extends TimestampBase {
         attestedOn = null;
     }
 
-    public boolean hasChanges(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName) {
+    public boolean hasChanges(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName,
+                              Integer hpmsTotalEnrollment, Integer medicareEligible) {
         boolean allEqual = Objects.equals(hmpsContractName, contractName) &&
                 Objects.equals(parentOrgId, hpmsParentOrgId) &&
                 Objects.equals(parentOrgName, hpmsParentOrg) &&
-                Objects.equals(orgMarketingName, hpmsOrgMarketingName);
+                Objects.equals(orgMarketingName, hpmsOrgMarketingName) &&
+                Objects.equals(totalEnrollment, hpmsTotalEnrollment) &&
+                Objects.equals(medicareEligible, medicareEligible);
 
         return !allEqual;
     }
 
-    public Contract updateOrg(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName) {
-        contractName = hmpsContractName;
-        hpmsParentOrgId = parentOrgId;
-        hpmsParentOrg = parentOrgName;
-        hpmsOrgMarketingName = orgMarketingName;
+    public Contract updateOrg(String hmpsContractName, long parentOrgId, String parentOrgName, String orgMarketingName,
+                              Integer hpmsTotalEnrollment, Integer hpmsMedicareEligible) {
+        this.contractName = hmpsContractName;
+        this.hpmsParentOrgId = parentOrgId;
+        this.hpmsParentOrg = parentOrgName;
+        this.hpmsOrgMarketingName = orgMarketingName;
+        this.totalEnrollment = hpmsTotalEnrollment;
+        this.medicareEligible = hpmsMedicareEligible;
         return this;
     }
 
@@ -139,9 +153,8 @@ public class Contract extends TimestampBase {
         return updateMode == UpdateMode.AUTOMATIC;
     }
 
-
     public ContractDTO toDTO() {
         return new ContractDTO(getId(), getContractNumber(), getContractName(),
-                getAttestedOn(), getContractType());
+                getAttestedOn(), getContractType(), getTotalEnrollment(), getMedicareEligible());
     }
 }

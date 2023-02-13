@@ -51,7 +51,6 @@ public class SendSqsEventTest {
 
     private final ObjectMapper mapper = SQSConfig.objectMapper();
 
-
     @Test
     void testQueueUrl() {
         String url = amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl();
@@ -83,7 +82,6 @@ public class SendSqsEventTest {
         List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl()).getMessages();
 
-
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
     }
@@ -105,7 +103,6 @@ public class SendSqsEventTest {
 
         List<Message> message1 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
         List<Message> message2 = amazonSQS.receiveMessage(amazonSQS.getQueueUrl("ab2d-dev-events-sqs").getQueueUrl()).getMessages();
-
 
         assertTrue(message1.get(0).getBody().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).getBody().contains(mapper.writeValueAsString(sentApiResponseEvent)));
