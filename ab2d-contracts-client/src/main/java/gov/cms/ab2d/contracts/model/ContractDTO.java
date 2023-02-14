@@ -25,6 +25,10 @@ public class ContractDTO {
 
     private Contract.ContractType contractType;
 
+    private Integer totalEnrollment;
+
+    private Integer medicareEligible;
+
     public boolean hasDateIssue() {
         return Contract.ContractType.CLASSIC_TEST == contractType;
     }
