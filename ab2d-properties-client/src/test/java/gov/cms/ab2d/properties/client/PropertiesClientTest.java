@@ -13,7 +13,6 @@ public class PropertiesClientTest {
     void testGettingProperties() {
         final String testKey = "one";
         PropertiesClient client = new PropertiesClientImpl();
-        // System.out.println(client.getAllProperties());
         Property property = client.getProperty("coverage.update.queueing");
         assertEquals("coverage.update.queueing", property.getKey());
         assertEquals("engaged", property.getValue());
