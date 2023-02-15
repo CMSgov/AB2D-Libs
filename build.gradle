@@ -28,7 +28,7 @@ ext {
     filtersVersion='1.8.2'
     eventClientVersion='1.11.5'
     propertiesClientVersion='1.1.6'
-    contractClientVersion='1.0.3'
+    contractClientVersion='1.1'
     snsClientVersion='0.0.2'
 
     sourcesRepo = 'ab2d-maven-repo'
