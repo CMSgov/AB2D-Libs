@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.31.0' apply false
+    id 'com.jfrog.artifactory' version '4.31.3' apply false
     id "org.sonarqube" version "3.5.0.2730"
     id 'org.cyclonedx.bom' version '1.7.3'
 }
