@@ -3,9 +3,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.31.0' apply false
-    id "org.sonarqube" version "3.5.0.2730"
-    id 'org.cyclonedx.bom' version '1.7.3'
+    id 'com.jfrog.artifactory' version '4.31.3' apply false
+    id "org.sonarqube" version "4.0.0.2929"
+    id 'org.cyclonedx.bom' version '1.7.4'
 }
 
 version = "1.0"
@@ -22,14 +22,14 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.1.8'
-    bfdVersion='2.0.5'
-    aggregatorVersion='1.2.8'
-    filtersVersion='1.8.2'
-    eventClientVersion='1.11.5'
-    propertiesClientVersion='1.1.6'
-    contractClientVersion='1.1'
-    snsClientVersion='0.0.2'
+    fhirVersion='1.1.9'
+    bfdVersion='2.0.7'
+    aggregatorVersion='1.2.9'
+    filtersVersion='1.8.3'
+    eventClientVersion='1.11.6'
+    propertiesClientVersion='1.1.7'
+    contractClientVersion='1.1.1'
+    snsClientVersion='0.0.3'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -37,13 +37,12 @@ ext {
 
     commonsLangVersion='3.12.0'
     lombokVersion = '1.18.26'
-    hapiVersion = '6.2.5'
+    hapiVersion = '6.4.0'
     springBootVersion='2.7.6'
     springCloudVersion='2021.0.3'
     newRelicVersion='8.0.0'
     testContainerVersion='1.17.6'
     mockServerVersion='5.15.0'
-    jacksonVersion='2.14.1'
     liquibaseVersion="4.19.0"
     jacksonVersion = "2.14.2"
     slackAPIVersion='1.27.3'
