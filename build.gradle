@@ -29,7 +29,7 @@ ext {
     eventClientVersion='1.11.6'
     propertiesClientVersion='1.1.7'
     contractClientVersion='1.1.1'
-    snsClientVersion='0.0.4'
+    snsClientVersion='0.1.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
