@@ -23,10 +23,11 @@ public class SNSConfig {
     @Bean
     public AmazonSNSClient amazonSNS() {
         log.info("Locakstack url " + url);
+        // only use the injected url locally, let aws figure itself out when deployed
         return (AmazonSNSClient) (
-                null != url
+                (url + "").contains("localhost")
                         ? AmazonSNSClient.builder()
-                            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region))
+                        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region))
                         : AmazonSNSClientBuilder.standard()
         ).build();
     }
