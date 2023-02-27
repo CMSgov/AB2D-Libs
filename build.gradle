@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'java-library'
-    id 'com.jfrog.artifactory' version '4.31.3' apply false
+    id 'com.jfrog.artifactory' version '4.31.4' apply false
     id "org.sonarqube" version "4.0.0.2929"
     id 'org.cyclonedx.bom' version '1.7.4'
 }
@@ -29,7 +29,7 @@ ext {
     eventClientVersion='1.11.6'
     propertiesClientVersion='1.1.7'
     contractClientVersion='1.1.1'
-    snsClientVersion='0.1.0'
+    snsClientVersion='0.1.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
