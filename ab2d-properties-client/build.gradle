@@ -12,7 +12,7 @@ task prepareKotlinBuildScriptModel {
 
 dependencies {
     implementation "commons-configuration:commons-configuration:1.10"
-    implementation "com.konghq:unirest-java:3.14.2"
+    implementation "com.konghq:unirest-java:3.14.1"
     implementation "org.projectlombok:lombok:$lombokVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
