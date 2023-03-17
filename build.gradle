@@ -22,14 +22,14 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.1.9'
-    bfdVersion='2.0.7'
-    aggregatorVersion='1.2.9'
-    filtersVersion='1.8.3'
-    eventClientVersion='1.11.6'
-    propertiesClientVersion='1.1.7'
-    contractClientVersion='1.1.1'
-    snsClientVersion='0.1.1'
+    fhirVersion='1.1.10'
+    bfdVersion='2.0.8'
+    aggregatorVersion='1.2.10'
+    filtersVersion='1.8.4'
+    eventClientVersion='1.11.7'
+    propertiesClientVersion='1.1.8'
+    contractClientVersion='1.1.2'
+    snsClientVersion='0.1.2'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
