@@ -111,6 +111,9 @@ allprojects {
                 username = project.artifactory_user
                 password = project.artifactory_password
             }
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
 }
