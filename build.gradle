@@ -40,13 +40,13 @@ ext {
     hapiVersion = '6.4.4'
     springBootVersion='2.7.6'
     springCloudVersion='2021.0.3'
-    newRelicVersion='8.1.0'
+    newRelicVersion='8.2.0'
     testContainerVersion='1.18.0'
     mockServerVersion='5.15.0'
     liquibaseVersion="4.21.1"
     jacksonVersion = "2.15.0"
     slackAPIVersion='1.29.2'
-    jupiterVersion='5.9.2'
+    jupiterVersion='5.9.3'
     hl7Version = '5.6.971'
 
     failedTests = []
