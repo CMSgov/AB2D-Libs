@@ -4,7 +4,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     implementation 'com.amazonaws:aws-java-sdk-sns:1.12.477'
-    implementation 'software.amazon.awssdk:sns:2.20.74'
+    implementation 'software.amazon.awssdk:sns:2.20.92'
     implementation(project(":ab2d-events-client"))
 
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
