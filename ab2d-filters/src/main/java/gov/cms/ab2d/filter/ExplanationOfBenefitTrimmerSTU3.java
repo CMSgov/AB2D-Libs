@@ -51,7 +51,7 @@ public class ExplanationOfBenefitTrimmerSTU3 {
 
            Inherited - Identifier, resourceType, type
          */
-        benefit.setExtension(null);
+        // Extensions should exist in benefit: AB2D-5728 Validate Humana AB2D data dictionary for missing elements reported in STU3
         benefit.setPatientTarget(null);
         benefit.setCreated(null);
         benefit.setEnterer(null);
@@ -118,7 +118,6 @@ public class ExplanationOfBenefitTrimmerSTU3 {
               quantity
          */
         clearOutList(component.getInformationLinkId());
-        component.setExtension(null);
         component.setRevenue(null);
         component.setCategory(null);
         clearOutList(component.getModifier());
