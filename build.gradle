@@ -21,15 +21,16 @@ ext {
     artifactory_password = project.hasProperty('artifactory_password') ? project.artifactory_password
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
+    // Springboot 3 Migration - Ticket: AB2D-5267 
     // AB2D libraries
-    fhirVersion='1.1.12'
-    bfdVersion='2.0.11'
-    aggregatorVersion='1.2.13'
-    filtersVersion='1.8.7'
-    eventClientVersion='1.11.10'
-    propertiesClientVersion='1.1.11'
-    contractClientVersion='1.1.4'
-    snsClientVersion='0.1.4'
+    fhirVersion='2.0.0'
+    bfdVersion='3.0.0'
+    aggregatorVersion='2.0.0'
+    filtersVersion='2.0.0'
+    eventClientVersion='2.0.0'
+    propertiesClientVersion='2.0.0'
+    contractClientVersion='2.0.0'
+    snsClientVersion='1.0.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
