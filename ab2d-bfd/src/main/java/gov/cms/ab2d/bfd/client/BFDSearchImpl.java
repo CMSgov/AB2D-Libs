@@ -55,6 +55,11 @@ public class BFDSearchImpl implements BFDSearch {
 
         if (since != null) {
             url.append("&_lastUpdated=ge").append(since);
+
+            //AB2D-5892 (Sprint 3)Centene customer support to provide 2 year data
+            if (contractNum.equals("S4802")){
+                url.append("&_lastUpdated=le").append(since.plusWeeks(2));
+            }
         }
 
         if (pageSize > 0) {
