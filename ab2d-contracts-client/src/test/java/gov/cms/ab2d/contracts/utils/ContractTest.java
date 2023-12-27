@@ -14,15 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContractTest {
-    private final static String CONTRACT_NAME = "Name";
-    private final static String PARENT_NAME = "Parent";
-    private final static String MARKETING_NAME = "Marketing Name";
-    private final static String CONTRACT_NUMBER = "S12345";
-    private final static OffsetDateTime NOW = OffsetDateTime.now();
-    private final static Long ID = 1L;
-    private final static Long PARENT_ID = 2L;
-    private final static Integer MEDICARE_ELIGIBLE = 95;
-    private final static Integer TOTAL_ENROLLMENT = 100;
+    private static final String CONTRACT_NAME = "Name";
+    private static final String PARENT_NAME = "Parent";
+    private static final String MARKETING_NAME = "Marketing Name";
+    private static final String CONTRACT_NUMBER = "S12345";
+    private static final OffsetDateTime NOW = OffsetDateTime.now();
+    private static final Long ID = 1L;
+    private static final Long PARENT_ID = 2L;
+    private static final Integer MEDICARE_ELIGIBLE = 95;
+    private static final Integer TOTAL_ENROLLMENT = 100;
 
     private Contract contract;
 
@@ -106,11 +106,11 @@ public class ContractTest {
                 MARKETING_NAME + "1", TOTAL_ENROLLMENT + 1,
                 MEDICARE_ELIGIBLE + 1);
 
-        assertEquals(contract.getContractName(),CONTRACT_NAME + "1");
-        assertEquals(contract.getHpmsParentOrgId(),PARENT_ID + 1);
-        assertEquals(contract.getHpmsParentOrg(),PARENT_NAME + "1");
-        assertEquals(contract.getTotalEnrollment(),TOTAL_ENROLLMENT + 1);
-        assertEquals(contract.getMedicareEligible(),MEDICARE_ELIGIBLE + 1);
+        assertEquals(contract.getContractName(), CONTRACT_NAME + "1");
+        assertEquals(contract.getHpmsParentOrgId(), PARENT_ID + 1);
+        assertEquals(contract.getHpmsParentOrg(), PARENT_NAME + "1");
+        assertEquals(contract.getTotalEnrollment(), TOTAL_ENROLLMENT + 1);
+        assertEquals(contract.getMedicareEligible(), MEDICARE_ELIGIBLE + 1);
         assertEquals(contract.getAttestedOn(), NOW);
         assertEquals(contract.getContractType(), Contract.ContractType.NORMAL);
         assertEquals(0, contract.getESTAttestationTime().toOffsetDateTime().toInstant().compareTo(NOW.toInstant()));
