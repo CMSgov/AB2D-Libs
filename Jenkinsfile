@@ -59,7 +59,9 @@ pipeline {
 
         stage("Generate SBOM") {
             steps {
-                sh 'gradle cyclonedxBom'
+                withCredentials([usernamePassword(credentialsId: 'artifactoryuserpass', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                    sh 'gradle cyclonedxBom'
+                }
             }
         }
 
