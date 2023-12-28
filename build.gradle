@@ -26,6 +26,8 @@ ext {
 
     println("'''----B2------- + ${B2}")
 
+    println("'''----B2------- + ${A2.length()}+ ${B2}")
+
 
     // Override user and password
     artifactory_user = project.hasProperty('artifactory_user') ? project.artifactory_user
