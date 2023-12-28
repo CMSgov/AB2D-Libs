@@ -79,11 +79,11 @@ allprojects {
                 rootProject.ext.skippedTests.add(desc)
             }
 
-            System.out.print("'''----artifactoryLoc -------" + ${artifactoryLoc})
+            System.out.print("'''----artifactoryLoc ------- + ${artifactoryLoc}")
 
-            System.out.print("'''----project.artifactory_contextUrl-------" + ${project.artifactory_contextUrl})
+       //     System.out.print("'''----project.artifactory_contextUrl------- + ${project.artifactory_contextUrl}")
 
-            System.out.print("'''----System.getenv()['ARTIFACTORY_URL']-------" + ${System.getenv()['ARTIFACTORY_URL']})
+            System.out.print("'''----System.getenv()['ARTIFACTORY_URL']------- + ${System.getenv()['ARTIFACTORY_URL']}")
         }
 
         afterSuite { desc, result ->
