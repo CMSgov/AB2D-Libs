@@ -15,20 +15,6 @@ ext {
     artifactoryLoc = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
             : System.getenv()['ARTIFACTORY_URL']
 
-    A2 = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
-            : System.getenv()['ARTIFACTORY_URL']
-
-
-    println("'''----A2 ------- + ${A2}")
-    B2 = System.getenv()['ARTIFACTORY_URL']
-
-    //     System.out.print("'''----project.artifactory_contextUrl------- + ${project.artifactory_contextUrl}")
-
-    println("'''----B2------- + ${B2}")
-
-    println("'''----B2------- + ${A2.length()}+ ${B2}")
-
-
     // Override user and password
     artifactory_user = project.hasProperty('artifactory_user') ? project.artifactory_user
             : System.getenv()['ARTIFACTORY_USER']
@@ -91,7 +77,6 @@ allprojects {
             if (result.resultType == TestResult.ResultType.SKIPPED) {
                 rootProject.ext.skippedTests.add(desc)
             }
-
         }
 
         afterSuite { desc, result ->
@@ -168,8 +153,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-  //      classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-   //     out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -179,7 +164,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-  //          xml.enabled true
+            xml.enabled true
         }
     }
 
