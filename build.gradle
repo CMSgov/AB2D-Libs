@@ -15,11 +15,16 @@ ext {
     artifactoryLoc = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
             : System.getenv()['ARTIFACTORY_URL']
 
-    println("'''----artifactoryLoc ------- + ${artifactoryLoc}")
+    A2 = project.hasProperty('artifactory_contextUrl') ? project.artifactory_contextUrl
+            : System.getenv()['ARTIFACTORY_URL']
+
+
+    println("'''----A2 ------- + ${A2}")
+    B2 = System.getenv()['ARTIFACTORY_URL']
 
     //     System.out.print("'''----project.artifactory_contextUrl------- + ${project.artifactory_contextUrl}")
 
-    println("'''----System.getenv()['ARTIFACTORY_URL']------- + ${System.getenv()['ARTIFACTORY_URL']}")
+    println("'''----B2------- + ${B2}")
 
 
     // Override user and password
