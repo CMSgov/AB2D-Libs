@@ -23,7 +23,7 @@ ext {
 
     // AB2D libraries
     fhirVersion='1.1.12'
-    bfdVersion='2.0.14'
+    bfdVersion='2.0.15'
     aggregatorVersion='1.2.13'
     filtersVersion='1.8.7'
     eventClientVersion='1.11.10'
