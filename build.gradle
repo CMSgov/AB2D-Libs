@@ -22,14 +22,14 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.1.12'
-    bfdVersion='2.0.16'
-    aggregatorVersion='1.2.13'
-    filtersVersion='1.8.7'
-    eventClientVersion='1.11.10'
-    propertiesClientVersion='1.1.11'
-    contractClientVersion='1.1.4'
-    snsClientVersion='0.1.4'
+    fhirVersion='1.2.0'
+    bfdVersion='2.1.0'
+    aggregatorVersion='1.3.0'
+    filtersVersion='1.9.0'
+    eventClientVersion='1.12.0'
+    propertiesClientVersion='1.2.0'
+    contractClientVersion='1.2.0'
+    snsClientVersion='0.2.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -39,7 +39,7 @@ ext {
     lombokVersion = '1.18.28'
     hapiVersion = '6.6.2'
     springBootVersion='2.7.6'
-    springCloudVersion='2021.0.3'
+    springCloudAwsVersion='2.4.4'
     newRelicVersion='8.4.0'
     testContainerVersion='1.18.3'
     mockServerVersion='5.15.0'
@@ -141,6 +141,8 @@ subprojects {
     dependencies {
         //set dependencies and versions for child projects to use (maven dependency management equivalent)
         implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
+        implementation(platform("io.awspring.cloud:spring-cloud-aws-dependencies:$springCloudAwsVersion"))
+        implementation(platform("io.awspring.cloud:spring-cloud-aws-core:${springCloudAwsVersion}"))
         implementation(platform("org.liquibase:liquibase-core:$liquibaseVersion"))
         implementation(platform("com.newrelic.agent.java:newrelic-api:$newRelicVersion"))
         implementation(platform("org.testcontainers:testcontainers:$testContainerVersion"))
