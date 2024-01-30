@@ -155,8 +155,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        // classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        // out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -164,11 +164,11 @@ subprojects {
         finalizedBy jacocoTestReport // report is always generated after tests run
     }
 
-    // jacocoTestReport {
-    //     reports {
-    //         xml.enabled true
-    //     }
-    // }
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+    }
 
     jacoco {
         toolVersion = "0.8.7"
