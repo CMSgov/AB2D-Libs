@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication(
         scanBasePackages = {"gov.cms.ab2d.eventclient"},
         exclude = {
-                org.springframework.cloud.aws.autoconfigure.context.ContextInstanceDataAutoConfiguration.class,
-                org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration.class,
-                org.springframework.cloud.aws.autoconfigure.context.ContextRegionProviderAutoConfiguration.class
+                io.awspring.cloud.autoconfigure.context.ContextInstanceDataAutoConfiguration.class,
+                io.awspring.cloud.autoconfigure.context.ContextStackAutoConfiguration.class,
+                io.awspring.cloud.autoconfigure.context.ContextRegionProviderAutoConfiguration.class
         }
 )
 public class SpringBootApp {
