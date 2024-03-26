@@ -23,6 +23,8 @@ public final class ExtensionUtils {
     public static final String ID_EXT = "http://hl7.org/fhir/StructureDefinition/elementdefinition-identifier";
     public static final String REF_YEAR_EXT = "https://bluebutton.cms.gov/resources/variables/rfrnc_yr";
 
+    private static final String EXTENSION_CLASSNAME = "Extension";
+
     private ExtensionUtils() { }
 
     /**
@@ -37,7 +39,7 @@ public final class ExtensionUtils {
             return;
         }
         try {
-            Versions.invokeSetMethod(resource, "addExtension", extension, Class.forName(version.getClassName("Extension")));
+            Versions.invokeSetMethod(resource, "addExtension", extension, Class.forName(version.getClassName(EXTENSION_CLASSNAME)));
         } catch (Exception ex) {
             log.error("Unable to add Extension");
         }
@@ -59,7 +61,7 @@ public final class ExtensionUtils {
         Object coding = Versions.getObject(version, "Coding");
         Versions.invokeSetMethod(coding, "setCode", current ? CURRENT_MBI : HISTORIC_MBI, String.class);
 
-        Object currencyExtension = Versions.getObject(version, "Extension");
+        Object currencyExtension = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(currencyExtension, "setUrl", CURRENCY_IDENTIFIER, String.class);
         try {
             Versions.invokeSetMethod(currencyExtension, "setValue", coding, Class.forName(version.getClassName("Type")));
@@ -69,7 +71,7 @@ public final class ExtensionUtils {
 
         Versions.invokeSetMethod(identifier, "setExtension", List.of(currencyExtension), List.class);
 
-        Object ext = Versions.getObject(version, "Extension");
+        Object ext = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(ext, "setUrl", ID_EXT, String.class);
         try {
             Versions.invokeSetMethod(ext, "setValue", identifier, Class.forName(version.getClassName("Type")));
