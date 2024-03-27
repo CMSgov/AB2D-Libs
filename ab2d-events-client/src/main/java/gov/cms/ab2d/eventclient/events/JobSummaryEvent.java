@@ -27,8 +27,8 @@ public class JobSummaryEvent extends LoggableEvent {
     public JobSummaryEvent() {
         // Adding a nested comment here to satisfy sonarqube code smells.
         // This method is intentionally blank for the following reason:
-        
-        // This is a constructor for a subtype of LoggableEvent. 
+
+        // This is a constructor for a subtype of LoggableEvent.
         // We construct this type while overriding asMessage to differentiate functionality.
     }
 
