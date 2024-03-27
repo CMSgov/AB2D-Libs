@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FilterTest {
+class FilterTest {
     @Test
     void testFilter() throws ParseException {
         assertTrue(FilterEob.filter(null, null, null, null, true).isEmpty());

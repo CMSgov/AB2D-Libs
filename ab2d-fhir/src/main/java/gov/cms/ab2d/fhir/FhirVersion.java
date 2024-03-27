@@ -148,15 +148,17 @@ public enum FhirVersion {
      * @return the OperationOutcome object
      */
     public IBaseResource getErrorOutcome(String msg) {
-        IBaseResource operationOutcome = (IBaseResource) Versions.getObject(this, "OperationOutcome");
+        String operationOutcomeClassName = "OperationOutcome";
+
+        IBaseResource operationOutcome = (IBaseResource) Versions.getObject(this, operationOutcomeClassName);
         List issues = (List) Versions.invokeGetMethod(operationOutcome, "getIssue");
 
-        Object newIssue = Versions.instantiateClass(this, "OperationOutcome", "OperationOutcomeIssueComponent");
+        Object newIssue = Versions.instantiateClass(this, operationOutcomeClassName, "OperationOutcomeIssueComponent");
 
-        Object severityError = Versions.instantiateEnum(this, "OperationOutcome", "IssueSeverity", "ERROR");
+        Object severityError = Versions.instantiateEnum(this, operationOutcomeClassName, "IssueSeverity", "ERROR");
         Versions.invokeSetMethod(newIssue, "setSeverity", severityError, severityError.getClass());
 
-        Object issueTypeInvalid = Versions.instantiateEnum(this, "OperationOutcome", "IssueType", "INVALID");
+        Object issueTypeInvalid = Versions.instantiateEnum(this, operationOutcomeClassName, "IssueType", "INVALID");
         Versions.invokeSetMethod(newIssue, "setCode", issueTypeInvalid, issueTypeInvalid.getClass());
         Object codableConcept = Versions.getObject(this, "CodeableConcept");
         Versions.invokeSetMethod(codableConcept, "setText", msg, String.class);

@@ -20,6 +20,10 @@ public final class BundleUtils {
     public static final String EOB = "ExplanationOfBenefit";
     public static final String PATIENT = "Patient";
 
+    private static final String GET_LINK_METHOD_NAME = "getLink";
+    private static final String GET_RELATION_METHOD_NAME = "getRelation";
+    private static final String GET_RESOURCE_METHOD_NAME = "getResource";
+
     private BundleUtils() { }
 
     /**
@@ -32,10 +36,10 @@ public final class BundleUtils {
         if (bundle == null) {
             return null;
         }
-        List<?> links = (List<?>) Versions.invokeGetMethod(bundle, "getLink");
+        List<?> links = (List<?>) Versions.invokeGetMethod(bundle, GET_LINK_METHOD_NAME);
         List<String> listValues = new ArrayList<>();
         for (Object o : links) {
-            listValues.add((String) Versions.invokeGetMethod(o, "getRelation"));
+            listValues.add((String) Versions.invokeGetMethod(o, GET_RELATION_METHOD_NAME));
         }
         return String.join(" , ", listValues);
     }
@@ -50,10 +54,10 @@ public final class BundleUtils {
         if (bundle == null) {
             return null;
         }
-        List<?> links = (List<?>) Versions.invokeGetMethod(bundle, "getLink");
+        List<?> links = (List<?>) Versions.invokeGetMethod(bundle, GET_LINK_METHOD_NAME);
         List<String> listValues = new ArrayList<>();
         for (Object o : links) {
-            listValues.add(Versions.invokeGetMethod(o, "getRelation") + " -> " +
+            listValues.add(Versions.invokeGetMethod(o, GET_RELATION_METHOD_NAME) + " -> " +
                     Versions.invokeGetMethod(o, "getUrl"));
         }
         return String.join(" , ", listValues);
@@ -70,7 +74,7 @@ public final class BundleUtils {
             return null;
         }
         try {
-            return (IBaseBackboneElement) Versions.invokeGetMethodWithArg(bundle, "getLink", LINK_NEXT, String.class);
+            return (IBaseBackboneElement) Versions.invokeGetMethodWithArg(bundle, GET_LINK_METHOD_NAME, LINK_NEXT, String.class);
         } catch (Exception ex) {
             return null;
         }
@@ -89,7 +93,7 @@ public final class BundleUtils {
         }
         List entries = getEntries(bundle);
         return entries.stream()
-                .map(c -> Versions.invokeGetMethod(c, "getResource"))
+                .map(c -> Versions.invokeGetMethod(c, GET_RESOURCE_METHOD_NAME))
                 .filter(c -> Versions.invokeGetMethod(c, "getResourceType") == version.getPatientEnum());
     }
 
@@ -116,7 +120,7 @@ public final class BundleUtils {
     public static List<IBaseResource> getEobResources(List<IBaseBackboneElement> bundleComponents) {
         try {
             return bundleComponents.stream()
-                    .map(c -> (IBaseResource) Versions.invokeGetMethod(c, "getResource"))
+                    .map(c -> (IBaseResource) Versions.invokeGetMethod(c, GET_RESOURCE_METHOD_NAME))
                     .filter(Objects::nonNull)
                     .filter(BundleUtils::isExplanationOfBenefitResource)
                     .collect(Collectors.toList());

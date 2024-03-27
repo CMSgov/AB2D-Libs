@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ExplanationOfBenefitTrimmerSTU3Test {
+class ExplanationOfBenefitTrimmerSTU3Test {
     private static IBaseResource eobResource = null;
     private static FhirContext context = FhirContext.forDstu3();
 
@@ -26,7 +26,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     }
 
     @Test
-    public void testEmptyList() {
+    void testEmptyList() {
         ExplanationOfBenefitTrimmerSTU3.clearOutList(null);
         List<Integer> list = new ArrayList<>();
         ExplanationOfBenefitTrimmerSTU3.clearOutList(list);
@@ -38,7 +38,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     }
 
     @Test
-    public void validateEmpty() {
+    void validateEmpty() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         assertNull(ExplanationOfBenefitTrimmerSTU3.getBenefit(null));
@@ -88,7 +88,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     }
 
     @Test
-    public void testItemValues() {
+    void testItemValues() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         if (eobCarrier.getItem() != null) {
             for (var item : eobCarrier.getItem()) {

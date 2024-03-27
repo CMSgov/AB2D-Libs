@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ProperyServiceMockTest {
+class ProperyServiceMockTest {
     class PropertiesClientImplMock extends PropertiesClientImpl {
         @Override
         public String getFromEnvironment() {

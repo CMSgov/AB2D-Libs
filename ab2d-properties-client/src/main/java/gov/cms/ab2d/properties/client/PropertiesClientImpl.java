@@ -96,9 +96,7 @@ public class PropertiesClientImpl implements PropertiesClient {
     public void deleteProperty(String key) {
         try {
             HttpResponse<String> result = Unirest.delete(url + "/properties/" + key).asString();
-            if (result != null && result.getBody() != null && result.getBody().equalsIgnoreCase("true")) {
-                return;
-            } else {
+            if (result == null || result.getBody() == null || !result.getBody().equalsIgnoreCase("true")) {
                 throw new PropertyNotFoundException("Unable to delete " + key);
             }
         } catch (Exception ex) {

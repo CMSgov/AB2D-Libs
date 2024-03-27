@@ -24,7 +24,13 @@ public class JobSummaryEvent extends LoggableEvent {
     private int numOptedOut;
     private int errorSearched;
 
-    public JobSummaryEvent() { }
+    public JobSummaryEvent() {
+        // Adding a nested comment here to satisfy sonarqube code smells.
+        // This method is intentionally blank for the following reason:
+
+        // This is a constructor for a subtype of LoggableEvent.
+        // We construct this type while overriding asMessage to differentiate functionality.
+    }
 
     @Override
     public String asMessage() {
