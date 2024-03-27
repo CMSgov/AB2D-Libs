@@ -24,6 +24,7 @@ public final class ExtensionUtils {
     public static final String REF_YEAR_EXT = "https://bluebutton.cms.gov/resources/variables/rfrnc_yr";
 
     private static final String EXTENSION_CLASSNAME = "Extension";
+    private static final String SET_VALUE_METHOD_NAME = "setValue";
 
     private ExtensionUtils() { }
 
@@ -56,7 +57,7 @@ public final class ExtensionUtils {
     public static IBase createMbiExtension(String mbi, boolean current, FhirVersion version) {
         Object identifier = Versions.getObject(version, "Identifier");
         Versions.invokeSetMethod(identifier, "setSystem", MBI_ID, String.class);
-        Versions.invokeSetMethod(identifier, "setValue", mbi, String.class);
+        Versions.invokeSetMethod(identifier, SET_VALUE_METHOD_NAME, mbi, String.class);
 
         Object coding = Versions.getObject(version, "Coding");
         Versions.invokeSetMethod(coding, "setCode", current ? CURRENT_MBI : HISTORIC_MBI, String.class);
@@ -64,7 +65,7 @@ public final class ExtensionUtils {
         Object currencyExtension = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(currencyExtension, "setUrl", CURRENCY_IDENTIFIER, String.class);
         try {
-            Versions.invokeSetMethod(currencyExtension, "setValue", coding, Class.forName(version.getClassName("Type")));
+            Versions.invokeSetMethod(currencyExtension, SET_VALUE_METHOD_NAME, coding, Class.forName(version.getClassName("Type")));
         } catch (Exception ex) {
             log.error("Unable to setValue");
         }
@@ -74,7 +75,7 @@ public final class ExtensionUtils {
         Object ext = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(ext, "setUrl", ID_EXT, String.class);
         try {
-            Versions.invokeSetMethod(ext, "setValue", identifier, Class.forName(version.getClassName("Type")));
+            Versions.invokeSetMethod(ext, SET_VALUE_METHOD_NAME, identifier, Class.forName(version.getClassName("Type")));
         } catch (Exception ex) {
             log.error("Unable to setValue");
         }
