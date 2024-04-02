@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ExplanationOfBenefitTrimmerR4Test {
+class ExplanationOfBenefitTrimmerR4Test {
     private static final ExplanationOfBenefit EOB = new ExplanationOfBenefit();
     private static final Date SAMPLE_DATE = new Date();
     private static final String DUMMY_REF = "1234";
