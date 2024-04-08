@@ -110,8 +110,8 @@ public class BlueButtonClientR4Test {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         response.getEntry().forEach((entry) -> assertEquals(
-                entry.getResource().getResourceType(),
                 org.hl7.fhir.r4.model.ResourceType.ExplanationOfBenefit,
+                entry.getResource().getResourceType(),
                 "EOB bundles returned by the BlueButton client should only contain EOB objects"
         ));
     }
