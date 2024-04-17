@@ -7,6 +7,8 @@ import org.hl7.fhir.r4.model.ExplanationOfBenefit;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,16 +123,13 @@ import java.util.stream.Collectors;
  *     . modifierExtension
  *
  */
-public final class ExplanationOfBenefitTrimmerR4 {
+@UtilityClass
+public class ExplanationOfBenefitTrimmerR4 {
     public static final String ANESTHESIA_UNIT_COUNT = "https://bluebutton.cms.gov/resources/variables/carr_line_ansthsa_unit_cnt";
     public static final String RELATED_DIAGNOSIS_GROUP = "https://bluebutton.cms.gov/resources/variables/clm_drg_cd";
     public static final String PRICING_STATE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_prcng_state_cd";
     public static final String SUPPLIER_TYPE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_supplr_type_cd";
     public static final String NL_RECORD_IDENTIFICATION = "https://bluebutton.cms.gov/resources/variables/nch_near_line_rec_ident_cd";
-
-    private ExplanationOfBenefitTrimmerR4() {
-        throw new UnsupportedOperationException("This is a utility class so it cannot be not be instantiated");
-    }
 
     /**
      * Pass in an ExplanationOfBenefit, return the copy without the data

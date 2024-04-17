@@ -3,6 +3,8 @@ package gov.cms.ab2d.filter;
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,11 +12,8 @@ import java.util.stream.Collectors;
  * Cleans out data from a copy of an ExplanationOfBenefit object that we don't want
  * to forward to Part D providers
  */
-public final class ExplanationOfBenefitTrimmerSTU3 {
-
-    private ExplanationOfBenefitTrimmerSTU3() {
-        throw new UnsupportedOperationException("This is a utility class so it cannot be not be instantiated");
-    }
+@UtilityClass
+public class ExplanationOfBenefitTrimmerSTU3 {
 
     /**
      * Pass in an ExplanationOfBenefit, return the copy without the data
