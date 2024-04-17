@@ -2,15 +2,14 @@ package gov.cms.ab2d.filter;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public final class FilterEob {
-
-    private FilterEob() {
-        throw new UnsupportedOperationException("This is a utility class so it cannot be not be instantiated");
-    }
+@UtilityClass
+public class FilterEob {
 
     /**
      * Does all the filtering. If null is returned
