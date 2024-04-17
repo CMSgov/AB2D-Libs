@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -136,7 +137,7 @@ class ExplanationOfBenefitTrimmerSTU3Test {
         return items == null || items.isEmpty();
     }
 
-    private void printItOut(String file) {
+    private String printItOut(String file) {
         IParser jsonParser = context.newJsonParser().setPrettyPrint(true);
 
         IBaseResource eCarrier = ExplanationOfBenefitTrimmerSTU3.getBenefit(
@@ -144,11 +145,13 @@ class ExplanationOfBenefitTrimmerSTU3Test {
 
         String result = jsonParser.encodeResourceToString(eCarrier);
         System.out.println(result);
+        return result;
     }
 
     @Test
-    void demo1() {
-        printItOut("eobdata/EOB-for-Carrier-Claims.json");
+    void testPrintItOut() {
+        String result = printItOut("eobdata/EOB-for-Carrier-Claims.json");
+        assertNotEquals("", result);
     }
 
     @Test
