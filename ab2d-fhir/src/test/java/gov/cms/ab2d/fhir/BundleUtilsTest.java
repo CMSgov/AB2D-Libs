@@ -49,6 +49,9 @@ class BundleUtilsTest {
     void testErrors() {
         assertNull(BundleUtils.getEntries(null));
         assertEquals(0, BundleUtils.getTotal(null));
+        assertNull(BundleUtils.getEobResources(null));
+        assertNull(BundleUtils.getNextLink(null));
+
     }
 
     @Test
