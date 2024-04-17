@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
  * Cleans out data from a copy of an ExplanationOfBenefit object that we don't want
  * to forward to Part D providers
  */
-public class ExplanationOfBenefitTrimmerSTU3 {
+public final class ExplanationOfBenefitTrimmerSTU3 {
+
+    private ExplanationOfBenefitTrimmerSTU3() {
+        throw new UnsupportedOperationException("This is a utility class so it cannot be not be instantiated");
+    }
 
     /**
      * Pass in an ExplanationOfBenefit, return the copy without the data
