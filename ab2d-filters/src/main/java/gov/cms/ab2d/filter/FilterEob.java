@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public final class FilterEob {
+
+    private FilterEob() {
+        throw new UnsupportedOperationException("This is a utility class so it cannot be not be instantiated");
+    }
+
     /**
      * Does all the filtering. If null is returned
      * @param resource - the resource to check
