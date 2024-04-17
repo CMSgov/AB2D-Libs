@@ -51,7 +51,7 @@ class BundleUtilsTest {
         assertEquals(0, BundleUtils.getTotal(null));
         assertNull(BundleUtils.getEobResources(null));
         assertNull(BundleUtils.getNextLink(null));
-
+        assertFalse(BundleUtils.isExplanationOfBenefitResource(null));
     }
 
     @Test
