@@ -63,17 +63,11 @@ public abstract class LoggableEvent {
      */
     public int hashCode() {
         int result = 1;
-        String environment = this.getEnvironment();
         result = result * 59 + (environment == null ? 43 : environment.hashCode());
-        Long id = this.getId();
         result = result * 59 + (id == null ? 43 : id.hashCode());
-        String awsId = this.getAwsId();
         result = result * 59 + (awsId == null ? 43 : awsId.hashCode());
-        OffsetDateTime timeOfEvent = this.getTimeOfEvent();
         result = result * 59 + (timeOfEvent == null ? 43 : timeOfEvent.hashCode());
-        String user = this.getOrganization();
-        result = result * 59 + (user == null ? 43 : user.hashCode());
-        String jobId = this.getJobId();
+        result = result * 59 + (organization == null ? 43 : organization.hashCode());
         result = result * 59 + (jobId == null ? 43 : jobId.hashCode());
         return result;
     }
