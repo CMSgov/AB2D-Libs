@@ -31,7 +31,6 @@ public class JobStatusChangeEvent extends LoggableEvent {
 
         // Prettify alert
         String label = "";
-        String description = this.description;
         if (description != null && !description.isBlank()) {
             String[] labelAndDescription = description.split("\\s+", 2);
 
