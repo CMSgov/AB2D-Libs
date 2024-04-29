@@ -1,5 +1,6 @@
 package gov.cms.ab2d.snsclient.config;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
@@ -49,6 +50,8 @@ class SendSnsTest {
                 AmazonSNSClientBuilder builder = Mockito.mock(AmazonSNSClientBuilder.class);
                 utilities.when(AmazonSNSClientBuilder::standard)
                         .thenReturn(builder);
+                Mockito.when(builder.withRegion(Regions.US_EAST_1))
+                    .thenReturn(builder);
                 Mockito.when(builder.build())
                         .thenReturn(sns);
                 SNSConfig snsConfig = new SNSConfig();
