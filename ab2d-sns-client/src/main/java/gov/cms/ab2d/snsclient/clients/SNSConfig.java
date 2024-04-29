@@ -1,6 +1,7 @@
 package gov.cms.ab2d.snsclient.clients;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
@@ -29,6 +30,7 @@ public class SNSConfig {
                         ? AmazonSNSClient.builder()
                         .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(url, region))
                         : AmazonSNSClientBuilder.standard()
+                        .withRegion(Regions.US_EAST_1)
         ).build();
     }
 
