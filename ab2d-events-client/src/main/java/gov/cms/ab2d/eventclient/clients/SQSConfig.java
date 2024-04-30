@@ -1,6 +1,7 @@
 package gov.cms.ab2d.eventclient.clients;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
@@ -61,6 +62,7 @@ public class SQSConfig {
         }
         return AmazonSQSAsyncClientBuilder
                 .standard()
+                .withRegion(Regions.US_EAST_1)
                 .build();
     }
 
