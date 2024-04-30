@@ -1,6 +1,6 @@
 package gov.cms.ab2d.eventclient.clients;
 
-import com.amazonaws.auth.InstanceProfileCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -63,7 +63,7 @@ public class SQSConfig {
         }
         return AmazonSQSAsyncClientBuilder
                 .standard()
-                .withCredentials(InstanceProfileCredentialsProvider.createAsyncRefreshingProvider(false))
+                .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
                 .withRegion(Regions.US_EAST_1)
                 .build();
     }
