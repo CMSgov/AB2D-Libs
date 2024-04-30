@@ -156,8 +156,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        // classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        // out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -172,9 +172,9 @@ subprojects {
     }
 
     jacocoTestReport {
-        // reports {
-        //     xml.enabled true
-        // }
+        reports {
+            xml.enabled true
+        }
     }
 
     jacoco {
