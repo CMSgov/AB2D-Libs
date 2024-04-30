@@ -58,6 +58,7 @@ public class SQSConfig {
         if (null != url) {
             return (AmazonSQSAsync) createQueue(AmazonSQSAsyncClientBuilder
                     .standard()
+                    .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
                     .withEndpointConfiguration(getEndpointConfig(url))
                     .build());
         }
