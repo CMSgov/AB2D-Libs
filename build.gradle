@@ -39,7 +39,7 @@ ext {
     lombokVersion = '1.18.28'
     hapiVersion = '6.6.2'
     springBootVersion='3.1.4'
-    springCloudAwsVersion='3.1.0'
+    springCloudAwsVersion='3.1.1'
     newRelicVersion='8.4.0'
     testContainerVersion='1.18.3'
     mockServerVersion='5.15.0'
