@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 public abstract class LoggableEvent {
-    public LoggableEvent() { }
+    protected LoggableEvent() { }
 
     // If it's dev, prod, etc.
     private String environment;
@@ -37,7 +37,7 @@ public abstract class LoggableEvent {
      * @param jobId uuid of job
      * @throws IllegalArgumentException if the organization may be an okta client credential
      */
-    public LoggableEvent(OffsetDateTime timeOfEvent, String organization, String jobId) {
+    protected LoggableEvent(OffsetDateTime timeOfEvent, String organization, String jobId) {
         this.timeOfEvent = timeOfEvent;
         this.organization = organization;
         this.jobId = jobId;
@@ -63,17 +63,11 @@ public abstract class LoggableEvent {
      */
     public int hashCode() {
         int result = 1;
-        String environment = this.getEnvironment();
         result = result * 59 + (environment == null ? 43 : environment.hashCode());
-        Long id = this.getId();
         result = result * 59 + (id == null ? 43 : id.hashCode());
-        String awsId = this.getAwsId();
         result = result * 59 + (awsId == null ? 43 : awsId.hashCode());
-        OffsetDateTime timeOfEvent = this.getTimeOfEvent();
         result = result * 59 + (timeOfEvent == null ? 43 : timeOfEvent.hashCode());
-        String user = this.getOrganization();
-        result = result * 59 + (user == null ? 43 : user.hashCode());
-        String jobId = this.getJobId();
+        result = result * 59 + (organization == null ? 43 : organization.hashCode());
         result = result * 59 + (jobId == null ? 43 : jobId.hashCode());
         return result;
     }

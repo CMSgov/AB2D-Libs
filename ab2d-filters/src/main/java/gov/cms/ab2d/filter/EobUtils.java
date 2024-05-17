@@ -1,5 +1,6 @@
 package gov.cms.ab2d.filter;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
@@ -11,6 +12,7 @@ import static gov.cms.ab2d.filter.EOBLoadUtilities.EOB_TYPE_CODE_SYS;
 import static gov.cms.ab2d.filter.EOBLoadUtilities.EOB_TYPE_PART_D_CODE_VAL;
 
 @Slf4j
+@UtilityClass
 public class EobUtils {
     /**
      * Given a resource and the method name, return the result of calling the method

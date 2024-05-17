@@ -60,9 +60,9 @@ public class ContractTest {
     @Test
     void testOther() {
         ContractDTO contractDTO = contract.toDTO();
-        assertEquals(contractDTO.getContractName(), CONTRACT_NAME);
-        assertEquals(contractDTO.getContractNumber(), CONTRACT_NUMBER);
-        assertEquals(contractDTO.getContractType(), Contract.ContractType.NORMAL);
+        assertEquals(CONTRACT_NAME, contractDTO.getContractName());
+        assertEquals(CONTRACT_NUMBER, contractDTO.getContractNumber());
+        assertEquals(Contract.ContractType.NORMAL, contractDTO.getContractType());
         assertEquals(contractDTO.getId(), contract.getId());
         assertEquals(contractDTO.getAttestedOn(), contract.getAttestedOn());
         assertEquals(contractDTO.getTotalEnrollment(), contract.getTotalEnrollment());
@@ -106,15 +106,15 @@ public class ContractTest {
                 MARKETING_NAME + "1", TOTAL_ENROLLMENT + 1,
                 MEDICARE_ELIGIBLE + 1);
 
-        assertEquals(contract.getContractName(), CONTRACT_NAME + "1");
-        assertEquals(contract.getHpmsParentOrgId(), PARENT_ID + 1);
-        assertEquals(contract.getHpmsParentOrg(), PARENT_NAME + "1");
-        assertEquals(contract.getTotalEnrollment(), TOTAL_ENROLLMENT + 1);
-        assertEquals(contract.getMedicareEligible(), MEDICARE_ELIGIBLE + 1);
-        assertEquals(contract.getAttestedOn(), NOW);
-        assertEquals(contract.getContractType(), Contract.ContractType.NORMAL);
+        assertEquals(CONTRACT_NAME + "1", contract.getContractName());
+        assertEquals(PARENT_ID + 1, contract.getHpmsParentOrgId());
+        assertEquals(PARENT_NAME + "1", contract.getHpmsParentOrg());
+        assertEquals(TOTAL_ENROLLMENT + 1, contract.getTotalEnrollment());
+        assertEquals(MEDICARE_ELIGIBLE + 1, contract.getMedicareEligible());
+        assertEquals(NOW, contract.getAttestedOn());
+        assertEquals(Contract.ContractType.NORMAL, contract.getContractType());
         assertEquals(0, contract.getESTAttestationTime().toOffsetDateTime().toInstant().compareTo(NOW.toInstant()));
-        assertEquals(contract.getId(), ID);
+        assertEquals(ID, contract.getId());
     }
 
     @Test

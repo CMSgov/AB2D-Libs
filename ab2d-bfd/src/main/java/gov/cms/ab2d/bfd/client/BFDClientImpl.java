@@ -41,6 +41,9 @@ public class BFDClientImpl implements BFDClient {
     private final BFDSearch bfdSearch;
     private final BfdClientVersions bfdClientVersions;
 
+    private static final String INCLUDE_IDENTIFIERS_HEADER = "IncludeIdentifiers";
+    private static final String MBI_HEADER_VALUE = "mbi";
+
     public BFDClientImpl(BFDSearch bfdSearch, BfdClientVersions bfdClientVersions) {
         this.bfdSearch = bfdSearch;
         this.bfdClientVersions = bfdClientVersions;
@@ -125,7 +128,7 @@ public class BFDClientImpl implements BFDClient {
                 .next(bundle)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
-                .withAdditionalHeader("IncludeIdentifiers", "mbi")
+                .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .encodedJson()
                 .execute();
     }
@@ -157,7 +160,7 @@ public class BFDClientImpl implements BFDClient {
                 .where(monthCriterion)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
-                .withAdditionalHeader("IncludeIdentifiers", "mbi")
+                .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
                 .returnBundle(version.getBundleClass())
                 .encodedJson()
@@ -185,7 +188,7 @@ public class BFDClientImpl implements BFDClient {
                 .and(yearCriterion)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
-                .withAdditionalHeader("IncludeIdentifiers", "mbi")
+                .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
                 .returnBundle(version.getBundleClass())
                 .encodedJson()

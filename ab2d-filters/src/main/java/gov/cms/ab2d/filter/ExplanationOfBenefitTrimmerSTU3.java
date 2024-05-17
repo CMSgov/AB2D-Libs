@@ -3,6 +3,8 @@ package gov.cms.ab2d.filter;
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
  * Cleans out data from a copy of an ExplanationOfBenefit object that we don't want
  * to forward to Part D providers
  */
+@UtilityClass
 public class ExplanationOfBenefitTrimmerSTU3 {
 
     /**

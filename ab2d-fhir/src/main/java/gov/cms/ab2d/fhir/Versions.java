@@ -1,5 +1,6 @@
 package gov.cms.ab2d.fhir;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +16,7 @@ import java.util.*;
  *   5. The ability to determine which version is being used based on the URL passed from the HttpRequest
  */
 @Slf4j
+@UtilityClass
 public class Versions {
     /**
      * So we don't have to instantiate all Method objects, hold on to them so we can just invoke them when necessary

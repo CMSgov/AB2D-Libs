@@ -1,6 +1,7 @@
 package gov.cms.ab2d.filter;
 
 import ca.uhn.fhir.context.FhirContext;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import java.io.Reader;
  * Loads Explanation of Benefits object from a file or reader
  */
 @Slf4j
+@UtilityClass
 public class EOBLoadUtilities {
     public static final String EOB_TYPE_CODE_SYS = "eob-type";
     public static final String EOB_TYPE_PART_D_CODE_VAL = "PDE";
