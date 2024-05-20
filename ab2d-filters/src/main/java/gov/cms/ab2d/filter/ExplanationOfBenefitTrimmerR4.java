@@ -7,6 +7,8 @@ import org.hl7.fhir.r4.model.ExplanationOfBenefit;
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,6 +123,7 @@ import java.util.stream.Collectors;
  *     . modifierExtension
  *
  */
+@UtilityClass
 public class ExplanationOfBenefitTrimmerR4 {
     public static final String ANESTHESIA_UNIT_COUNT = "https://bluebutton.cms.gov/resources/variables/carr_line_ansthsa_unit_cnt";
     public static final String RELATED_DIAGNOSIS_GROUP = "https://bluebutton.cms.gov/resources/variables/clm_drg_cd";

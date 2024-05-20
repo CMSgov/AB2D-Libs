@@ -49,6 +49,16 @@ class BundleUtilsTest {
     void testErrors() {
         assertNull(BundleUtils.getEntries(null));
         assertEquals(0, BundleUtils.getTotal(null));
+        assertNull(BundleUtils.getEobResources(null));
+
+        assertNull(BundleUtils.getNextLink(null));
+        assertFalse(BundleUtils.isExplanationOfBenefitResource(null));
+
+        org.hl7.fhir.dstu3.model.Bundle bundle = new org.hl7.fhir.dstu3.model.Bundle();
+
+        assertNull(BundleUtils.getNextLink(bundle));
+        assertFalse(BundleUtils.isExplanationOfBenefitResource(bundle));
+
     }
 
     @Test
