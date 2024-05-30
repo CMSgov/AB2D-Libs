@@ -34,12 +34,12 @@ public class BFDSearchImpl implements BFDSearch {
 
     /**
      * Search for ebos using the provided parameters
-     *
      * AB2D does not report SAMHSA claims (https://www.samhsa.gov/).
      *      - excludeSAMHSA must be set to true to maintain this exclusion
      *
      * @param patientId internal beneficiary id
      * @param since the minimum lastUpdated date which may be null
+     * @param until the maximum lastUpdated date which may be null
      * @param pageSize maximum number of records that can be returned
      * @param bulkJobId header to uniquely identify what job this is coming from within BFD logs
      * @param version the version of FHIR that we need from BFD
@@ -48,18 +48,17 @@ public class BFDSearchImpl implements BFDSearch {
      */
     @Trace
     @Override
-    public IBaseBundle searchEOB(long patientId, OffsetDateTime since, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
+    public IBaseBundle searchEOB(long patientId, OffsetDateTime since, OffsetDateTime until, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
 
         String urlLocation = bfdClientVersions.getUrl(version);
         StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
 
         if (since != null) {
             url.append("&_lastUpdated=ge").append(since);
+        }
 
-            //AB2D-5892 (Sprint 3)Centene customer support to provide 2 year data
-            if (contractNum.equals("S4802") || contractNum.equals("Z1001")) {
-                url.append("&_lastUpdated=le").append(since.plusMonths(1));
-            }
+        if (until != null) {
+            url.append("&_lastUpdated=le").append(until);
         }
 
         if (pageSize > 0) {

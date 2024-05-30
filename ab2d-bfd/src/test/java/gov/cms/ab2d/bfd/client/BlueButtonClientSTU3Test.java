@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HttpStatus;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -182,9 +183,7 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     public void shouldGetTimedOutOnSlowResponse() {
-        var exception = Assertions.assertThrows(SocketTimeoutException.class, () -> {
-            bbc.requestEOBFromServer(STU3, TEST_SLOW_PATIENT_ID, CONTRACT);
-        });
+        var exception = Assertions.assertThrows(SocketTimeoutException.class, () -> bbc.requestEOBFromServer(STU3, TEST_SLOW_PATIENT_ID, CONTRACT));
 
         var rootCause = ExceptionUtils.getRootCause(exception);
         assertTrue(rootCause instanceof SocketTimeoutException);
@@ -196,15 +195,35 @@ public class BlueButtonClientSTU3Test {
     public void shouldGetEOBFromPatientID() {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, CONTRACT);
 
-        assertNotNull(response, "The demo patient should have a non-null EOB bundle");
-        assertEquals(32, response.getTotal(), "The demo patient should have exactly 32 EOBs");
+        validation(response);
     }
 
     @Test
     public void shouldGetEOBFromPatientIDSince() {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, OffsetDateTime.parse(
-                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
+                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), null, CONTRACT);
 
+        validation(response);
+    }
+
+    @Test
+    public void shouldGetEOBFromPatientIDUtil() {
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, null, OffsetDateTime.parse(
+                "2024-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
+
+        validation(response);
+    }
+
+    @Test
+    public void shouldGetEOBFromPatientIDSinceAndUtil() {
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, OffsetDateTime.parse(
+                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), OffsetDateTime.parse(
+                "2024-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
+
+        validation(response);
+    }
+
+    private static void validation(Bundle response) {
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
         assertEquals(32, response.getTotal(), "The demo patient should have exactly 32 EOBs");
     }
@@ -255,8 +274,8 @@ public class BlueButtonClientSTU3Test {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, CONTRACT);
 
         response.getEntry().forEach((entry) -> assertEquals(
-                entry.getResource().getResourceType(),
                 org.hl7.fhir.dstu3.model.ResourceType.ExplanationOfBenefit,
+                entry.getResource().getResourceType(),
                 "EOB bundles returned by the BlueButton client should only contain EOB objects"
         ));
     }

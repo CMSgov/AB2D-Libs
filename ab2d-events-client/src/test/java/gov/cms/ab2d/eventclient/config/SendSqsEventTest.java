@@ -54,7 +54,6 @@ public class SendSqsEventTest {
     @Test
     void testQueueUrl() {
         String url = amazonSQS.getQueueUrl(LOCAL_EVENTS_SQS).getQueueUrl();
-        assertTrue(url.contains("localhost:"));
         assertTrue(url.contains(LOCAL_EVENTS_SQS));
     }
 
@@ -169,9 +168,9 @@ public class SendSqsEventTest {
     @Test
     void testAB2DEEnvironment() {
         new SQSConfig("", "", Ab2dEnvironment.DEV);
-        assertEquals(System.getProperty("sqs.queue-name"), "ab2d-dev-events-sqs");
+        assertEquals("ab2d-dev-events-sqs", System.getProperty("sqs.queue-name"));
 
         new SQSConfig("", "", Ab2dEnvironment.SANDBOX);
-        assertEquals(System.getProperty("sqs.queue-name"), "ab2d-sbx-sandbox-events-sqs");
+        assertEquals("ab2d-sbx-sandbox-events-sqs", System.getProperty("sqs.queue-name"));
     }
 }

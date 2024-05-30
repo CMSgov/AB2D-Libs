@@ -14,10 +14,11 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ExplanationOfBenefitTrimmerSTU3Test {
+class ExplanationOfBenefitTrimmerSTU3Test {
     private static IBaseResource eobResource = null;
     private static FhirContext context = FhirContext.forDstu3();
 
@@ -26,7 +27,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     }
 
     @Test
-    public void testEmptyList() {
+    void testEmptyList() {
         ExplanationOfBenefitTrimmerSTU3.clearOutList(null);
         List<Integer> list = new ArrayList<>();
         ExplanationOfBenefitTrimmerSTU3.clearOutList(list);
@@ -38,20 +39,46 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
     }
 
     @Test
-    public void validateEmpty() {
-        ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
+    void validateDefaultEobStartingBillablePeriod() {
+        ExplanationOfBenefit eob = (ExplanationOfBenefit) eobResource;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        assertEquals("1999-10-27", sdf.format(eob.getBillablePeriod().getStart()));
+        assertEquals("1999-10-27", sdf.format(eob.getBillablePeriod().getEnd()));
+    }
+
+    @Test
+    void validateDefaultEobClaimEmpty() {
+        ExplanationOfBenefit eob = (ExplanationOfBenefit) eobResource;
+
+        assertNull(eob.getClaim().getId());
+        assertNull(eob.getClaimTarget().getId());
+        assertNull(eob.getClaimResponse().getId());
+        assertNull(eob.getClaimResponseTarget().getId());
+    }
+
+    @Test
+    void validateDefaultEobFieldsEmpty() {
+        ExplanationOfBenefit eob = (ExplanationOfBenefit) eobResource;
+
+        assertTrue(isNullOrEmpty(eob.getProcessNote()));
+        assertTrue(isNullOrEmpty(eob.getBenefitBalance()));
+        assertTrue(isNullOrEmpty(eob.getAddItem()));
+        assertTrue(isNullOrEmpty(eob.getInformation()));
+        assertTrue(isNullOrEmpty(eob.getRelated()));
+        assertTrue(eob.getPatientTarget().isEmpty());
+        assertTrue(StringUtils.isBlank(eob.getEnterer().getReference()));
+        assertTrue(eob.getEntererTarget().getName().isEmpty());
+        assertEquals(0, eob.getPrecedence());
+    }
+
+    @Test
+    void validateDefaultEobFieldsNull() {
+        ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         assertNull(ExplanationOfBenefitTrimmerSTU3.getBenefit(null));
         // Since getting a patient target creates a new one, make sure the object is empty
-        assertTrue(eobCarrier.getPatientTarget().getIdentifier().isEmpty());
-        assertNull(eobCarrier.getPatientTarget().getId());
-        assertFalse(eobCarrier.getPatientTarget().getActive());
-        assertNull(eobCarrier.getPatientTarget().getBirthDate());
-        assertEquals("1999-10-27", sdf.format(eobCarrier.getBillablePeriod().getStart()));
-        assertEquals("1999-10-27", sdf.format(eobCarrier.getBillablePeriod().getEnd()));
+
         assertNull(eobCarrier.getCreated());
-        assertTrue(StringUtils.isBlank(eobCarrier.getEnterer().getReference()));
-        assertTrue(eobCarrier.getEntererTarget().getName().isEmpty());
         assertNull(eobCarrier.getInsurer().getId());
         assertNull(eobCarrier.getInsurerTarget().getId());
         assertNull(eobCarrier.getProviderTarget().getId());
@@ -59,36 +86,26 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
         assertNull(eobCarrier.getReferral().getId());
         assertNull(eobCarrier.getReferralTarget().getId());
         assertNull(eobCarrier.getFacilityTarget().getId());
-        assertNull(eobCarrier.getClaim().getId());
-        assertNull(eobCarrier.getClaimTarget().getId());
-        assertNull(eobCarrier.getClaimResponse().getId());
-        assertNull(eobCarrier.getClaimResponseTarget().getId());
         assertNull(eobCarrier.getOutcome().getId());
         assertNull(eobCarrier.getDisposition());
-        assertTrue(isNullOrEmpty(eobCarrier.getRelated()));
         assertNull(eobCarrier.getPrescription().getId());
         assertNull(eobCarrier.getPrescriptionTarget());
         assertNull(eobCarrier.getOriginalPrescription().getId());
         assertNull(eobCarrier.getOriginalPrescriptionTarget().getId());
         assertNull(eobCarrier.getPayee().getId());
-        assertTrue(isNullOrEmpty(eobCarrier.getInformation()));
-        assertEquals(0, eobCarrier.getPrecedence());
         assertNull(eobCarrier.getInsurance().getId());
         assertNull(eobCarrier.getAccident().getId());
         assertNull(eobCarrier.getEmploymentImpacted().getId());
         assertNull(eobCarrier.getHospitalization().getId());
-        assertTrue(isNullOrEmpty(eobCarrier.getAddItem()));
         assertNull(eobCarrier.getTotalCost().getId());
         assertNull(eobCarrier.getUnallocDeductable().getId());
         assertNull(eobCarrier.getTotalBenefit().getId());
         assertNull(eobCarrier.getPayment().getId());
         assertNull(eobCarrier.getForm().getId());
-        assertTrue(isNullOrEmpty(eobCarrier.getProcessNote()));
-        assertTrue(isNullOrEmpty(eobCarrier.getBenefitBalance()));
     }
 
     @Test
-    public void testItemValues() {
+    void testItemValues() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         if (eobCarrier.getItem() != null) {
             for (var item : eobCarrier.getItem()) {
@@ -120,7 +137,7 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
         return items == null || items.isEmpty();
     }
 
-    private void printItOut(String file) {
+    private String printItOut(String file) {
         IParser jsonParser = context.newJsonParser().setPrettyPrint(true);
 
         IBaseResource eCarrier = ExplanationOfBenefitTrimmerSTU3.getBenefit(
@@ -128,11 +145,13 @@ public class ExplanationOfBenefitTrimmerSTU3Test {
 
         String result = jsonParser.encodeResourceToString(eCarrier);
         System.out.println(result);
+        return result;
     }
 
     @Test
-    void demo1() {
-        printItOut("eobdata/EOB-for-Carrier-Claims.json");
+    void testPrintItOut() {
+        String result = printItOut("eobdata/EOB-for-Carrier-Claims.json");
+        assertNotEquals("", result);
     }
 
     @Test

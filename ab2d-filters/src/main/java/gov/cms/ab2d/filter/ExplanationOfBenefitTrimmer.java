@@ -2,6 +2,9 @@ package gov.cms.ab2d.filter;
 
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class ExplanationOfBenefitTrimmer {
     /**
      * Return the trimmed version of the EOB. Currently, only R4 & DSTU3 are supported

@@ -36,15 +36,15 @@ public class EOBLoadUtilitiesTest {
         assertEquals(4, coding.size());
         org.hl7.fhir.dstu3.model.Coding cd = coding.stream().filter(c -> c.getCode().equals("professional")).findFirst().orElse(null);
         assertNotNull(cd);
-        assertEquals(cd.getSystem(), "http://hl7.org/fhir/ex-claimtype");
-        assertEquals(cd.getCode(), "professional");
-        assertEquals(cd.getDisplay(), "Professional");
+        assertEquals("http://hl7.org/fhir/ex-claimtype", cd.getSystem());
+        assertEquals("professional", cd.getCode());
+        assertEquals("Professional", cd.getDisplay());
     }
 
     @Test
     public void testResourceType() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
-        assertEquals(eobCarrier.getResourceType(), org.hl7.fhir.dstu3.model.ResourceType.ExplanationOfBenefit);
+        assertEquals(org.hl7.fhir.dstu3.model.ResourceType.ExplanationOfBenefit, eobCarrier.getResourceType());
     }
 
     @Test
@@ -56,8 +56,8 @@ public class EOBLoadUtilitiesTest {
         ExplanationOfBenefit.DiagnosisComponent comp = diagnoses.stream()
                 .filter(c -> c.getSequence() == 2).findFirst().orElse(null);
         assertNotNull(comp);
-        assertEquals(comp.getDiagnosisCodeableConcept().getCoding().size(), 1);
-        assertEquals(comp.getDiagnosisCodeableConcept().getCoding().get(0).getCode(), "H8888");
+        assertEquals(1, comp.getDiagnosisCodeableConcept().getCoding().size());
+        assertEquals("H8888", comp.getDiagnosisCodeableConcept().getCoding().get(0).getCode());
     }
 
     @Test
@@ -65,15 +65,15 @@ public class EOBLoadUtilitiesTest {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<ExplanationOfBenefit.ProcedureComponent> procedures = eobSNF.getProcedure();
         assertNotNull(procedures);
-        assertEquals(procedures.size(), 1);
+        assertEquals(1, procedures.size());
         ExplanationOfBenefit.ProcedureComponent comp = procedures.get(0);
-        assertEquals(comp.getSequence(), 1);
+        assertEquals(1, comp.getSequence());
         assertNotNull(comp.getDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         Date expectedTime = sdf.parse("2016-01-16T00:00:00-0600");
         assertEquals(expectedTime.getTime(), comp.getDate().getTime());
-        assertEquals(comp.getProcedureCodeableConcept().getCoding().get(0).getSystem(), "http://hl7.org/fhir/sid/icd-9-cm");
-        assertEquals(comp.getProcedureCodeableConcept().getCoding().get(0).getCode(), "0TCCCCC");
+        assertEquals("http://hl7.org/fhir/sid/icd-9-cm", comp.getProcedureCodeableConcept().getCoding().get(0).getSystem());
+        assertEquals("0TCCCCC", comp.getProcedureCodeableConcept().getCoding().get(0).getCode());
     }
 
     @Test
@@ -82,8 +82,8 @@ public class EOBLoadUtilitiesTest {
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getProvider();
         assertNotNull(ref);
         assertNotNull(ref.getIdentifier());
-        assertEquals(ref.getIdentifier().getSystem(), "https://bluebutton.cms.gov/resources/variables/prvdr_num");
-        assertEquals(ref.getIdentifier().getValue(), "299999");
+        assertEquals("https://bluebutton.cms.gov/resources/variables/prvdr_num", ref.getIdentifier().getSystem());
+        assertEquals("299999", ref.getIdentifier().getValue());
     }
 
     @Test
@@ -92,8 +92,8 @@ public class EOBLoadUtilitiesTest {
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getOrganization();
         assertNotNull(ref);
         assertNotNull(ref.getIdentifier());
-        assertEquals(ref.getIdentifier().getSystem(), "http://hl7.org/fhir/sid/us-npi");
-        assertEquals(ref.getIdentifier().getValue(), "1111111111");
+        assertEquals("http://hl7.org/fhir/sid/us-npi", ref.getIdentifier().getSystem());
+        assertEquals("1111111111", ref.getIdentifier().getValue());
     }
 
     @Test
@@ -102,8 +102,8 @@ public class EOBLoadUtilitiesTest {
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getFacility();
         assertNotNull(ref);
         assertNotNull(ref.getIdentifier());
-        assertEquals(ref.getIdentifier().getSystem(), "http://hl7.org/fhir/sid/us-npi");
-        assertEquals(ref.getIdentifier().getValue(), "1111111111");
+        assertEquals("http://hl7.org/fhir/sid/us-npi", ref.getIdentifier().getSystem());
+        assertEquals("1111111111", ref.getIdentifier().getValue());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class EOBLoadUtilitiesTest {
                 .filter(c -> c.getValue().equalsIgnoreCase("900"))
                 .findFirst().orElse(null);
         assertNotNull(id);
-        assertEquals(id.getSystem(), "https://bluebutton.cms.gov/resources/identifier/claim-group");
+        assertEquals("https://bluebutton.cms.gov/resources/identifier/claim-group", id.getSystem());
     }
 
     @Test
@@ -128,11 +128,11 @@ public class EOBLoadUtilitiesTest {
         ExplanationOfBenefit.CareTeamComponent comp = careTeamComponents.stream()
                 .filter(c -> c.getSequence() == 2).findFirst().orElse(null);
         assertNotNull(comp);
-        assertEquals(comp.getProvider().getIdentifier().getSystem(), "http://hl7.org/fhir/sid/us-npi");
-        assertEquals(comp.getProvider().getIdentifier().getValue(), "3333333333");
-        assertEquals(comp.getRole().getCoding().get(0).getSystem(), "http://hl7.org/fhir/claimcareteamrole");
-        assertEquals(comp.getRole().getCoding().get(0).getCode(), "assist");
-        assertEquals(comp.getRole().getCoding().get(0).getDisplay(), "Assisting Provider");
+        assertEquals("http://hl7.org/fhir/sid/us-npi", comp.getProvider().getIdentifier().getSystem());
+        assertEquals("3333333333", comp.getProvider().getIdentifier().getValue());
+        assertEquals("http://hl7.org/fhir/claimcareteamrole", comp.getRole().getCoding().get(0).getSystem());
+        assertEquals("assist", comp.getRole().getCoding().get(0).getCode());
+        assertEquals("Assisting Provider", comp.getRole().getCoding().get(0).getDisplay());
     }
 
     @Test
@@ -141,12 +141,12 @@ public class EOBLoadUtilitiesTest {
         List<ExplanationOfBenefit.ItemComponent> components = eobCarrier.getItem();
         assertNotNull(components);
         assertEquals(components.size(), 1);
-        assertEquals(components.get(0).getCareTeamLinkId().get(0).getValue(), 2);
-        assertEquals(components.get(0).getQuantity().getValue().toString(), "1");
-        assertEquals(components.get(0).getSequence(), 6);
-        assertEquals(components.get(0).getService().getCoding().get(0).getSystem(), "https://bluebutton.cms.gov/resources/codesystem/hcpcs");
-        assertEquals(components.get(0).getService().getCoding().get(0).getVersion(), "5");
-        assertEquals(components.get(0).getService().getCoding().get(0).getCode(), "92999");
+        assertEquals(2, components.get(0).getCareTeamLinkId().get(0).getValue());
+        assertEquals("1", components.get(0).getQuantity().getValue().toString());
+        assertEquals(6, components.get(0).getSequence());
+        assertEquals("https://bluebutton.cms.gov/resources/codesystem/hcpcs", components.get(0).getService().getCoding().get(0).getSystem());
+        assertEquals("5", components.get(0).getService().getCoding().get(0).getVersion());
+        assertEquals("92999", components.get(0).getService().getCoding().get(0).getCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Date d = sdf.parse("1999-10-27");
         org.hl7.fhir.dstu3.model.Period period = (org.hl7.fhir.dstu3.model.Period) components.get(0).getServiced();
@@ -155,13 +155,13 @@ public class EOBLoadUtilitiesTest {
 
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.CodeableConcept location = (org.hl7.fhir.dstu3.model.CodeableConcept) components.get(0).getLocation();
-        assertEquals(location.getCoding().get(0).getSystem(), "https://bluebutton.cms.gov/resources/variables/line_place_of_srvc_cd");
-        assertEquals(location.getCoding().get(0).getCode(), "11");
-        assertEquals(location.getCoding().get(0).getDisplay(), "Office. Location, other than a hospital, skilled nursing facility (SNF), military treatment facility, community health center, State or local public health clinic, or intermediate care facility (ICF), where the health professional routinely provides health examinations, diagnosis, and treatment of illness or injury on an ambulatory basis.");
+        assertEquals("https://bluebutton.cms.gov/resources/variables/line_place_of_srvc_cd", location.getCoding().get(0).getSystem());
+        assertEquals("11", location.getCoding().get(0).getCode());
+        assertEquals("Office. Location, other than a hospital, skilled nursing facility (SNF), military treatment facility, community health center, State or local public health clinic, or intermediate care facility (ICF), where the health professional routinely provides health examinations, diagnosis, and treatment of illness or injury on an ambulatory basis.", location.getCoding().get(0).getDisplay());
 
         List<ExplanationOfBenefit.ItemComponent> components2 = eobSNF.getItem();
         org.hl7.fhir.dstu3.model.Address location2 = (org.hl7.fhir.dstu3.model.Address) components2.get(0).getLocation();
-        assertEquals(location2.getState(), "FL");
+        assertEquals("FL", location2.getState());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class EOBLoadUtilitiesTest {
                 // STU3
                 ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
                 assertNotNull(benefit);
-                assertEquals(benefit.getPatient().getReference(), "Patient/-199900000022040");
+                assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
             } catch (Exception e) {
                 e.printStackTrace();
             }

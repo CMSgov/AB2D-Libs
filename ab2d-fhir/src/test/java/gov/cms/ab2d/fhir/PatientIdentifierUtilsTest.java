@@ -1,12 +1,10 @@
 package gov.cms.ab2d.fhir;
 
-import org.hl7.fhir.dstu3.model.Base;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Coding;
 import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.UriType;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.jupiter.api.Test;
 
@@ -26,14 +24,6 @@ import static gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PatientIdentifierUtilsTest {
-    @Test
-    void dummy() {
-        Identifier id = new Identifier();
-        id.setSystem("systemVal");
-        Base[] val = id.getProperty(-887328209, "system", false);
-        String valS = ((UriType) val[0]).getValue();
-    }
-
     @Test
     void testGetMbis() {
         Patient patient = new Patient();
