@@ -13,6 +13,10 @@ import java.util.List;
 public class PropertiesClientImpl implements PropertiesClient {
     @Getter
     private String url = "http://localhost:8060";
+
+    @Getter
+    private String configFileName = "application.properties";
+
     private static final String JSON = "application/json";
     private static final String ACCEPT = "accept";
 
@@ -28,7 +32,7 @@ public class PropertiesClientImpl implements PropertiesClient {
         }
         PropertiesConfiguration config = new PropertiesConfiguration();
         try {
-            config.load("application.properties");
+            config.load(getConfigFileName());
             String configUrl = config.getString("properties.service.url");
             if (StringUtils.isNotEmpty(configUrl)) {
                 url = configUrl;
@@ -50,7 +54,7 @@ public class PropertiesClientImpl implements PropertiesClient {
                     .asObject(new GenericType<List<Property>>() {
                     });
             List<Property> values = response.getBody();
-            if (values ==  null) {
+            if (values == null) {
                 throw new PropertyNotFoundException("Cannot find the list of properties");
             }
             return values;

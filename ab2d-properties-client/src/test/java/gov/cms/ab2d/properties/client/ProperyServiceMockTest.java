@@ -37,7 +37,6 @@ class ProperyServiceMockTest {
         List<Property> propertiesToReturn = List.of(new Property("a.key", "a.value"), new Property("b.key", "b.value"));
         JSONArray jsonArray = new JSONArray(propertiesToReturn);
         stubFor(get(urlEqualTo("/properties")).willReturn(aResponse().withBody(jsonArray.toString())));
-        System.out.println(propertiesToReturn.get(0).toString());
         stubFor(get(urlEqualTo("/properties/a.key"))
                 .willReturn(aResponse().withBody("{ \"key\": \"a.key\", \"value\": \"a.value\"}")));
         stubFor(post(urlEqualTo("/properties"))
@@ -75,6 +74,20 @@ class ProperyServiceMockTest {
     void testImpl() {
         PropertiesClientImplMock mock = new PropertiesClientImplMock();
         assertEquals("http://localhost:8065", mock.getUrl());
+    }
+
+    class PropertiesClientImplMockConfig extends PropertiesClientImpl {
+        @Override
+        public String getConfigFileName() {
+            return "does.not.exist";
+        }
+    }
+
+    @Test
+    void testConfigUrl() {
+        // There's nothing to test here, with just want to assert that the method
+        // doesn't throw an exception
+        new PropertiesClientImplMockConfig();
     }
 
     @Test
