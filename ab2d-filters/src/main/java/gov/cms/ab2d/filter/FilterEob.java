@@ -13,19 +13,15 @@ public class FilterEob {
 
     /**
      * Does all the filtering. If null is returned
-     * 
-     * @param resource                - the resource to check
-     * @param dateRanges              - the valid date ranges the beneficiary was a
-     *                                member
-     * @param earliestDate            - the earliest date after which the billable
-     *                                period must be after
-     * @param attTime                 - the time the contract was attested
-     * @param skipBillablePeriodCheck - if you want to turn off date checking (used
-     *                                with testing data)
+     * @param resource - the resource to check
+     * @param dateRanges - the valid date ranges the beneficiary was a member
+     * @param earliestDate - the earliest date after which the billable period must be after
+     * @param attTime - the time the contract was attested
+     * @param skipBillablePeriodCheck - if you want to turn off date checking (used with testing data)
      * @return an optional of the resource. If filtered out, isPresent() is false
      */
     public static Optional<IBaseResource> filter(IBaseResource resource, List<FilterOutByDate.DateRange> dateRanges,
-            Date earliestDate, Date attTime, boolean skipBillablePeriodCheck) {
+                                                 Date earliestDate, Date attTime, boolean skipBillablePeriodCheck) {
         // If there is no attestation date, cannot return the data
         if (attTime == null) {
             return Optional.empty();

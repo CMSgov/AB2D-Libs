@@ -57,17 +57,13 @@ class FilterOutByDateTest {
                     createEOB("10/01/2018", "10/01/2018"), // In
                     createEOB("10/01/2000", "10/03/2000"), // Out
                     createEOB("10/01/2013", "10/03/2013"), // In
-                    createEOB("10/31/2020", "11/02/2020") // In
+                    createEOB("10/31/2020", "11/02/2020")  // In
             );
 
-            assertEquals(6, FilterOutByDate
-                    .filterByDate(list, sdf.get().parse("12/01/2000"), sdf.get().parse("01/01/2000"), ranges).size());
-            assertEquals(5, FilterOutByDate
-                    .filterByDate(list, sdf.get().parse("10/01/2018"), sdf.get().parse("01/01/2000"), ranges).size());
-            assertEquals(0, FilterOutByDate
-                    .filterByDate(list, sdf.get().parse("12/01/2021"), sdf.get().parse("01/01/2000"), ranges).size());
-            assertEquals(4, FilterOutByDate
-                    .filterByDate(list, sdf.get().parse("12/01/2000"), sdf.get().parse("12/01/2018"), ranges).size());
+            assertEquals(6, FilterOutByDate.filterByDate(list, sdf.get().parse("12/01/2000"), sdf.get().parse("01/01/2000"), ranges).size());
+            assertEquals(5, FilterOutByDate.filterByDate(list, sdf.get().parse("10/01/2018"), sdf.get().parse("01/01/2000"), ranges).size());
+            assertEquals(0, FilterOutByDate.filterByDate(list, sdf.get().parse("12/01/2021"), sdf.get().parse("01/01/2000"), ranges).size());
+            assertEquals(4, FilterOutByDate.filterByDate(list, sdf.get().parse("12/01/2000"), sdf.get().parse("12/01/2018"), ranges).size());
         } catch (Exception parseException) {
             fail("could not create eobs", parseException);
         }

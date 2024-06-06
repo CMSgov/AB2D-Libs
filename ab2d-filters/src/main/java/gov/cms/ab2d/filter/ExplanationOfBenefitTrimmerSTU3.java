@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Cleans out data from a copy of an ExplanationOfBenefit object that we don't
- * want
+ * Cleans out data from a copy of an ExplanationOfBenefit object that we don't want
  * to forward to Part D providers
  */
 @UtilityClass
@@ -42,21 +41,20 @@ public class ExplanationOfBenefitTrimmerSTU3 {
      */
     private static void cleanOutUnNeededData(ExplanationOfBenefit benefit) {
         /*
-         * Keep:
-         * patient
-         * provider
-         * organization
-         * facility
-         * careTeam
-         * diagnosis
-         * procedure
-         * billablePeriod
-         * item - Clear out required data
-         * 
-         * Inherited - Identifier, resourceType, type
+           Keep:
+              patient
+              provider
+              organization
+              facility
+              careTeam
+              diagnosis
+              procedure
+              billablePeriod
+              item - Clear out required data
+
+           Inherited - Identifier, resourceType, type
          */
-        // Extensions should exist in benefit: AB2D-5728 Validate Humana AB2D data
-        // dictionary for missing elements reported in STU3
+        // Extensions should exist in benefit: AB2D-5728 Validate Humana AB2D data dictionary for missing elements reported in STU3
         benefit.setPatientTarget(null);
         benefit.setCreated(null);
         benefit.setEnterer(null);
@@ -103,26 +101,24 @@ public class ExplanationOfBenefitTrimmerSTU3 {
     }
 
     /**
-     * Used to clean up the ItemComponent because this object is also contains a
-     * subset
+     * Used to clean up the ItemComponent because this object is also contains a subset
      * of the data for this object
      *
      * @param component - the data to clean up
      * @return the cleaned up data
      */
     @SuppressWarnings("deprecation")
-    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(
-            ExplanationOfBenefit.ItemComponent component) {
+    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(ExplanationOfBenefit.ItemComponent component) {
         /*
-         * Keep:
-         * sequence
-         * careTeamLinkId
-         * diagnosisLinkId
-         * procedureLinkId
-         * service
-         * serviced
-         * location
-         * quantity
+         Keep:
+              sequence
+              careTeamLinkId
+              diagnosisLinkId
+              procedureLinkId
+              service
+              serviced
+              location
+              quantity
          */
         clearOutList(component.getInformationLinkId());
         component.setRevenue(null);
