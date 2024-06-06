@@ -112,7 +112,7 @@ class ProperyServiceMockTest {
     }
 
     @Test
-    void testDeleteTrueFalse() {
+    void testDeleteCases() {
         int port = 8066;
         PropertiesClientImpl impl = new PropertiesClientImpl("http://localhost:" + port);
         WireMockServer wireMockServer = new WireMockServer(port);
@@ -127,6 +127,10 @@ class ProperyServiceMockTest {
         // test running delete with true
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
         impl.deleteProperty("one");
+
+        // test running delete with null (presumably)
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse()));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
 
         wireMockServer.stop();
     }
