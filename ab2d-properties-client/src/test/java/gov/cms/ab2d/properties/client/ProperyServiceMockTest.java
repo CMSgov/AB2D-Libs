@@ -18,10 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProperyServiceMockTest {
-    class PropertiesClientImplMock extends PropertiesClientImpl {
+    class PropertiesClientImplMockEnv extends PropertiesClientImpl {
         @Override
         public String getFromEnvironment() {
             return "http://localhost:8065";
+        }
+    }
+
+    class PropertiesClientImplMockConfig extends PropertiesClientImpl {
+        @Override
+        public String getConfigFileName() {
+            return "does.not.exist";
         }
     }
 
@@ -71,23 +78,15 @@ class ProperyServiceMockTest {
     }
 
     @Test
-    void testImpl() {
-        PropertiesClientImplMock mock = new PropertiesClientImplMock();
+    void testMockEnv() {
+        PropertiesClientImplMockEnv mock = new PropertiesClientImplMockEnv();
         assertEquals("http://localhost:8065", mock.getUrl());
     }
 
-    class PropertiesClientImplMockConfig extends PropertiesClientImpl {
-        @Override
-        public String getConfigFileName() {
-            return "does.not.exist";
-        }
-    }
-
     @Test
-    void testConfigUrl() {
-        // There's nothing to test here, with just want to assert that the method
-        // doesn't throw an exception
-        new PropertiesClientImplMockConfig();
+    void testMockConfig() {
+        PropertiesClientImplMockConfig mock = new PropertiesClientImplMockConfig();
+        assertEquals("http://localhost:8060", mock.getUrl());
     }
 
     @Test
