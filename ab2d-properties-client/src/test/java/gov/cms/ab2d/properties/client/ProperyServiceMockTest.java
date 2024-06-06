@@ -13,6 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -130,7 +131,7 @@ class ProperyServiceMockTest {
 
         // test running delete with true
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
-        impl.deleteProperty("one");
+        assertDoesNotThrow(() -> impl.deleteProperty("one"));
 
         // test running delete with null (presumably)
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse()));
