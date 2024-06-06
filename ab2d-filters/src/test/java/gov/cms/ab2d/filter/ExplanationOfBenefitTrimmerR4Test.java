@@ -91,7 +91,8 @@ class ExplanationOfBenefitTrimmerR4Test {
         EOB.setFormCode(new CodeableConcept().setText(DUMMY_TXT));
         EOB.setBenefitPeriod(new Period().setEnd(SAMPLE_DATE).setStart(SAMPLE_DATE));
         EOB.setOutcome(COMPLETE);
-        EOB.setRelated(List.of(new ExplanationOfBenefit.RelatedClaimComponent().setReference(new Identifier().setValue("one"))));
+        EOB.setRelated(List
+                .of(new ExplanationOfBenefit.RelatedClaimComponent().setReference(new Identifier().setValue("one"))));
         EOB.setPayee(new ExplanationOfBenefit.PayeeComponent().setParty(new Reference("party")));
         EOB.setInsurance(List.of(new ExplanationOfBenefit.InsuranceComponent().setCoverage(new Reference("coverage"))));
         EOB.setAccident(new ExplanationOfBenefit.AccidentComponent().setDate(SAMPLE_DATE));
@@ -102,8 +103,10 @@ class ExplanationOfBenefitTrimmerR4Test {
         EOB.setBenefitBalance(List.of(new ExplanationOfBenefit.BenefitBalanceComponent().setDescription("Desc")));
         EOB.setTotal(List.of(new ExplanationOfBenefit.TotalComponent().setAmount(new Money().setValue(13))));
         EOB.setUse(ExplanationOfBenefit.Use.CLAIM);
-        EOB.setAdjudication(List.of(new ExplanationOfBenefit.AdjudicationComponent().setAmount(new Money().setValue(11))));
-        EOB.setSupportingInfo(List.of(new ExplanationOfBenefit.SupportingInformationComponent().setSequence(3).setReason(new Coding().setCode("code"))));
+        EOB.setAdjudication(
+                List.of(new ExplanationOfBenefit.AdjudicationComponent().setAmount(new Money().setValue(11))));
+        EOB.setSupportingInfo(List.of(new ExplanationOfBenefit.SupportingInformationComponent().setSequence(3)
+                .setReason(new Coding().setCode("code"))));
         ExplanationOfBenefit.ItemComponent item = new ExplanationOfBenefit.ItemComponent()
                 .setSequence(3)
                 .setCategory(new CodeableConcept().setText("category"))
@@ -119,28 +122,26 @@ class ExplanationOfBenefitTrimmerR4Test {
 
         EOB.setCareTeam(List.of(
                 new ExplanationOfBenefit.CareTeamComponent().setResponsible(true)
-                .setSequence(2)
-                .setRole(new CodeableConcept().setText("care"))
-                .setProvider(new Reference("provider"))
-        ));
+                        .setSequence(2)
+                        .setRole(new CodeableConcept().setText("care"))
+                        .setProvider(new Reference("provider"))));
         EOB.setDiagnosis(List.of(
                 new ExplanationOfBenefit.DiagnosisComponent()
-                .setSequence(1)
-                .setOnAdmission(new CodeableConcept().setText("admission"))
-                .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
-        ));
+                        .setSequence(1)
+                        .setOnAdmission(new CodeableConcept().setText("admission"))
+                        .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))));
         EOB.setProcedure(List.of(
                 new ExplanationOfBenefit.ProcedureComponent()
-                .setSequence(3)
-                .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
-                .setUdi(List.of(new Reference("udi")))
-                .setProcedure(new CodeableConcept().setText("procedure"))
-                .setDate(SAMPLE_DATE)
-        ));
+                        .setSequence(3)
+                        .setType(List.of(new CodeableConcept().setText(DUMMY_TYPE)))
+                        .setUdi(List.of(new Reference("udi")))
+                        .setProcedure(new CodeableConcept().setText("procedure"))
+                        .setDate(SAMPLE_DATE)));
     }
 
     /**
-     * Verify that all the data that is not available to the PDP is not in the filtered object
+     * Verify that all the data that is not available to the PDP is not in the
+     * filtered object
      */
     @Test
     void testFilterIt() {
@@ -206,8 +207,8 @@ class ExplanationOfBenefitTrimmerR4Test {
         assertEquals(ExplanationOfBenefit.ExplanationOfBenefitStatus.CANCELLED, eobtrim.getStatus());
         assertEquals(DUMMY_TYPE, eobtrim.getType().getText());
         assertEquals("subtype", eobtrim.getSubType().getText());
-        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  eobtrim.getBillablePeriod().getStart().getTime()) < 1000);
-        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  eobtrim.getBillablePeriod().getEnd().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() - eobtrim.getBillablePeriod().getStart().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() - eobtrim.getBillablePeriod().getEnd().getTime()) < 1000);
         assertEquals(1, eobtrim.getCareTeam().size());
         ExplanationOfBenefit.CareTeamComponent careTeamComponent = eobtrim.getCareTeamFirstRep();
         assertTrue(careTeamComponent.getResponsible());
@@ -220,7 +221,7 @@ class ExplanationOfBenefitTrimmerR4Test {
         assertEquals(DUMMY_TYPE, diagnosisComponent.getType().get(0).getText());
         assertEquals(1, eobtrim.getProcedure().size());
         ExplanationOfBenefit.ProcedureComponent procedureComponent = eobtrim.getProcedureFirstRep();
-        assertTrue(Math.abs(SAMPLE_DATE.getTime() -  procedureComponent.getDate().getTime()) < 1000);
+        assertTrue(Math.abs(SAMPLE_DATE.getTime() - procedureComponent.getDate().getTime()) < 1000);
         assertNotEquals(0, procedureComponent.getType().size());
         assertNotEquals(0, procedureComponent.getUdi().size());
         assertEquals("procedure", ((CodeableConcept) procedureComponent.getProcedure()).getText());
@@ -300,7 +301,7 @@ class ExplanationOfBenefitTrimmerR4Test {
         List<String> validUrls = List.of(PRICING_STATE, ANESTHESIA_UNIT_COUNT, SUPPLIER_TYPE);
         for (String url : urls) {
             assertTrue(validUrls.contains(url));
-            System.out.println(eob.getId() + " Item Extension Found: " + url);
+            // System.out.println(eob.getId() + " Item Extension Found: " + url);
         }
 
         List<Extension> extensions = eob.getExtension();
@@ -308,7 +309,7 @@ class ExplanationOfBenefitTrimmerR4Test {
         if (extensions.size() == 1) {
             Extension e = extensions.get(0);
             assertEquals(NL_RECORD_IDENTIFICATION, e.getUrl());
-            System.out.println(eob.getId() + " Extension Found: " + e.getUrl());
+            // System.out.println(eob.getId() + " Extension Found: " + e.getUrl());
         }
 
         List<ExplanationOfBenefit.SupportingInformationComponent> suppInfoComps = eob.getSupportingInfo();
@@ -318,7 +319,8 @@ class ExplanationOfBenefitTrimmerR4Test {
             CodeableConcept concept = component.getCode();
             Coding code = concept.getCoding().get(0);
             assertEquals(ExplanationOfBenefitTrimmerR4.RELATED_DIAGNOSIS_GROUP, code.getSystem());
-            System.out.println(eob.getId() + " Supporting Info Found: " + code.getSystem());
+            // System.out.println(eob.getId() + " Supporting Info Found: " +
+            // code.getSystem());
         }
 
         int numExtensions = extensions.size();

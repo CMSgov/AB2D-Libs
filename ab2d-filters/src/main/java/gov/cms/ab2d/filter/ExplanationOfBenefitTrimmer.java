@@ -7,7 +7,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ExplanationOfBenefitTrimmer {
     /**
-     * Return the trimmed version of the EOB. Currently, only R4 & DSTU3 are supported
+     * Return the trimmed version of the EOB. Currently, only R4 & DSTU3 are
+     * supported
      *
      * @param resource - the resource
      * @return - the trimmed resource

@@ -17,7 +17,7 @@ public class EobUtils {
     /**
      * Given a resource and the method name, return the result of calling the method
      *
-     * @param resource - the resource object
+     * @param resource   - the resource object
      * @param methodName - the method name
      * @return the result of calling the method
      */
@@ -89,6 +89,7 @@ public class EobUtils {
         List<?> codes = (List<?>) EobUtils.invokeGetMethod(c, "getCoding");
         return codes.stream()
                 .filter(code -> ((String) EobUtils.invokeGetMethod(code, "getSystem")).endsWith(EOB_TYPE_CODE_SYS))
-                .anyMatch(code -> EOB_TYPE_PART_D_CODE_VAL.equalsIgnoreCase((String) EobUtils.invokeGetMethod(code, "getCode")));
+                .anyMatch(code -> EOB_TYPE_PART_D_CODE_VAL
+                        .equalsIgnoreCase((String) EobUtils.invokeGetMethod(code, "getCode")));
     }
 }

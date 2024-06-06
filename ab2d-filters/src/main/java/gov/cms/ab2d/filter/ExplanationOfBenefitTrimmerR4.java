@@ -15,112 +15,113 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Cleans out data from a copy of an ExplanationOfBenefit object that we don't want
+ * Cleans out data from a copy of an ExplanationOfBenefit object that we don't
+ * want
  * to forward to Part D providers
  *
- *  Keep:
- *     . identifier (inherited)
- *     . type (inherited, min cardinality from 0 to 1)
- *     . meta (inherited)
- *     . text (inherited)
- *     . language (inherited)
- *     . id (inherited)
- *     . implicitRules (inherited)
- *     . patient
- *     . provider
- *     . facility
- *     . careTeam
- *     . diagnosis (new in R4 so don't use - onAdmission)
- *     . procedure (new in R4 so don't use - type, udi, udi)
- *     . billablePeriod
- *     . item (some of the data)
- *     . status
- *     . Near Line Record Identification Code (in extension)
+ * Keep:
+ * . identifier (inherited)
+ * . type (inherited, min cardinality from 0 to 1)
+ * . meta (inherited)
+ * . text (inherited)
+ * . language (inherited)
+ * . id (inherited)
+ * . implicitRules (inherited)
+ * . patient
+ * . provider
+ * . facility
+ * . careTeam
+ * . diagnosis (new in R4 so don't use - onAdmission)
+ * . procedure (new in R4 so don't use - type, udi, udi)
+ * . billablePeriod
+ * . item (some of the data)
+ * . status
+ * . Near Line Record Identification Code (in extension)
  *
- *  Items not kept:
- *     . extension (inherited)
- *          except for: Near Line Record Identification Code
- *     . modifierExtension (new for R4, inherited)
- *     . patientTarget
- *     . created
- *     . enterer
- *     . entererTarget
- *     . insurer
- *     . insurerTarget
- *     . provider
- *     . providerTarget
- *     . referral
- *     . referralTarget
- *     . facilityTarget
- *     . claim
- *     . claimTarget
- *     . claimResponse
- *     . claimResponseTarget
- *     . outcome
- *     . disposition
- *     . related
- *     . prescription
- *     . prescriptionTarget
- *     . originalPrescription
- *     . originalPrescriptionTarget
- *     . payee
- *     . precedence
- *     . insurance
- *     . accident
- *     . supportingInfo (was information in STU3)
- *     . addItem
- *     . payment
- *     . form
- *     . contained
- *     . processNote
- *     . benefitBalance
- *     . priority (new for R4)
- *     . total (new for R4)
- *     . use (new for R4)
- *     . fundsReserveRequested (new for R4)
- *     . fundsReserve (new for R4)
- *     . preAuthRef (new for R4)
- *     . preAuthRefPeriod (new for R4)
- *     . formCode (new for R4)
- *     . benefitPeriod (new for R4)
- *     . adjucation (new for R4)
+ * Items not kept:
+ * . extension (inherited)
+ * except for: Near Line Record Identification Code
+ * . modifierExtension (new for R4, inherited)
+ * . patientTarget
+ * . created
+ * . enterer
+ * . entererTarget
+ * . insurer
+ * . insurerTarget
+ * . provider
+ * . providerTarget
+ * . referral
+ * . referralTarget
+ * . facilityTarget
+ * . claim
+ * . claimTarget
+ * . claimResponse
+ * . claimResponseTarget
+ * . outcome
+ * . disposition
+ * . related
+ * . prescription
+ * . prescriptionTarget
+ * . originalPrescription
+ * . originalPrescriptionTarget
+ * . payee
+ * . precedence
+ * . insurance
+ * . accident
+ * . supportingInfo (was information in STU3)
+ * . addItem
+ * . payment
+ * . form
+ * . contained
+ * . processNote
+ * . benefitBalance
+ * . priority (new for R4)
+ * . total (new for R4)
+ * . use (new for R4)
+ * . fundsReserveRequested (new for R4)
+ * . fundsReserve (new for R4)
+ * . preAuthRef (new for R4)
+ * . preAuthRefPeriod (new for R4)
+ * . formCode (new for R4)
+ * . benefitPeriod (new for R4)
+ * . adjucation (new for R4)
  *
- *  For item elements:
+ * For item elements:
  *
- *  Keep:
- *     . sequence
- *     . careTeamSequence
- *     . productOrService
- *     . serviced
- *     . location
- *     . quantity
- *     . extension
- *          Anesthesia Unit Count
- *          Pricing State Code
- *          Supplier Type Code
+ * Keep:
+ * . sequence
+ * . careTeamSequence
+ * . productOrService
+ * . serviced
+ * . location
+ * . quantity
+ * . extension
+ * Anesthesia Unit Count
+ * Pricing State Code
+ * Supplier Type Code
  *
- *  Items not kept:
- *     . diagnosisSequence
- *     . procedureSequence
- *     . informationSequence
- *     . extension
- *     . revenue
- *     . category
- *     . modifier
- *     . programCode
- *     . unitPrice
- *     . factor
- *     . net
- *     . udi
- *     . udiTarget
- *     . bodySite
- *     . subSite
- *     . encounter
- *     . encounterTarget
- *     . noteNumber
- *     . adjudication
- *     . detail
- *     . modifierExtension
+ * Items not kept:
+ * . diagnosisSequence
+ * . procedureSequence
+ * . informationSequence
+ * . extension
+ * . revenue
+ * . category
+ * . modifier
+ * . programCode
+ * . unitPrice
+ * . factor
+ * . net
+ * . udi
+ * . udiTarget
+ * . bodySite
+ * . subSite
+ * . encounter
+ * . encounterTarget
+ * . noteNumber
+ * . adjudication
+ * . detail
+ * . modifierExtension
  *
  */
 @UtilityClass
@@ -219,10 +220,11 @@ public class ExplanationOfBenefitTrimmerR4 {
     }
 
     /**
-     * Retrieve specific supporting information in the list based on the specified system
+     * Retrieve specific supporting information in the list based on the specified
+     * system
      *
      * @param supportingInfo - the list of supporing info
-     * @param system - the system to look for
+     * @param system         - the system to look for
      *
      * @return - Supporting information defined by the passed system
      */
@@ -243,29 +245,31 @@ public class ExplanationOfBenefitTrimmerR4 {
     }
 
     /**
-     * Used to clean up the ItemComponent because this object is also contains a subset
+     * Used to clean up the ItemComponent because this object is also contains a
+     * subset
      * of the data for this object
      *
      * @param component - the data to clean up
      * @return the cleaned up data
      */
     @SuppressWarnings("deprecation")
-    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(ExplanationOfBenefit.ItemComponent component) {
+    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(
+            ExplanationOfBenefit.ItemComponent component) {
         /*
-         Keep:
-              sequence
-              diagnosisSequence
-              procedureSequence
-              careTeamSequence
-              productOrService
-              serviced
-              location
-              quantity
-              item extensions :
-                    Anesthesia Unit Count
-                    Pricing State Code
-                    Supplier Type Code
-              Related Diagnosis Group Code
+         * Keep:
+         * sequence
+         * diagnosisSequence
+         * procedureSequence
+         * careTeamSequence
+         * productOrService
+         * serviced
+         * location
+         * quantity
+         * item extensions :
+         * Anesthesia Unit Count
+         * Pricing State Code
+         * Supplier Type Code
+         * Related Diagnosis Group Code
          */
         clearOutList(component.getInformationSequence());
 
@@ -298,7 +302,7 @@ public class ExplanationOfBenefitTrimmerR4 {
      * Find specific extensions with the types of url specified by the passed urls
      *
      * @param extensions - the list of extensions to search
-     * @param url - the urls we are searching for
+     * @param url        - the urls we are searching for
      *
      * @return the list of matching extensions
      */
@@ -308,7 +312,8 @@ public class ExplanationOfBenefitTrimmerR4 {
             return keptExtensions;
         }
         for (String urlItem : url) {
-            Optional<Extension> extension = extensions.stream().filter(e -> e.getUrl().equalsIgnoreCase(urlItem)).findFirst();
+            Optional<Extension> extension = extensions.stream().filter(e -> e.getUrl().equalsIgnoreCase(urlItem))
+                    .findFirst();
             extension.ifPresent(keptExtensions::add);
         }
         return keptExtensions;

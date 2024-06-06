@@ -25,8 +25,10 @@ public class EOBLoadUtilitiesTest {
     private static FhirContext context = FhirContext.forDstu3();
 
     static {
-        eobC = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
-        eobS = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-SNF-Claims.json"));
+        eobC = ExplanationOfBenefitTrimmerSTU3
+                .getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
+        eobS = ExplanationOfBenefitTrimmerSTU3
+                .getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-SNF-Claims.json"));
     }
 
     @Test
@@ -34,7 +36,8 @@ public class EOBLoadUtilitiesTest {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<org.hl7.fhir.dstu3.model.Coding> coding = eobCarrier.getType().getCoding();
         assertEquals(4, coding.size());
-        org.hl7.fhir.dstu3.model.Coding cd = coding.stream().filter(c -> c.getCode().equals("professional")).findFirst().orElse(null);
+        org.hl7.fhir.dstu3.model.Coding cd = coding.stream().filter(c -> c.getCode().equals("professional")).findFirst()
+                .orElse(null);
         assertNotNull(cd);
         assertEquals("http://hl7.org/fhir/ex-claimtype", cd.getSystem());
         assertEquals("professional", cd.getCode());
@@ -72,7 +75,8 @@ public class EOBLoadUtilitiesTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         Date expectedTime = sdf.parse("2016-01-16T00:00:00-0600");
         assertEquals(expectedTime.getTime(), comp.getDate().getTime());
-        assertEquals("http://hl7.org/fhir/sid/icd-9-cm", comp.getProcedureCodeableConcept().getCoding().get(0).getSystem());
+        assertEquals("http://hl7.org/fhir/sid/icd-9-cm",
+                comp.getProcedureCodeableConcept().getCoding().get(0).getSystem());
         assertEquals("0TCCCCC", comp.getProcedureCodeableConcept().getCoding().get(0).getCode());
     }
 
@@ -144,7 +148,8 @@ public class EOBLoadUtilitiesTest {
         assertEquals(2, components.get(0).getCareTeamLinkId().get(0).getValue());
         assertEquals("1", components.get(0).getQuantity().getValue().toString());
         assertEquals(6, components.get(0).getSequence());
-        assertEquals("https://bluebutton.cms.gov/resources/codesystem/hcpcs", components.get(0).getService().getCoding().get(0).getSystem());
+        assertEquals("https://bluebutton.cms.gov/resources/codesystem/hcpcs",
+                components.get(0).getService().getCoding().get(0).getSystem());
         assertEquals("5", components.get(0).getService().getCoding().get(0).getVersion());
         assertEquals("92999", components.get(0).getService().getCoding().get(0).getCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -154,13 +159,18 @@ public class EOBLoadUtilitiesTest {
         assertEquals(period.getEnd().getTime(), d.getTime());
 
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
-        org.hl7.fhir.dstu3.model.CodeableConcept location = (org.hl7.fhir.dstu3.model.CodeableConcept) components.get(0).getLocation();
-        assertEquals("https://bluebutton.cms.gov/resources/variables/line_place_of_srvc_cd", location.getCoding().get(0).getSystem());
+        org.hl7.fhir.dstu3.model.CodeableConcept location = (org.hl7.fhir.dstu3.model.CodeableConcept) components.get(0)
+                .getLocation();
+        assertEquals("https://bluebutton.cms.gov/resources/variables/line_place_of_srvc_cd",
+                location.getCoding().get(0).getSystem());
         assertEquals("11", location.getCoding().get(0).getCode());
-        assertEquals("Office. Location, other than a hospital, skilled nursing facility (SNF), military treatment facility, community health center, State or local public health clinic, or intermediate care facility (ICF), where the health professional routinely provides health examinations, diagnosis, and treatment of illness or injury on an ambulatory basis.", location.getCoding().get(0).getDisplay());
+        assertEquals(
+                "Office. Location, other than a hospital, skilled nursing facility (SNF), military treatment facility, community health center, State or local public health clinic, or intermediate care facility (ICF), where the health professional routinely provides health examinations, diagnosis, and treatment of illness or injury on an ambulatory basis.",
+                location.getCoding().get(0).getDisplay());
 
         List<ExplanationOfBenefit.ItemComponent> components2 = eobSNF.getItem();
-        org.hl7.fhir.dstu3.model.Address location2 = (org.hl7.fhir.dstu3.model.Address) components2.get(0).getLocation();
+        org.hl7.fhir.dstu3.model.Address location2 = (org.hl7.fhir.dstu3.model.Address) components2.get(0)
+                .getLocation();
         assertEquals("FL", location2.getState());
     }
 
@@ -171,7 +181,8 @@ public class EOBLoadUtilitiesTest {
             try (Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
                 // STU3
-                ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
+                ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader,
+                        context);
                 assertNotNull(benefit);
                 assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
             } catch (Exception e) {
@@ -185,9 +196,17 @@ public class EOBLoadUtilitiesTest {
     @Test
     void testToJson() {
         var jsonParser = context.newJsonParser();
-        ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
-        ExplanationOfBenefit eobNew = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerSTU3.getBenefit((IBaseResource) eob);
+        ExplanationOfBenefit eob = EOBLoadUtilities
+                .getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
+        ExplanationOfBenefit eobNew = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerSTU3
+                .getBenefit((IBaseResource) eob);
         String payload = jsonParser.encodeResourceToString(eobNew) + System.lineSeparator();
         assertNotNull(payload);
+    }
+
+    @Test
+    void testNull() {
+        ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("");
+        assertNull(eob);
     }
 }

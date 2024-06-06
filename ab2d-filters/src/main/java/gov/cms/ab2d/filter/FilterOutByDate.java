@@ -17,8 +17,10 @@ import java.util.stream.Collectors;
 /**
  * Utility class to take different subscription ranges and attestation dates and
  * determine if an explanation of benefit object should be filtered out based on
- * those dates. Older Date objects are used instead of more modern dates because the
- * explanation of benefit object billing dates periods are in dates. For consistency
+ * those dates. Older Date objects are used instead of more modern dates because
+ * the
+ * explanation of benefit object billing dates periods are in dates. For
+ * consistency
  * and to minimize time zone issues, we kept everything as Date objects.
  */
 public final class FilterOutByDate {
@@ -30,9 +32,12 @@ public final class FilterOutByDate {
     public static final TimeZone TIMEZONE = TimeZone.getTimeZone(AB2D_ZONE);
 
     /**
-     * Date range class used to define a from and to date for a subscribers membership.
-     * We only deal with date ranges consisting of months and eliminate the ability to construct other
-     * ranges. A date range is from the start of a month to the end of that same or other month only.
+     * Date range class used to define a from and to date for a subscribers
+     * membership.
+     * We only deal with date ranges consisting of months and eliminate the ability
+     * to construct other
+     * ranges. A date range is from the start of a month to the end of that same or
+     * other month only.
      */
     @Getter
     public static final class DateRange {
@@ -41,7 +46,8 @@ public final class FilterOutByDate {
         private final Date end;
 
         /**
-         * Create date range from the beginning of the startMonth during startYear to the end of the endMonth during endYear
+         * Create date range from the beginning of the startMonth during startYear to
+         * the end of the endMonth during endYear
          */
         private DateRange(int startMonth, int startYear, int endMonth, int endYear) {
             this.start = getStartOfMonth(startMonth, startYear);
@@ -51,8 +57,10 @@ public final class FilterOutByDate {
         /**
          * True if a date is in range between the start date and the end date.
          *
-         * This inRange function is inclusive meaning if the end date is May 31st at 11:59:59.999 and someone
-         * enters that date in, the function will return true. But if someone enters June 1st at exactly midnight
+         * This inRange function is inclusive meaning if the end date is May 31st at
+         * 11:59:59.999 and someone
+         * enters that date in, the function will return true. But if someone enters
+         * June 1st at exactly midnight
          * it will return false.
          *
          * @param d - the date to compare
@@ -70,12 +78,14 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Method to parse a list of months included and return the date ranges implied by the list.
-     * For example, a list of (1, 2, 4, 6) in the year 2020 would end up with two time ranges -
+     * Method to parse a list of months included and return the date ranges implied
+     * by the list.
+     * For example, a list of (1, 2, 4, 6) in the year 2020 would end up with two
+     * time ranges -
      * 1/1/2020 - 2/29/2020 and 4/1/2020 - 6/30/2020
      *
      * @param months - the list of months to include
-     * @param year - the year to include
+     * @param year   - the year to include
      * @return the list of date ranges
      */
     public static List<DateRange> getDateRanges(List<Integer> months, int year) {
@@ -113,12 +123,15 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Create a list of size 12 of months where if the passed months argument is in the list, set it to 1.
-     * For example, if you have a list of months [1, 4, 5] for months Jan, Apr & May, convert into list:
+     * Create a list of size 12 of months where if the passed months argument is in
+     * the list, set it to 1.
+     * For example, if you have a list of months [1, 4, 5] for months Jan, Apr &
+     * May, convert into list:
      * [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
      *
      * @param months - the months
-     * @return the months in a list of 12 where a value of 1 means that month is checked
+     * @return the months in a list of 12 where a value of 1 means that month is
+     *         checked
      */
     private static List<Integer> getMonthList(List<Integer> months) {
         List<Integer> monthList = new ArrayList<>(12);
@@ -134,7 +147,8 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Given a month and year, get us the Date that is at the beginning of the month. For example,
+     * Given a month and year, get us the Date that is at the beginning of the
+     * month. For example,
      * 10, 2020 = 10/01/2020 00:00:00
      *
      * @param month - month to choose
@@ -169,7 +183,8 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Get the date corresponding with the end of the month. For example, 2, 2020 = 02/29/2020 23:59:59
+     * Get the date corresponding with the end of the month. For example, 2, 2020 =
+     * 02/29/2020 23:59:59
      *
      * @param month - the month to get the end of
      * @param year  - the year
@@ -185,7 +200,8 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Create a date range with just the month and year notation. For example, 10/2020, 11/2020 will
+     * Create a date range with just the month and year notation. For example,
+     * 10/2020, 11/2020 will
      * end up being 10/01/2020 00:00:00 - 11/30/2020 59:59:59
      *
      * @param startMonth - the start month
@@ -200,11 +216,12 @@ public final class FilterOutByDate {
     }
 
     /**
-     * Create a date range with just the month and year notation. For example, 10/2020 will
+     * Create a date range with just the month and year notation. For example,
+     * 10/2020 will
      * end up being 10/01/2020 00:00:00 - 10/31/2020 59:59:59
      *
      * @param month - the start and end month
-     * @param year - the start and end year
+     * @param year  - the start and end year
      * @return the date range
      * @throws ParseException if there is an issue parsing the date information
      */
@@ -213,27 +230,33 @@ public final class FilterOutByDate {
     }
 
     /**
-     * This does most of the work of the class. It takes a list of explanation of benefit objects,
-     * the attestation date and list of valid date ranges and returns the list of qualifying objects
+     * This does most of the work of the class. It takes a list of explanation of
+     * benefit objects,
+     * the attestation date and list of valid date ranges and returns the list of
+     * qualifying objects
      *
      * @param benes           - the explanation of benefit objects
      * @param attestationDate - the attestation date
-     * @param earliestDate    - the earliest date that ab2d data is available for any PDP
+     * @param earliestDate    - the earliest date that ab2d data is available for
+     *                        any PDP
      * @param dateRanges      - the list of date ranges
-     * @return - the list of objects done after the attestation date and in the date ranges
+     * @return - the list of objects done after the attestation date and in the date
+     *         ranges
      * @throws ParseException - if there is an issue parsing the dates
      */
     public static List<IBaseResource> filterByDate(List<IBaseResource> benes,
-                                                   Date attestationDate,
-                                                   Date earliestDate,
-                                                   List<DateRange> dateRanges) {
+            Date attestationDate,
+            Date earliestDate,
+            List<DateRange> dateRanges) {
         if (benes == null || benes.isEmpty()) {
             return new ArrayList<>();
         }
-        return benes.stream().filter(b -> valid(b, attestationDate, earliestDate, dateRanges)).collect(Collectors.toList());
+        return benes.stream().filter(b -> valid(b, attestationDate, earliestDate, dateRanges))
+                .collect(Collectors.toList());
     }
 
-    public static boolean valid(IBaseResource bene, Date attestationDate, Date earliestDate, List<DateRange> dateRanges) {
+    public static boolean valid(IBaseResource bene, Date attestationDate, Date earliestDate,
+            List<DateRange> dateRanges) {
         if (bene == null) {
             return false;
         }
@@ -252,13 +275,16 @@ public final class FilterOutByDate {
     }
 
     /**
-     * True if the submitted date is after attestation date. This takes the attestation date
-     * and zeros out time so that we can assume if the attestation date is 10/01/2020 23:59:59
-     * and the billable end time is 10/01/2020 00:00:00 it will be included because they were on
+     * True if the submitted date is after attestation date. This takes the
+     * attestation date
+     * and zeros out time so that we can assume if the attestation date is
+     * 10/01/2020 23:59:59
+     * and the billable end time is 10/01/2020 00:00:00 it will be included because
+     * they were on
      * the same day
      *
      * @param dateVal - attestation date
-     * @param ben - the explanation of benefit object
+     * @param ben     - the explanation of benefit object
      * @return if the EOB object is after the attestation date
      * @throws ParseException - if there is an issue parsing the dates
      */
@@ -268,14 +294,16 @@ public final class FilterOutByDate {
             return false;
         }
 
-        Date attToUse = new SimpleDateFormat(FULL, Locale.US).parse(new SimpleDateFormat(SHORT, Locale.US).format(dateVal) + " 00:00:00:000");
+        Date attToUse = new SimpleDateFormat(FULL, Locale.US)
+                .parse(new SimpleDateFormat(SHORT, Locale.US).format(dateVal) + " 00:00:00:000");
         Date end = EobUtils.getEndDate(ben);
         return end != null && end.getTime() >= attToUse.getTime();
     }
 
     /**
      * Returns true if the EOB object is within a date range
-     * @param ben - the EOB object
+     * 
+     * @param ben   - the EOB object
      * @param range - the date range
      * @return true if the EOB object's billable period is within the date range
      */

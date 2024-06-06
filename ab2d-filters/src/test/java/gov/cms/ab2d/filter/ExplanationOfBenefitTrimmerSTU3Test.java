@@ -23,7 +23,8 @@ class ExplanationOfBenefitTrimmerSTU3Test {
     private static FhirContext context = FhirContext.forDstu3();
 
     static {
-        eobResource = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
+        eobResource = ExplanationOfBenefitTrimmerSTU3
+                .getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
     }
 
     @Test
@@ -76,7 +77,8 @@ class ExplanationOfBenefitTrimmerSTU3Test {
     void validateDefaultEobFieldsNull() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobResource;
         assertNull(ExplanationOfBenefitTrimmerSTU3.getBenefit(null));
-        // Since getting a patient target creates a new one, make sure the object is empty
+        // Since getting a patient target creates a new one, make sure the object is
+        // empty
 
         assertNull(eobCarrier.getCreated());
         assertNull(eobCarrier.getInsurer().getId());
@@ -144,7 +146,7 @@ class ExplanationOfBenefitTrimmerSTU3Test {
                 EOBLoadUtilities.getSTU3EOBFromFileInClassPath(file));
 
         String result = jsonParser.encodeResourceToString(eCarrier);
-        System.out.println(result);
+        // System.out.println(result);
         return result;
     }
 
