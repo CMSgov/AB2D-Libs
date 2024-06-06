@@ -38,11 +38,14 @@ class ProperyServiceMockTest {
         JSONArray jsonArray = new JSONArray(propertiesToReturn);
         stubFor(get(urlEqualTo("/properties")).willReturn(aResponse().withBody(jsonArray.toString())));
         System.out.println(propertiesToReturn.get(0).toString());
-        stubFor(get(urlEqualTo("/properties/a.key")).willReturn(aResponse().withBody("{ \"key\": \"a.key\", \"value\": \"a.value\"}")));
+        stubFor(get(urlEqualTo("/properties/a.key"))
+                .willReturn(aResponse().withBody("{ \"key\": \"a.key\", \"value\": \"a.value\"}")));
         stubFor(post(urlEqualTo("/properties"))
                 .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
+        stubFor(get(urlEqualTo("/properties/one"))
+                .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
+        stubFor(get(urlEqualTo("/properties/bogus"))
+                .willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
 
         List<Property> properties = impl.getAllProperties();
@@ -87,11 +90,14 @@ class ProperyServiceMockTest {
         stubFor(get(urlEqualTo("/properties/a.key")).willReturn(aResponse().withStatus(520)));
         stubFor(post(urlEqualTo("/properties")).willReturn((aResponse().withStatus(404))));
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("false")));
-        //stubFor(post(urlEqualTo("/properties"))
-         //       .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        //stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        //stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
-        //stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
+        // stubFor(post(urlEqualTo("/properties"))
+        // .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\":
+        // \"two\"}")));
+        // stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{
+        // \"key\": \"one\", \"value\": \"two\"}")));
+        // stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{
+        // \"key\": \"null\", \"value\": \"null\"}")));
+        // stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
 
         assertThrows(PropertyNotFoundException.class, () -> impl.getAllProperties());
 
@@ -104,4 +110,34 @@ class ProperyServiceMockTest {
 
         wireMockServer.stop();
     }
+
+    @Test
+    void testDeleteTrueFalse() {
+        int port = 8066;
+        PropertiesClientImpl impl = new PropertiesClientImpl("http://localhost:" + port);
+        WireMockServer wireMockServer = new WireMockServer(port);
+        wireMockServer.start();
+
+        configureFor("localhost", port);
+
+        // test running delete with false
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("false")));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
+
+        // test running delete with true
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
+        impl.deleteProperty("one");
+
+        wireMockServer.stop();
+    }
+
+    @Test
+    void testErrorsWithoutMock() {
+        PropertiesClientImpl impl = new PropertiesClientImpl();
+        assertThrows(PropertyNotFoundException.class, () -> impl.getAllProperties());
+        assertThrows(PropertyNotFoundException.class, () -> impl.getProperty("a.key"));
+        assertThrows(PropertyNotFoundException.class, () -> impl.setProperty("one", "two"));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
+    }
+
 }
