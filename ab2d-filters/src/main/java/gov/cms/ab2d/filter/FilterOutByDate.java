@@ -66,8 +66,7 @@ public final class FilterOutByDate {
     /**
      * We should never have to construct this object
      */
-    private FilterOutByDate() {
-    }
+    private FilterOutByDate() {}
 
     /**
      * Method to parse a list of months included and return the date ranges implied by the list.
@@ -223,17 +222,17 @@ public final class FilterOutByDate {
      * @return - the list of objects done after the attestation date and in the date ranges
      * @throws ParseException - if there is an issue parsing the dates
      */
-    public static List<IBaseResource> filterByDate(List<IBaseResource> benes,
-                                                   Date attestationDate,
-                                                   Date earliestDate,
-                                                   List<DateRange> dateRanges) {
+    public static List<IBaseResource> filterByDate(List<IBaseResource> benes, Date attestationDate,
+            Date earliestDate, List<DateRange> dateRanges) {
         if (benes == null || benes.isEmpty()) {
             return new ArrayList<>();
         }
-        return benes.stream().filter(b -> valid(b, attestationDate, earliestDate, dateRanges)).collect(Collectors.toList());
+        return benes.stream().filter(b -> valid(b, attestationDate, earliestDate, dateRanges))
+                .collect(Collectors.toList());
     }
 
-    public static boolean valid(IBaseResource bene, Date attestationDate, Date earliestDate, List<DateRange> dateRanges) {
+    public static boolean valid(IBaseResource bene, Date attestationDate, Date earliestDate,
+            List<DateRange> dateRanges) {
         if (bene == null) {
             return false;
         }
@@ -268,7 +267,8 @@ public final class FilterOutByDate {
             return false;
         }
 
-        Date attToUse = new SimpleDateFormat(FULL, Locale.US).parse(new SimpleDateFormat(SHORT, Locale.US).format(dateVal) + " 00:00:00:000");
+        Date attToUse = new SimpleDateFormat(FULL, Locale.US)
+                .parse(new SimpleDateFormat(SHORT, Locale.US).format(dateVal) + " 00:00:00:000");
         Date end = EobUtils.getEndDate(ben);
         return end != null && end.getTime() >= attToUse.getTime();
     }

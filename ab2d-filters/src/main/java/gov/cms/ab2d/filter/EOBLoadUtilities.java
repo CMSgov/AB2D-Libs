@@ -25,12 +25,15 @@ public class EOBLoadUtilities {
      *             Explanation of Benefit data retrieved from Blue
      * @return the ExplanationOfBenefit object
      */
-    public static org.hl7.fhir.dstu3.model.ExplanationOfBenefit getSTU3EOBFromFileInClassPath(String fileInClassPath) {
+    public static org.hl7.fhir.dstu3.model.ExplanationOfBenefit getSTU3EOBFromFileInClassPath(
+            String fileInClassPath) {
         if (StringUtils.isBlank(fileInClassPath)) {
             return null;
         }
-        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileInClassPath)) {
-            return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, inputStream);
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(fileInClassPath)) {
+            return FhirContext.forDstu3().newJsonParser().parseResource(
+                    org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, inputStream);
         } catch (Exception ex) {
             log.error("Unable to open the file", ex);
             return null;
@@ -43,12 +46,15 @@ public class EOBLoadUtilities {
      *             Explanation of Benefit data retrieved from Blue
      * @return the ExplanationOfBenefit object
      */
-    public static org.hl7.fhir.r4.model.ExplanationOfBenefit getR4EOBFromFileInClassPath(String fileInClassPath) {
+    public static org.hl7.fhir.r4.model.ExplanationOfBenefit getR4EOBFromFileInClassPath(
+            String fileInClassPath) {
         if (StringUtils.isBlank(fileInClassPath)) {
             return null;
         }
-        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileInClassPath)) {
-            return FhirContext.forR4().newJsonParser().parseResource(org.hl7.fhir.r4.model.ExplanationOfBenefit.class, inputStream);
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                .getResourceAsStream(fileInClassPath)) {
+            return FhirContext.forR4().newJsonParser()
+                    .parseResource(org.hl7.fhir.r4.model.ExplanationOfBenefit.class, inputStream);
         } catch (Exception ex) {
             log.error("Unable to open the file", ex);
             return null;
@@ -67,9 +73,12 @@ public class EOBLoadUtilities {
         }
         switch (context.getVersion().getVersion()) {
             case DSTU3:
-                return FhirContext.forDstu3().newJsonParser().parseResource(org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class, IOUtils.toString(reader));
+                return FhirContext.forDstu3().newJsonParser().parseResource(
+                        org.hl7.fhir.dstu3.model.ExplanationOfBenefit.class,
+                        IOUtils.toString(reader));
             case R4:
-                return FhirContext.forR4().newJsonParser().parseResource(org.hl7.fhir.r4.model.ExplanationOfBenefit.class, IOUtils.toString(reader));
+                return FhirContext.forR4().newJsonParser().parseResource(
+                        org.hl7.fhir.r4.model.ExplanationOfBenefit.class, IOUtils.toString(reader));
             default:
                 return null;
         }

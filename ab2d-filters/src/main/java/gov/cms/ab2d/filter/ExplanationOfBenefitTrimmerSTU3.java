@@ -51,7 +51,7 @@ public class ExplanationOfBenefitTrimmerSTU3 {
               procedure
               billablePeriod
               item - Clear out required data
-
+        
            Inherited - Identifier, resourceType, type
          */
         // Extensions should exist in benefit: AB2D-5728 Validate Humana AB2D data dictionary for missing elements reported in STU3
@@ -108,7 +108,8 @@ public class ExplanationOfBenefitTrimmerSTU3 {
      * @return the cleaned up data
      */
     @SuppressWarnings("deprecation")
-    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(ExplanationOfBenefit.ItemComponent component) {
+    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(
+            ExplanationOfBenefit.ItemComponent component) {
         /*
          Keep:
               sequence
