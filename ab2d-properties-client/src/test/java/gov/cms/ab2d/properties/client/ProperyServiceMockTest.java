@@ -90,14 +90,6 @@ class ProperyServiceMockTest {
         stubFor(get(urlEqualTo("/properties/a.key")).willReturn(aResponse().withStatus(520)));
         stubFor(post(urlEqualTo("/properties")).willReturn((aResponse().withStatus(404))));
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("false")));
-        // stubFor(post(urlEqualTo("/properties"))
-        // .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\":
-        // \"two\"}")));
-        // stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{
-        // \"key\": \"one\", \"value\": \"two\"}")));
-        // stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{
-        // \"key\": \"null\", \"value\": \"null\"}")));
-        // stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
 
         assertThrows(PropertyNotFoundException.class, () -> impl.getAllProperties());
 
