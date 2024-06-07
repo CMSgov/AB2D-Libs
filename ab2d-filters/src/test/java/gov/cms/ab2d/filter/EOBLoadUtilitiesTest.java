@@ -183,10 +183,29 @@ class EOBLoadUtilitiesTest {
     }
 
     @Test
-    void testToJson() {
-        var jsonParser = context.newJsonParser();
-        ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
-        ExplanationOfBenefit eobNew = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerSTU3.getBenefit((IBaseResource) eob);
+    void testGetSTU3EOB() {
+        // null tests
+        assertNull(EOBLoadUtilities.getSTU3EOBFromFileInClassPath(""));
+        assertNull(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("does-not-exist.json"));
+
+        // not null tests
+        var jsonParser = FhirContext.forDstu3().newJsonParser();
+        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
+        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eobNew = (org.hl7.fhir.dstu3.model.ExplanationOfBenefit) ExplanationOfBenefitTrimmer.getBenefit((IBaseResource) eob);
+        String payload = jsonParser.encodeResourceToString(eobNew) + System.lineSeparator();
+        assertNotNull(payload);
+    }
+
+    @Test
+    void testGetR4EOB() {
+        // null tests
+        assertNull(EOBLoadUtilities.getR4EOBFromFileInClassPath(""));
+        assertNull(EOBLoadUtilities.getR4EOBFromFileInClassPath("does-not-exist.json"));
+
+        // not null tests
+        var jsonParser = FhirContext.forR4().newJsonParser();
+        org.hl7.fhir.r4.model.ExplanationOfBenefit eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Carrier-R4.json");
+        org.hl7.fhir.r4.model.ExplanationOfBenefit eobNew = (org.hl7.fhir.r4.model.ExplanationOfBenefit) ExplanationOfBenefitTrimmer.getBenefit((IBaseResource) eob);
         String payload = jsonParser.encodeResourceToString(eobNew) + System.lineSeparator();
         assertNotNull(payload);
     }
