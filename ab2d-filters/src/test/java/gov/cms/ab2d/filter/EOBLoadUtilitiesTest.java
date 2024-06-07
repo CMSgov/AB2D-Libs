@@ -1,6 +1,9 @@
 package gov.cms.ab2d.filter;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.model.api.IFhirVersion;
+
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.jupiter.api.Test;
@@ -22,11 +25,24 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class EOBLoadUtilitiesTest {
     private static IBaseResource eobC;
     private static IBaseResource eobS;
-    private static FhirContext context = FhirContext.forDstu3();
 
     static {
         eobC = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
         eobS = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-SNF-Claims.json"));
+    }
+
+    class MockFhirVersion extends org.hl7.fhir.r4.hapi.ctx.FhirR4{
+        public FhirVersionEnum getVersion() {
+            // Return a version that is not supported by the switch case statement inside of
+            // EOBLoadUtilities.getEOBFromReader. The goal is to force the method to return null.
+            return FhirVersionEnum.R5;
+        }
+    }
+    class MockFhirContext extends FhirContext {
+        @Override
+        public IFhirVersion getVersion() {
+            return new MockFhirVersion();
+        }
     }
 
     @Test
@@ -167,19 +183,28 @@ class EOBLoadUtilitiesTest {
     @Test
     void testReaderEOB() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json")) {
-            try (Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
-                // STU3
-                ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
-                assertNotNull(benefit);
-                assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+
+        // DSTU3
+        InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json");
+        Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, FhirContext.forDstu3()));
+        ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, FhirContext.forDstu3());
+        assertNotNull(benefit);
+        assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
+
+        // R4
+        inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-R4.json");
+        reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, FhirContext.forR4()));
+        org.hl7.fhir.r4.model.ExplanationOfBenefit benefitR4 = (org.hl7.fhir.r4.model.ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, FhirContext.forR4());
+        assertNotNull(benefitR4);
+        assertEquals("Patient/567834", benefitR4.getPatient().getReference());
+
+        // invalid context
+        inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-R4.json");
+        reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader(null, new MockFhirContext()));
+        assertNull(EOBLoadUtilities.getEOBFromReader(reader, new MockFhirContext()));
     }
 
     @Test
