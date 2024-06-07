@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class EOBLoadUtilitiesTest {
+class EOBLoadUtilitiesTest {
     private static IBaseResource eobC;
     private static IBaseResource eobS;
     private static FhirContext context = FhirContext.forDstu3();
@@ -30,7 +30,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testType() {
+    void testType() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<org.hl7.fhir.dstu3.model.Coding> coding = eobCarrier.getType().getCoding();
         assertEquals(4, coding.size());
@@ -42,13 +42,13 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testResourceType() {
+    void testResourceType() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         assertEquals(org.hl7.fhir.dstu3.model.ResourceType.ExplanationOfBenefit, eobCarrier.getResourceType());
     }
 
     @Test
-    public void testDiagnosis() {
+    void testDiagnosis() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<ExplanationOfBenefit.DiagnosisComponent> diagnoses = eobCarrier.getDiagnosis();
         assertNotNull(diagnoses);
@@ -61,7 +61,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testProcedure() throws ParseException {
+    void testProcedure() throws ParseException {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<ExplanationOfBenefit.ProcedureComponent> procedures = eobSNF.getProcedure();
         assertNotNull(procedures);
@@ -77,7 +77,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testProvider() {
+    void testProvider() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getProvider();
         assertNotNull(ref);
@@ -87,7 +87,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testOrganization() {
+    void testOrganization() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getOrganization();
         assertNotNull(ref);
@@ -97,7 +97,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testFacility() {
+    void testFacility() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getFacility();
         assertNotNull(ref);
@@ -107,11 +107,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testIdentifier() {
+    void testIdentifier() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<org.hl7.fhir.dstu3.model.Identifier> ids = eobSNF.getIdentifier();
         assertNotNull(ids);
-        assertEquals(ids.size(), 2);
+        assertEquals(2, ids.size());
         org.hl7.fhir.dstu3.model.Identifier id = ids.stream()
                 .filter(c -> c.getValue().equalsIgnoreCase("900"))
                 .findFirst().orElse(null);
@@ -120,11 +120,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testCareTeam() {
+    void testCareTeam() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<ExplanationOfBenefit.CareTeamComponent> careTeamComponents = eobSNF.getCareTeam();
         assertNotNull(careTeamComponents);
-        assertEquals(careTeamComponents.size(), 4);
+        assertEquals(4, careTeamComponents.size());
         ExplanationOfBenefit.CareTeamComponent comp = careTeamComponents.stream()
                 .filter(c -> c.getSequence() == 2).findFirst().orElse(null);
         assertNotNull(comp);
@@ -136,11 +136,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testItems() throws ParseException {
+    void testItems() throws ParseException {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<ExplanationOfBenefit.ItemComponent> components = eobCarrier.getItem();
         assertNotNull(components);
-        assertEquals(components.size(), 1);
+        assertEquals(1, components.size());
         assertEquals(2, components.get(0).getCareTeamLinkId().get(0).getValue());
         assertEquals("1", components.get(0).getQuantity().getValue().toString());
         assertEquals(6, components.get(0).getSequence());
