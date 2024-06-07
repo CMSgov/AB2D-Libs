@@ -26,8 +26,7 @@ public class EobUtils {
             Method method = resource.getClass().getMethod(methodName);
             return method.invoke(resource);
         } catch (Exception ex) {
-            log.error("Unable to invoke get method " + methodName + " on "
-                    + resource.getClass().getName());
+            log.error("Unable to invoke get method " + methodName + " on " + resource.getClass().getName());
             return null;
         }
     }
@@ -89,9 +88,7 @@ public class EobUtils {
         Object c = EobUtils.invokeGetMethod(eob, "getType");
         List<?> codes = (List<?>) EobUtils.invokeGetMethod(c, "getCoding");
         return codes.stream()
-                .filter(code -> ((String) EobUtils.invokeGetMethod(code, "getSystem"))
-                        .endsWith(EOB_TYPE_CODE_SYS))
-                .anyMatch(code -> EOB_TYPE_PART_D_CODE_VAL
-                        .equalsIgnoreCase((String) EobUtils.invokeGetMethod(code, "getCode")));
+                .filter(code -> ((String) EobUtils.invokeGetMethod(code, "getSystem")).endsWith(EOB_TYPE_CODE_SYS))
+                .anyMatch(code -> EOB_TYPE_PART_D_CODE_VAL.equalsIgnoreCase((String) EobUtils.invokeGetMethod(code, "getCode")));
     }
 }

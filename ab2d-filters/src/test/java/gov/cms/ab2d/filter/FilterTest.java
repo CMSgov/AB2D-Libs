@@ -36,8 +36,7 @@ class FilterTest {
         assertTrue(FilterEob.filter(eob1, null, earliest, new Date(), false).isEmpty());
         assertTrue(FilterEob.filter(eob1, null, earliest, earliest, false).isEmpty());
 
-        List<FilterOutByDate.DateRange> dateRanges =
-                FilterOutByDate.getDateRanges(List.of(11, 12), 2019);
+        List<FilterOutByDate.DateRange> dateRanges = FilterOutByDate.getDateRanges(List.of(11, 12), 2019);
         assertTrue(FilterEob.filter(eob1, dateRanges, earliest, earliest, false).isPresent());
     }
 }

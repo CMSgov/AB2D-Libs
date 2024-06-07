@@ -125,16 +125,11 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class ExplanationOfBenefitTrimmerR4 {
-    public static final String ANESTHESIA_UNIT_COUNT =
-            "https://bluebutton.cms.gov/resources/variables/carr_line_ansthsa_unit_cnt";
-    public static final String RELATED_DIAGNOSIS_GROUP =
-            "https://bluebutton.cms.gov/resources/variables/clm_drg_cd";
-    public static final String PRICING_STATE =
-            "https://bluebutton.cms.gov/resources/variables/dmerc_line_prcng_state_cd";
-    public static final String SUPPLIER_TYPE =
-            "https://bluebutton.cms.gov/resources/variables/dmerc_line_supplr_type_cd";
-    public static final String NL_RECORD_IDENTIFICATION =
-            "https://bluebutton.cms.gov/resources/variables/nch_near_line_rec_ident_cd";
+    public static final String ANESTHESIA_UNIT_COUNT = "https://bluebutton.cms.gov/resources/variables/carr_line_ansthsa_unit_cnt";
+    public static final String RELATED_DIAGNOSIS_GROUP = "https://bluebutton.cms.gov/resources/variables/clm_drg_cd";
+    public static final String PRICING_STATE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_prcng_state_cd";
+    public static final String SUPPLIER_TYPE = "https://bluebutton.cms.gov/resources/variables/dmerc_line_supplr_type_cd";
+    public static final String NL_RECORD_IDENTIFICATION = "https://bluebutton.cms.gov/resources/variables/nch_near_line_rec_ident_cd";
 
     /**
      * Pass in an ExplanationOfBenefit, return the copy without the data
@@ -178,12 +173,10 @@ public class ExplanationOfBenefitTrimmerR4 {
         copy.setLanguage(benefit.getLanguage());
         copy.setImplicitRules(benefit.getImplicitRules());
 
-        List<Extension> extensions =
-                new ArrayList<>(benefit.getExtensionsByUrl(NL_RECORD_IDENTIFICATION));
+        List<Extension> extensions = new ArrayList<>(benefit.getExtensionsByUrl(NL_RECORD_IDENTIFICATION));
         copy.setExtension(extensions);
 
-        copy.setSupportingInfo(
-                getSupportingInfo(benefit.getSupportingInfo(), RELATED_DIAGNOSIS_GROUP));
+        copy.setSupportingInfo(getSupportingInfo(benefit.getSupportingInfo(), RELATED_DIAGNOSIS_GROUP));
 
         // Called out data
         copy.setPatient(benefit.getPatient().copy());
@@ -234,10 +227,8 @@ public class ExplanationOfBenefitTrimmerR4 {
      * @return - Supporting information defined by the passed system
      */
     static List<ExplanationOfBenefit.SupportingInformationComponent> getSupportingInfo(
-            List<ExplanationOfBenefit.SupportingInformationComponent> supportingInfo,
-            String system) {
-        List<ExplanationOfBenefit.SupportingInformationComponent> newSupporingInfo =
-                new ArrayList<>();
+            List<ExplanationOfBenefit.SupportingInformationComponent> supportingInfo, String system) {
+        List<ExplanationOfBenefit.SupportingInformationComponent> newSupporingInfo = new ArrayList<>();
         for (ExplanationOfBenefit.SupportingInformationComponent supporintInfoComponent : supportingInfo) {
             CodeableConcept codeableConcept = supporintInfoComponent.getCode();
             List<Coding> coding = codeableConcept.getCoding();
@@ -259,8 +250,7 @@ public class ExplanationOfBenefitTrimmerR4 {
      * @return the cleaned up data
      */
     @SuppressWarnings("deprecation")
-    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(
-            ExplanationOfBenefit.ItemComponent component) {
+    private static ExplanationOfBenefit.ItemComponent cleanOutItemComponent(ExplanationOfBenefit.ItemComponent component) {
         /*
          Keep:
               sequence
@@ -280,8 +270,8 @@ public class ExplanationOfBenefitTrimmerR4 {
         clearOutList(component.getInformationSequence());
 
         // Get the extensions we want to keep
-        component.setExtension(findExtensions(component.getExtension(), ANESTHESIA_UNIT_COUNT,
-                PRICING_STATE, SUPPLIER_TYPE));
+        component.setExtension(findExtensions(component.getExtension(),
+                ANESTHESIA_UNIT_COUNT, PRICING_STATE, SUPPLIER_TYPE));
 
         component.setRevenue(null);
         component.setCategory(null);
@@ -318,8 +308,7 @@ public class ExplanationOfBenefitTrimmerR4 {
             return keptExtensions;
         }
         for (String urlItem : url) {
-            Optional<Extension> extension = extensions.stream()
-                    .filter(e -> e.getUrl().equalsIgnoreCase(urlItem)).findFirst();
+            Optional<Extension> extension = extensions.stream().filter(e -> e.getUrl().equalsIgnoreCase(urlItem)).findFirst();
             extension.ifPresent(keptExtensions::add);
         }
         return keptExtensions;

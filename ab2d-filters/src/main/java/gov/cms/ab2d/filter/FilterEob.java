@@ -20,9 +20,8 @@ public class FilterEob {
      * @param skipBillablePeriodCheck - if you want to turn off date checking (used with testing data)
      * @return an optional of the resource. If filtered out, isPresent() is false
      */
-    public static Optional<IBaseResource> filter(IBaseResource resource,
-            List<FilterOutByDate.DateRange> dateRanges, Date earliestDate, Date attTime,
-            boolean skipBillablePeriodCheck) {
+    public static Optional<IBaseResource> filter(IBaseResource resource, List<FilterOutByDate.DateRange> dateRanges,
+                                                 Date earliestDate, Date attTime, boolean skipBillablePeriodCheck) {
         // If there is no attestation date, cannot return the data
         if (attTime == null) {
             return Optional.empty();
@@ -31,8 +30,7 @@ public class FilterEob {
         if (EobUtils.isPartD(resource)) {
             return Optional.empty();
         }
-        if (skipBillablePeriodCheck
-                || FilterOutByDate.valid(resource, attTime, earliestDate, dateRanges)) {
+        if (skipBillablePeriodCheck || FilterOutByDate.valid(resource, attTime, earliestDate, dateRanges)) {
             return Optional.of(resource);
         }
         return Optional.empty();

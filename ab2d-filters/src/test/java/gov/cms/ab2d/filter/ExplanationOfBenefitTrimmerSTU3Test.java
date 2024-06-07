@@ -23,8 +23,7 @@ class ExplanationOfBenefitTrimmerSTU3Test {
     private static FhirContext context = FhirContext.forDstu3();
 
     static {
-        eobResource = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities
-                .getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
+        eobResource = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
     }
 
     @Test
@@ -141,8 +140,8 @@ class ExplanationOfBenefitTrimmerSTU3Test {
     private String printItOut(String file) {
         IParser jsonParser = context.newJsonParser().setPrettyPrint(true);
 
-        IBaseResource eCarrier = ExplanationOfBenefitTrimmerSTU3
-                .getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath(file));
+        IBaseResource eCarrier = ExplanationOfBenefitTrimmerSTU3.getBenefit(
+                EOBLoadUtilities.getSTU3EOBFromFileInClassPath(file));
 
         String result = jsonParser.encodeResourceToString(eCarrier);
         System.out.println(result);
@@ -157,8 +156,8 @@ class ExplanationOfBenefitTrimmerSTU3Test {
 
     @Test
     void isPartD() {
-        IBaseResource ePartD = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities
-                .getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Part-D-Claims.json"));
+        IBaseResource ePartD = ExplanationOfBenefitTrimmerSTU3.getBenefit(
+                EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Part-D-Claims.json"));
         assertTrue(EobUtils.isPartD(ePartD));
         assertFalse(EobUtils.isPartD(eobResource));
         assertFalse(EobUtils.isPartD((ExplanationOfBenefit) null));
