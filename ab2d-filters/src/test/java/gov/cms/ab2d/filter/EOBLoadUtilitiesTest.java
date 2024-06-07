@@ -31,6 +31,11 @@ class EOBLoadUtilitiesTest {
         eobS = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-SNF-Claims.json"));
     }
 
+    // Our mock FhirVersion class to test the switch case statement inside of EOBLoadUtilities.getEOBFromReader.
+    // We need to extend from a FhirVersionEnum that is actually on our classpath, so we extend from the R4 version.
+    // We then override the getVersion method to return a version that is not supported by the switch case statement.
+    // Choosing `FhirVersionEnum.R5` as the version to return here was an arbitrary choice. If we ever add support
+    // for R5, this test will need to be updated.
     class MockFhirVersion extends org.hl7.fhir.r4.hapi.ctx.FhirR4{
         public FhirVersionEnum getVersion() {
             // Return a version that is not supported by the switch case statement inside of
