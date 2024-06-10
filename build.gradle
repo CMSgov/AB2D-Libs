@@ -27,7 +27,7 @@ ext {
     aggregatorVersion='1.3.4'
     filtersVersion='1.9.4'
     eventClientVersion='1.12.7'
-    propertiesClientVersion='1.2.4'
+    propertiesClientVersion='1.2.5'
     contractClientVersion='1.2.4'
     snsClientVersion='0.2.4'
 

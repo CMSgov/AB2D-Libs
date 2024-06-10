@@ -13,15 +13,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProperyServiceMockTest {
-    class PropertiesClientImplMock extends PropertiesClientImpl {
+    class PropertiesClientImplMockEnv extends PropertiesClientImpl {
         @Override
         public String getFromEnvironment() {
             return "http://localhost:8065";
+        }
+    }
+
+    class PropertiesClientImplMockConfig extends PropertiesClientImpl {
+        @Override
+        public String getConfigFileName() {
+            return "does.not.exist";
         }
     }
 
@@ -37,12 +45,14 @@ class ProperyServiceMockTest {
         List<Property> propertiesToReturn = List.of(new Property("a.key", "a.value"), new Property("b.key", "b.value"));
         JSONArray jsonArray = new JSONArray(propertiesToReturn);
         stubFor(get(urlEqualTo("/properties")).willReturn(aResponse().withBody(jsonArray.toString())));
-        System.out.println(propertiesToReturn.get(0).toString());
-        stubFor(get(urlEqualTo("/properties/a.key")).willReturn(aResponse().withBody("{ \"key\": \"a.key\", \"value\": \"a.value\"}")));
+        stubFor(get(urlEqualTo("/properties/a.key"))
+                .willReturn(aResponse().withBody("{ \"key\": \"a.key\", \"value\": \"a.value\"}")));
         stubFor(post(urlEqualTo("/properties"))
                 .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
+        stubFor(get(urlEqualTo("/properties/one"))
+                .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
+        stubFor(get(urlEqualTo("/properties/bogus"))
+                .willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
 
         List<Property> properties = impl.getAllProperties();
@@ -69,9 +79,15 @@ class ProperyServiceMockTest {
     }
 
     @Test
-    void testImpl() {
-        PropertiesClientImplMock mock = new PropertiesClientImplMock();
+    void testMockEnv() {
+        PropertiesClientImplMockEnv mock = new PropertiesClientImplMockEnv();
         assertEquals("http://localhost:8065", mock.getUrl());
+    }
+
+    @Test
+    void testMockConfig() {
+        PropertiesClientImplMockConfig mock = new PropertiesClientImplMockConfig();
+        assertEquals("http://localhost:8060", mock.getUrl());
     }
 
     @Test
@@ -87,11 +103,6 @@ class ProperyServiceMockTest {
         stubFor(get(urlEqualTo("/properties/a.key")).willReturn(aResponse().withStatus(520)));
         stubFor(post(urlEqualTo("/properties")).willReturn((aResponse().withStatus(404))));
         stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("false")));
-        //stubFor(post(urlEqualTo("/properties"))
-         //       .willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        //stubFor(get(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("{ \"key\": \"one\", \"value\": \"two\"}")));
-        //stubFor(get(urlEqualTo("/properties/bogus")).willReturn(aResponse().withStatus(404).withBody("{ \"key\": \"null\", \"value\": \"null\"}")));
-        //stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
 
         assertThrows(PropertyNotFoundException.class, () -> impl.getAllProperties());
 
@@ -104,4 +115,38 @@ class ProperyServiceMockTest {
 
         wireMockServer.stop();
     }
+
+    @Test
+    void testDeleteCases() {
+        int port = 8066;
+        PropertiesClientImpl impl = new PropertiesClientImpl("http://localhost:" + port);
+        WireMockServer wireMockServer = new WireMockServer(port);
+        wireMockServer.start();
+
+        configureFor("localhost", port);
+
+        // test running delete with false
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("false")));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
+
+        // test running delete with true
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse().withBody("true")));
+        assertDoesNotThrow(() -> impl.deleteProperty("one"));
+
+        // test running delete with null (presumably)
+        stubFor(delete(urlEqualTo("/properties/one")).willReturn(aResponse()));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
+
+        wireMockServer.stop();
+    }
+
+    @Test
+    void testErrorsWithoutMock() {
+        PropertiesClientImpl impl = new PropertiesClientImpl();
+        assertThrows(PropertyNotFoundException.class, () -> impl.getAllProperties());
+        assertThrows(PropertyNotFoundException.class, () -> impl.getProperty("a.key"));
+        assertThrows(PropertyNotFoundException.class, () -> impl.setProperty("one", "two"));
+        assertThrows(PropertyNotFoundException.class, () -> impl.deleteProperty("one"));
+    }
+
 }
