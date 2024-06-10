@@ -2,6 +2,8 @@ package gov.cms.ab2d.filter;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import java.lang.reflect.Method;
@@ -22,9 +24,6 @@ public class EobUtils {
      * @return the result of calling the method
      */
     static Object invokeGetMethod(Object resource, String methodName) {
-        if (resource == null) {
-            return null;
-        }
         try {
             Method method = resource.getClass().getMethod(methodName);
             return method.invoke(resource);
