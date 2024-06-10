@@ -11,16 +11,24 @@ import org.junit.jupiter.api.Test;
 
 class EobUtilsTest {
 
+  class MockEOB extends ExplanationOfBenefit {
+    @Override
+    public String fhirType() {
+      return "mock";
+    }
+  }
+
   IBaseResource eob1 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Part-D-Claims.json"));
   IBaseResource eob2 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
-  IBaseResource eob3 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/fake-claim.json"));
+  IBaseResource eob3 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/mock.json"));
+  IBaseResource eob4 = new MockEOB();
 
   @Test
   void testInvokeGetMethod() {
     assertNotNull(EobUtils.invokeGetMethod(eob1, "getBillablePeriod"));
     assertNotNull(EobUtils.invokeGetMethod(eob2, "getBillablePeriod"));
     assertNull(EobUtils.invokeGetMethod(eob3, "getBillablePeriod"));
-    assertNull(EobUtils.invokeGetMethod((ExplanationOfBenefit) null, "fake"));
+    assertNull(EobUtils.invokeGetMethod((ExplanationOfBenefit) null, "getBillablePeriod"));
 
     assertNull(EobUtils.invokeGetMethod(eob1, "fake"));
     assertNull(EobUtils.invokeGetMethod(eob2, "fake"));
@@ -49,6 +57,7 @@ class EobUtilsTest {
     assertTrue(EobUtils.isPartD(eob1));
     assertFalse(EobUtils.isPartD(eob2));
     assertFalse(EobUtils.isPartD(eob3));
+    assertFalse(EobUtils.isPartD(eob4));
     assertFalse(EobUtils.isPartD((ExplanationOfBenefit) null));
   }
 }
