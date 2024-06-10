@@ -2,8 +2,6 @@ package gov.cms.ab2d.filter;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.ObjectUtils.Null;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import java.lang.reflect.Method;
