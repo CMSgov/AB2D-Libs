@@ -16,6 +16,19 @@ class EobUtilsTest {
   IBaseResource eob3 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/fake-claim.json"));
 
   @Test
+  void testInvokeGetMethod() {
+    assertNotNull(EobUtils.invokeGetMethod(eob1, "getBillablePeriod"));
+    assertNotNull(EobUtils.invokeGetMethod(eob2, "getBillablePeriod"));
+    assertNull(EobUtils.invokeGetMethod(eob3, "getBillablePeriod"));
+    assertNull(EobUtils.invokeGetMethod((ExplanationOfBenefit) null, "fake"));
+
+    assertNull(EobUtils.invokeGetMethod(eob1, "fake"));
+    assertNull(EobUtils.invokeGetMethod(eob2, "fake"));
+    assertNull(EobUtils.invokeGetMethod(eob3, "fake"));
+    assertNull(EobUtils.invokeGetMethod((ExplanationOfBenefit) null, "fake"));
+  }
+
+  @Test
   void testGetStartDate() {
     assertNull(EobUtils.getStartDate(eob1));
     assertNotNull(EobUtils.getStartDate(eob2));

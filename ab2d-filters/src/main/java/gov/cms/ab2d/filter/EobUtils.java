@@ -22,6 +22,9 @@ public class EobUtils {
      * @return the result of calling the method
      */
     static Object invokeGetMethod(Object resource, String methodName) {
+        if (resource == null) {
+            return null;
+        }
         try {
             Method method = resource.getClass().getMethod(methodName);
             return method.invoke(resource);
