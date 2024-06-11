@@ -234,6 +234,12 @@ class ExplanationOfBenefitTrimmerR4Test {
     }
 
     @Test
+    void testNullEOB() {
+        ExplanationOfBenefit eob = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerR4.getBenefit((ExplanationOfBenefit) null);
+        assertNull(eob);
+    }
+
+    @Test
     void extensionCleanupTestCarrier() {
         IBaseResource eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Carrier-R4.json");
         giveStats(eob);
