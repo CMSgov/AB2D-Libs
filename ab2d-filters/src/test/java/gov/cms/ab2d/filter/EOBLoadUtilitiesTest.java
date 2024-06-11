@@ -1,6 +1,9 @@
 package gov.cms.ab2d.filter;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.model.api.IFhirVersion;
+
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.jupiter.api.Test;
@@ -19,18 +22,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class EOBLoadUtilitiesTest {
+class EOBLoadUtilitiesTest {
     private static IBaseResource eobC;
     private static IBaseResource eobS;
-    private static FhirContext context = FhirContext.forDstu3();
 
     static {
         eobC = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json"));
         eobS = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-SNF-Claims.json"));
     }
 
+    // Our mock FhirVersion class is used to test the switch case statement inside of EOBLoadUtilities.getEOBFromReader.
+    // We need to extend from a FhirVersionEnum that is actually on our classpath, so we extend from the R4 version.
+    // We then override the getVersion method to return a version that is not supported by the switch case statement.
+    // Choosing `FhirVersionEnum.R5` as the version to return here was an arbitrary choice. If we ever add support
+    // for R5, this test will need to be updated.
+    class MockFhirVersion extends org.hl7.fhir.r4.hapi.ctx.FhirR4{
+        public FhirVersionEnum getVersion() {
+            return FhirVersionEnum.R5;
+        }
+    }
+    class MockFhirContext extends FhirContext {
+        @Override
+        public IFhirVersion getVersion() {
+            return new MockFhirVersion();
+        }
+    }
+
     @Test
-    public void testType() {
+    void testType() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<org.hl7.fhir.dstu3.model.Coding> coding = eobCarrier.getType().getCoding();
         assertEquals(4, coding.size());
@@ -42,13 +61,13 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testResourceType() {
+    void testResourceType() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         assertEquals(org.hl7.fhir.dstu3.model.ResourceType.ExplanationOfBenefit, eobCarrier.getResourceType());
     }
 
     @Test
-    public void testDiagnosis() {
+    void testDiagnosis() {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<ExplanationOfBenefit.DiagnosisComponent> diagnoses = eobCarrier.getDiagnosis();
         assertNotNull(diagnoses);
@@ -61,7 +80,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testProcedure() throws ParseException {
+    void testProcedure() throws ParseException {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<ExplanationOfBenefit.ProcedureComponent> procedures = eobSNF.getProcedure();
         assertNotNull(procedures);
@@ -77,7 +96,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testProvider() {
+    void testProvider() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getProvider();
         assertNotNull(ref);
@@ -87,7 +106,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testOrganization() {
+    void testOrganization() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getOrganization();
         assertNotNull(ref);
@@ -97,7 +116,7 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testFacility() {
+    void testFacility() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         org.hl7.fhir.dstu3.model.Reference ref = eobSNF.getFacility();
         assertNotNull(ref);
@@ -107,11 +126,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testIdentifier() {
+    void testIdentifier() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<org.hl7.fhir.dstu3.model.Identifier> ids = eobSNF.getIdentifier();
         assertNotNull(ids);
-        assertEquals(ids.size(), 2);
+        assertEquals(2, ids.size());
         org.hl7.fhir.dstu3.model.Identifier id = ids.stream()
                 .filter(c -> c.getValue().equalsIgnoreCase("900"))
                 .findFirst().orElse(null);
@@ -120,11 +139,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testCareTeam() {
+    void testCareTeam() {
         ExplanationOfBenefit eobSNF = (ExplanationOfBenefit) eobS;
         List<ExplanationOfBenefit.CareTeamComponent> careTeamComponents = eobSNF.getCareTeam();
         assertNotNull(careTeamComponents);
-        assertEquals(careTeamComponents.size(), 4);
+        assertEquals(4, careTeamComponents.size());
         ExplanationOfBenefit.CareTeamComponent comp = careTeamComponents.stream()
                 .filter(c -> c.getSequence() == 2).findFirst().orElse(null);
         assertNotNull(comp);
@@ -136,11 +155,11 @@ public class EOBLoadUtilitiesTest {
     }
 
     @Test
-    public void testItems() throws ParseException {
+    void testItems() throws ParseException {
         ExplanationOfBenefit eobCarrier = (ExplanationOfBenefit) eobC;
         List<ExplanationOfBenefit.ItemComponent> components = eobCarrier.getItem();
         assertNotNull(components);
-        assertEquals(components.size(), 1);
+        assertEquals(1, components.size());
         assertEquals(2, components.get(0).getCareTeamLinkId().get(0).getValue());
         assertEquals("1", components.get(0).getQuantity().getValue().toString());
         assertEquals(6, components.get(0).getSequence());
@@ -167,26 +186,54 @@ public class EOBLoadUtilitiesTest {
     @Test
     void testReaderEOB() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json")) {
-            try (Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, context));
-                // STU3
-                ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, context);
-                assertNotNull(benefit);
-                assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+
+        // DSTU3
+        InputStream inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-Claims.json");
+        Reader reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, FhirContext.forDstu3()));
+        ExplanationOfBenefit benefit = (ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, FhirContext.forDstu3());
+        assertNotNull(benefit);
+        assertEquals("Patient/-199900000022040", benefit.getPatient().getReference());
+
+        // R4
+        inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-R4.json");
+        reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader((Reader) null, FhirContext.forR4()));
+        org.hl7.fhir.r4.model.ExplanationOfBenefit benefitR4 = (org.hl7.fhir.r4.model.ExplanationOfBenefit) EOBLoadUtilities.getEOBFromReader(reader, FhirContext.forR4());
+        assertNotNull(benefitR4);
+        assertEquals("Patient/567834", benefitR4.getPatient().getReference());
+
+        // invalid context
+        inputStream = classLoader.getResourceAsStream("eobdata/EOB-for-Carrier-R4.json");
+        reader = new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        assertNull(EOBLoadUtilities.getEOBFromReader(null, new MockFhirContext()));
+        assertNull(EOBLoadUtilities.getEOBFromReader(reader, new MockFhirContext()));
     }
 
     @Test
-    void testToJson() {
-        var jsonParser = context.newJsonParser();
-        ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
-        ExplanationOfBenefit eobNew = (ExplanationOfBenefit) ExplanationOfBenefitTrimmerSTU3.getBenefit((IBaseResource) eob);
+    void testGetSTU3EOB() {
+        // null tests
+        assertNull(EOBLoadUtilities.getSTU3EOBFromFileInClassPath(""));
+        assertNull(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("does-not-exist.json"));
+
+        // not null tests
+        var jsonParser = FhirContext.forDstu3().newJsonParser();
+        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eob = EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Carrier-Claims.json");
+        org.hl7.fhir.dstu3.model.ExplanationOfBenefit eobNew = (org.hl7.fhir.dstu3.model.ExplanationOfBenefit) ExplanationOfBenefitTrimmer.getBenefit((IBaseResource) eob);
+        String payload = jsonParser.encodeResourceToString(eobNew) + System.lineSeparator();
+        assertNotNull(payload);
+    }
+
+    @Test
+    void testGetR4EOB() {
+        // null tests
+        assertNull(EOBLoadUtilities.getR4EOBFromFileInClassPath(""));
+        assertNull(EOBLoadUtilities.getR4EOBFromFileInClassPath("does-not-exist.json"));
+
+        // not null tests
+        var jsonParser = FhirContext.forR4().newJsonParser();
+        org.hl7.fhir.r4.model.ExplanationOfBenefit eob = EOBLoadUtilities.getR4EOBFromFileInClassPath("eobdata/EOB-for-Carrier-R4.json");
+        org.hl7.fhir.r4.model.ExplanationOfBenefit eobNew = (org.hl7.fhir.r4.model.ExplanationOfBenefit) ExplanationOfBenefitTrimmer.getBenefit((IBaseResource) eob);
         String payload = jsonParser.encodeResourceToString(eobNew) + System.lineSeparator();
         assertNotNull(payload);
     }
