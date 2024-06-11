@@ -1,5 +1,6 @@
 package gov.cms.ab2d.filter;
 
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.ExplanationOfBenefit;
 import org.hl7.fhir.r4.model.Period;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,11 @@ class FilterTest {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
 
         ExplanationOfBenefit eob1 = new ExplanationOfBenefit();
+        IBaseResource eob2 = ExplanationOfBenefitTrimmerSTU3.getBenefit(EOBLoadUtilities.getSTU3EOBFromFileInClassPath("eobdata/EOB-for-Part-D-Claims.json"));
         assertTrue(FilterEob.filter(eob1, null, null, null, true).isEmpty());
         assertTrue(FilterEob.filter(eob1, null, null, new Date(), true).isPresent());
         assertTrue(FilterEob.filter(eob1, null, null, new Date(), false).isEmpty());
+        assertTrue(FilterEob.filter(eob2, null, null, new Date(), false).isEmpty());
 
         Period period = new Period();
         period.setStart(sdf.parse("12/01/2019 00:00"));
