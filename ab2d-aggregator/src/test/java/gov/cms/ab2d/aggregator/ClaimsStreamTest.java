@@ -19,6 +19,19 @@ class ClaimsStreamTest {
     private static final int MIB = 1048576;
 
     @Test
+    void testInit(@TempDir File tmpDirFolder) {
+        // Tests the constructor that uses the default buffer size
+        try (ClaimsStream stream = new ClaimsStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR)) {
+            assertTrue(stream.isOpen());
+            stream.flush();
+            stream.close();
+            assertFalse(stream.isOpen());
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    @Test
     void testCreateAndWriteToStream(@TempDir File tmpDirFolder) {
         ClaimsStream savedStream = null;
         try (ClaimsStream stream = new ClaimsStream(JOB_ID, tmpDirFolder.getAbsolutePath(), DATA, STREAM_DIR, FINISH_DIR, MIB)) {

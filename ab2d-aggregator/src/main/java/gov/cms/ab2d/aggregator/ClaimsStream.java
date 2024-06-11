@@ -34,9 +34,11 @@ public class ClaimsStream implements AutoCloseable {
 
     public ClaimsStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir) throws IOException {
         this(jobId, baseDir, type, streamingDir, finishedDir, 0);
+        System.out.println("ClaimsStream 1");
     }
 
     public ClaimsStream(String jobId, String baseDir, FileOutputType type, String streamingDir, String finishedDir, int bufferSize) throws IOException {
+        System.out.println("ClaimsStream 2");
         this.type = type;
         this.open = true;
         this.jobDir = Path.of(baseDir, jobId).toFile().getAbsolutePath();
