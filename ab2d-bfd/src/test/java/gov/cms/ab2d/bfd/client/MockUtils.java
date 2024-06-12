@@ -45,15 +45,14 @@ public class MockUtils {
 
     static void createMockServerExpectation(String path, int respCode, String payload,
                                             List<Parameter> qStringParams, int delayMs, int port) {
-        new MockServerClient("localhost", port)
-                .when(
+        MockServerClient mock = new MockServerClient("localhost", port);
+                mock.when(
                         HttpRequest.request()
                                 .withMethod("GET")
                                 .withPath(path)
                                 .withQueryStringParameters(qStringParams),
                         Times.unlimited()
-                )
-                .respond(
+                ).respond(
                         org.mockserver.model.HttpResponse.response()
                                 .withStatusCode(respCode)
                                 .withHeader(
@@ -63,6 +62,7 @@ public class MockUtils {
                                 .withBody(payload)
                                 .withDelay(TimeUnit.MILLISECONDS, delayMs)
                 );
+                mock.close();
     }
 
     static int randomMockServerPort() {
