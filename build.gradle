@@ -167,7 +167,7 @@ subprojects {
 
     sonarqube {
         properties {
-            property 'sonar.coverage.exclusions', "**/BFDSearchImpl.java, **/SQSConfig.java, **/SNSConfig.java"
+            property 'sonar.coverage.exclusions', "**/SQSConfig.java, **/SNSConfig.java"
         }
     }
 
