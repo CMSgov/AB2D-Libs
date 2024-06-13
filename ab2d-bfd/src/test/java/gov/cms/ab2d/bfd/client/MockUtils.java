@@ -37,13 +37,13 @@ public class MockUtils {
      * @param qStringParams The query string parameters that must be present to generate this
      *                      response
      */
-    static void createMockServerExpectation(String path, int respCode, String payload,
+    static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
                                             List<Parameter> qStringParams, int port) {
         var delay = 100;
-        createMockServerExpectation(path, respCode, payload, qStringParams, delay, port);
+        return createMockServerExpectation(path, respCode, payload, qStringParams, delay, port);
     }
 
-    static void createMockServerExpectation(String path, int respCode, String payload,
+    static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
                                             List<Parameter> qStringParams, int delayMs, int port) {
         MockServerClient mock = new MockServerClient("localhost", port);
                 mock.when(
@@ -62,7 +62,7 @@ public class MockUtils {
                                 .withBody(payload)
                                 .withDelay(TimeUnit.MILLISECONDS, delayMs)
                 );
-                mock.close();
+        return mock;
     }
 
     static int randomMockServerPort() {

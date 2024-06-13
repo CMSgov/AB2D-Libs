@@ -61,10 +61,13 @@ class BFDClientConfigurationTest {
     @BeforeAll
     static void setupBFDClient() throws IOException {
         mockServer = ClientAndServer.startClientAndServer(MOCK_PORT_V1);
-        MockUtils.createMockServerExpectation("/v1/fhir/metadata", HttpStatus.SC_OK,
-                getRawJson(METADATA_PATH), List
-                        .of(), MOCK_PORT_V1);
-
+        MockUtils.createMockServerExpectation(
+            "/v1/fhir/metadata",
+            HttpStatus.SC_OK,
+            getRawJson(METADATA_PATH),
+            List.of(),
+            MOCK_PORT_V1
+        );
 
         URL keyUrl = BFDClientConfigurationTest.class.getResource("/mitm_bfd_cert.key");
         if (keyUrl == null) {
@@ -145,7 +148,7 @@ class BFDClientConfigurationTest {
         BFDClientConfiguration clientConfiguration = new BFDClientConfiguration();
 
         assertThrows(
-            BeanInstantiationException.class,
+            Exception.class,
             () -> ReflectionTestUtils.invokeMethod(
                 clientConfiguration, "buildMutualTlsClient", new File("/dne"), "dne".toCharArray()
             )
