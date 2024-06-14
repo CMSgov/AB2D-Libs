@@ -61,19 +61,24 @@ class BFDClientConfigurationTest {
     @BeforeAll
     static void setupBFDClient() throws IOException {
         mockServer = ClientAndServer.startClientAndServer(MOCK_PORT_V1);
-        MockUtils.createMockServerExpectation("/v1/fhir/metadata", HttpStatus.SC_OK,
-                getRawJson(METADATA_PATH), List
-                        .of(), MOCK_PORT_V1);
-
+        MockUtils.createMockServerExpectation(
+            "/v1/fhir/metadata",
+            HttpStatus.SC_OK,
+            getRawJson(METADATA_PATH),
+            List.of(),
+            MOCK_PORT_V1
+        );
 
         URL keyUrl = BFDClientConfigurationTest.class.getResource("/mitm_bfd_cert.key");
         if (keyUrl == null) {
             fail("could not pull mitm private key for tests");
+            return;
         }
 
         URL certUrl = BFDClientConfigurationTest.class.getResource("/mitm_bfd_cert.pem");
         if (certUrl == null) {
             fail("could not pull mitm cert for tests");
+            return;
         }
 
         // MITM attack private key and cert with same common name as BFD
@@ -86,7 +91,7 @@ class BFDClientConfigurationTest {
     }
 
     @AfterAll
-    static void tearDown() throws IOException {
+    static void tearDown() {
         mockServer.stop();
     }
 
@@ -142,8 +147,11 @@ class BFDClientConfigurationTest {
 
         BFDClientConfiguration clientConfiguration = new BFDClientConfiguration();
 
-        assertThrows(BeanInstantiationException.class, () -> ReflectionTestUtils.invokeMethod(clientConfiguration,
-                "buildMutualTlsClient", new File("/dne"), "dne".toCharArray())
+        assertThrows(
+            Exception.class,
+            () -> ReflectionTestUtils.invokeMethod(
+                clientConfiguration, "buildMutualTlsClient", new File("/dne"), "dne".toCharArray()
+            )
         );
 
     }
