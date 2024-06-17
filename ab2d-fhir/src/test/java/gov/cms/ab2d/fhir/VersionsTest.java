@@ -27,6 +27,14 @@ class VersionsTest {
     }
 
     @Test
+    void executeGetMethodWithBadSetArgs() {
+        ExplanationOfBenefit eob = new ExplanationOfBenefit();
+        Versions.invokeSetMethod(eob, "setPatient", "broken", Reference.class);
+        Object obj = Versions.invokeGetMethod(eob, "getPatient");
+        assertEquals(null, ((Reference) obj).getReference());
+    }
+
+    @Test
     void methodNotAvailableWhenInvokeGet() {
         ExplanationOfBenefit eob = new ExplanationOfBenefit();
         assertThrows(AssertionError.class, () -> {

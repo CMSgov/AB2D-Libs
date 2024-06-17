@@ -82,13 +82,8 @@ public class Versions {
                 Class clazz;
                 try {
                     clazz = Class.forName(fullName);
-                } catch (ClassNotFoundException e) {
-                    log.error("Unable to create class " + fullName);
-                    return null;
-                }
-                try {
                     object = clazz.getDeclaredConstructor(null).newInstance();
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                } catch (Exception e) {
                     log.error("Unable to create class " + fullName);
                     return null;
                 }
