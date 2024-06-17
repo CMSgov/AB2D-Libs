@@ -89,7 +89,7 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
-    public void shouldGetEOBFromPatientID() {
+    void shouldGetEOBFromPatientID() {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
@@ -97,7 +97,7 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
-    public void shouldHaveNextBundle() {
+    void shouldHaveNextBundle() {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
@@ -106,10 +106,10 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
-    public void shouldReturnBundleContainingOnlyEOBs() {
+    void shouldReturnBundleContainingOnlyEOBs() {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
-        response.getEntry().forEach((entry) -> assertEquals(
+        response.getEntry().forEach(entry -> assertEquals(
                 org.hl7.fhir.r4.model.ResourceType.ExplanationOfBenefit,
                 entry.getResource().getResourceType(),
                 "EOB bundles returned by the BlueButton client should only contain EOB objects"
@@ -117,7 +117,7 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
-    public void getCoverageData() {
+    void getCoverageData() {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestPartDEnrolleesFromServer(R4, CONTRACT, 12);
         assertNotNull(response);
         List<Bundle.BundleEntryComponent> entries = response.getEntry();
@@ -133,7 +133,23 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
-    public void shouldGetMetadata() {
+    void getCoverageDataFromYear() {
+        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestPartDEnrolleesFromServer(R4, CONTRACT, 12, 2000);
+        assertNotNull(response);
+        List<Bundle.BundleEntryComponent> entries = response.getEntry();
+        assertTrue(entries.size() > 0);
+        Patient patient = (Patient) entries.get(0).getResource();
+        assertNotNull(patient);
+        List<Identifier> identifiers = patient.getIdentifier();
+        assertTrue(identifiers.stream()
+                .anyMatch(c -> c.getSystem().equalsIgnoreCase("http://hl7.org/fhir/sid/us-mbi")));
+        List<Extension> extensions = patient.getExtension();
+        assertTrue(extensions.stream()
+                .anyMatch(c -> c.getUrl().equalsIgnoreCase("https://bluebutton.cms.gov/resources/variables/rfrnc_yr")));
+    }
+
+    @Test
+    void shouldGetMetadata() {
         org.hl7.fhir.r4.model.CapabilityStatement capabilityStatement = (org.hl7.fhir.r4.model.CapabilityStatement) bbc.capabilityStatement(R4);
 
         assertNotNull(capabilityStatement, "There should be a non null capability statement");
