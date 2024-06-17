@@ -16,12 +16,12 @@ class FhirBfdServerTest {
 
   @Test
   void testGetGenericClient() {
-    FhirBfdServer FhirBfdServer = new FhirBfdServer(FhirVersion.R4);
+    FhirBfdServer fhirBfdServer = new FhirBfdServer(FhirVersion.R4);
 
     // We intentionally test this method twice to increase code coverage,
     // since the first call of the method mutates the object.
-    assertNotNull(FhirBfdServer.getGenericClient(null, "test"));
-    assertNotNull(FhirBfdServer.getGenericClient(null, "test"));
+    assertNotNull(fhirBfdServer.getGenericClient(null, "test"));
+    assertNotNull(fhirBfdServer.getGenericClient(null, "test"));
   }
 
 }
