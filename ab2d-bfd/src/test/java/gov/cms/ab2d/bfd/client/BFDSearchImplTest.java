@@ -36,6 +36,15 @@ class BFDSearchImplTest {
   private static String activeProfile = "test";
   private static String bfdUrl = "http://localhost:8080";
 
+  HttpClient httpClient100() throws IOException {
+    HttpClient httpClient = mock(HttpClient.class);
+    CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+    when(httpClient.execute(any())).thenReturn(response);
+    when(response.getStatusLine()).thenReturn(mock(org.apache.http.StatusLine.class));
+    when(response.getStatusLine().getStatusCode()).thenReturn(HttpStatus.SC_CONTINUE);
+    return httpClient;
+  }
+
   HttpClient httpClient200() throws IOException {
     HttpClient httpClient = mock(HttpClient.class);
     CloseableHttpResponse response = mock(CloseableHttpResponse.class);
@@ -64,6 +73,24 @@ class BFDSearchImplTest {
     when(response.getStatusLine()).thenReturn(mock(org.apache.http.StatusLine.class));
     when(response.getStatusLine().getStatusCode()).thenReturn(HttpStatus.SC_INTERNAL_SERVER_ERROR);
     return httpClient;
+  }
+
+  @Test
+  void testSearchEOB100() throws IOException {
+    // Setup mocks
+    HttpClient httpClient = httpClient100();
+    Environment environment = mock(Environment.class);
+    when(environment.getActiveProfiles()).thenReturn(new String[] { activeProfile });
+
+    // Setup classes
+    BfdClientVersions bfdClientVersions = new BfdClientVersions(bfdUrl, httpClient);
+    BFDSearchImpl bfdSearchImpl = new BFDSearchImpl(httpClient, environment, bfdClientVersions);
+
+    // Business logic & assertion(s)
+    assertThrows(
+      RuntimeException.class,
+      () -> bfdSearchImpl.searchEOB(patientId, since, until, pageSize, bulkJobId, version, contractNum)
+    );
   }
 
   @Test
