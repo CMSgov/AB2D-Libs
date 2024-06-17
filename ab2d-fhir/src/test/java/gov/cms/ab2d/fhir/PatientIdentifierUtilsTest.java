@@ -24,6 +24,23 @@ import static gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PatientIdentifierUtilsTest {
+
+    @Test
+    void testGetTypes() {
+        assertEquals(PatientIdentifier.MBI_ID, PatientIdentifier.Type.MBI.getSystem());
+        assertEquals(PatientIdentifier.Type.MBI, PatientIdentifier.Type.fromSystem(PatientIdentifier.MBI_ID));
+        assertEquals(null, PatientIdentifier.Type.fromSystem("does-not-exist"));
+    }
+
+    @Test
+    void testGetValueAsLong() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        assertNull(patientIdentifier.getValueAsLong());
+
+        patientIdentifier.setValue("1234");
+        assertEquals(1234, patientIdentifier.getValueAsLong());
+    }
+
     @Test
     void testGetMbis() {
         Patient patient = new Patient();
