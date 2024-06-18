@@ -117,6 +117,16 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testRealInput() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem("https://bluebutton.cms.gov/resources/variables/bene_id");
+        identifier.setValue("test-1");
+        patient.setIdentifier(List.of(identifier));
+        assertNotNull(IdentifierUtils.getIdentifier(patient.getIdentifier().get(0)));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
