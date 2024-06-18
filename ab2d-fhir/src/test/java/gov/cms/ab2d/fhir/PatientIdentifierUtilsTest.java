@@ -127,6 +127,22 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetBeneId() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.BENE_ID);
+        patientIdentifier.setValue("test-1");
+        assertEquals("test-1", IdentifierUtils.getBeneId(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetBeneIdWrongType() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getBeneId(List.of(patientIdentifier)));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
