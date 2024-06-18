@@ -93,6 +93,11 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testNullInput() {
+        assertNull(IdentifierUtils.getIdentifiers(null));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
