@@ -143,6 +143,32 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetCurrentMbiCurrent() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.CURRENT);
+        assertEquals("test-1", IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetCurrentMbiUnknown() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.UNKNOWN);
+        assertEquals("test-1", IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetCurrentMbiWrongType() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.BENE_ID);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
