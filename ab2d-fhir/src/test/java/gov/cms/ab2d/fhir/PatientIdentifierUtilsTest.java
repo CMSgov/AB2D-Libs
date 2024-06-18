@@ -6,6 +6,7 @@ import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import static gov.cms.ab2d.fhir.PatientIdentifier.HISTORIC_MBI;
 import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID;
 import static gov.cms.ab2d.fhir.IdentifierUtils.CURRENCY_IDENTIFIER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class PatientIdentifierUtilsTest {
 
@@ -92,7 +94,7 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
-    void testNullInput() {
+    void testNullInputs() {
         assertNull(IdentifierUtils.getIdentifiers(null));
     }
 
@@ -107,6 +109,11 @@ class PatientIdentifierUtilsTest {
         Patient patient = new Patient();
         patient.setIdentifier(List.of());
         assertTrue(IdentifierUtils.getIdentifiers(patient).isEmpty());
+    }
+
+    @Test
+    void testMockInput() {
+        assertNull(IdentifierUtils.getIdentifier(mock(ICompositeType.class)));
     }
 
     @Test
