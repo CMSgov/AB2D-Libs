@@ -152,6 +152,15 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetCurrentMbiHistoric() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.HISTORIC);
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
     void testGetCurrentMbiUnknown() {
         PatientIdentifier patientIdentifier = new PatientIdentifier();
         patientIdentifier.setType(PatientIdentifier.Type.MBI);
