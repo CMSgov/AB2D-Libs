@@ -80,6 +80,9 @@ class VersionsTest {
     void executeInstantiateSimpleEnum() {
         Object obj = Versions.instantiateEnum(R4, "Enumerations", "ResourceType", "PATIENT");
         assertEquals(Enumerations.ResourceType.PATIENT, obj);
+
+        obj = Versions.instantiateEnum(R4, "Enumerations", "FAKE", "PATIENT");
+        assertNull(obj);
     }
 
     @Test
