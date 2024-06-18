@@ -70,6 +70,11 @@ class VersionsTest {
     }
 
     @Test
+    void testInvalidClass() {
+        assertNull(Versions.instantiateClass(STU3, "does-not-exist", "does-not-exist"));
+    }
+
+    @Test
     void testInvalidVersion() {
         assertNull(Versions.getObject(STU3, "Bogus"));
         assertNull(Versions.getObject(STU3, "Bogus", "dumb", String.class));
