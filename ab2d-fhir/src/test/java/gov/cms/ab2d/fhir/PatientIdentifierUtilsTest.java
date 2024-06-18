@@ -97,6 +97,19 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testEmptyPatients() {
+        Patient patient = new Patient();
+        assertTrue(IdentifierUtils.getIdentifiers(patient).isEmpty());
+    }
+
+    @Test
+    void testEmptyPatientIds() {
+        Patient patient = new Patient();
+        patient.setIdentifier(List.of());
+        assertTrue(IdentifierUtils.getIdentifiers(patient).isEmpty());
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
