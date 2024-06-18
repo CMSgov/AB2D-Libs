@@ -20,7 +20,6 @@ import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.HISTORIC;
 import static gov.cms.ab2d.fhir.PatientIdentifier.HISTORIC_MBI;
 import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID;
 import static gov.cms.ab2d.fhir.IdentifierUtils.CURRENCY_IDENTIFIER;
-import static gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PatientIdentifierUtilsTest {
@@ -64,7 +63,7 @@ class PatientIdentifierUtilsTest {
         identifier3.addExtension(extension2);
         patient.setIdentifier(List.of(identifier, identifier2, identifier3));
 
-        List<PatientIdentifier> identifiers = gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers(patient);
+        List<PatientIdentifier> identifiers = IdentifierUtils.getIdentifiers(patient);
         assertEquals("mbi-1", IdentifierUtils.getCurrentMbi(identifiers).getValue());
         Set<PatientIdentifier> historical = IdentifierUtils.getHistoricMbi(identifiers);
         PatientIdentifier h = (PatientIdentifier) historical.toArray()[0];
@@ -76,7 +75,7 @@ class PatientIdentifierUtilsTest {
     void testStu3ExtractIds() throws IOException {
         Bundle resource = (Bundle) extractBundle(FhirVersion.STU3, "data/stu3patients.json");
         for (Bundle.BundleEntryComponent component : resource.getEntry()) {
-            List<PatientIdentifier> ids = getIdentifiers((Patient) component.getResource());
+            List<PatientIdentifier> ids = IdentifierUtils.getIdentifiers((Patient) component.getResource());
             assertEquals(5, ids.size());
             PatientIdentifier benId = IdentifierUtils.getBeneId(ids);
             assertEquals("-19990000001101", benId.getValue());
@@ -101,11 +100,10 @@ class PatientIdentifierUtilsTest {
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
-        List<String> historicMbis = List.of();
         org.hl7.fhir.r4.model.Bundle resource = (org.hl7.fhir.r4.model.Bundle) extractBundle(FhirVersion.R4, "data/r4patients.json");
         for (org.hl7.fhir.r4.model.Bundle.BundleEntryComponent component : resource.getEntry()) {
             org.hl7.fhir.r4.model.Patient patient = (org.hl7.fhir.r4.model.Patient) component.getResource();
-            List<PatientIdentifier> ids = getIdentifiers(patient);
+            List<PatientIdentifier> ids = IdentifierUtils.getIdentifiers(patient);
             assertEquals(3, ids.size());
 
             PatientIdentifier benId = IdentifierUtils.getBeneId(ids);
