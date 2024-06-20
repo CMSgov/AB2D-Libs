@@ -27,6 +27,14 @@ class VersionsTest {
     }
 
     @Test
+    void executeGetMethodWithBadSetArgs() {
+        ExplanationOfBenefit eob = new ExplanationOfBenefit();
+        Versions.invokeSetMethod(eob, "setPatient", "broken", Reference.class);
+        Object obj = Versions.invokeGetMethod(eob, "getPatient");
+        assertEquals(null, ((Reference) obj).getReference());
+    }
+
+    @Test
     void methodNotAvailableWhenInvokeGet() {
         ExplanationOfBenefit eob = new ExplanationOfBenefit();
         assertThrows(AssertionError.class, () -> {
@@ -62,6 +70,11 @@ class VersionsTest {
     }
 
     @Test
+    void testInvalidClass() {
+        assertNull(Versions.instantiateClass(STU3, "does-not-exist", "does-not-exist"));
+    }
+
+    @Test
     void testInvalidVersion() {
         assertNull(Versions.getObject(STU3, "Bogus"));
         assertNull(Versions.getObject(STU3, "Bogus", "dumb", String.class));
@@ -72,6 +85,9 @@ class VersionsTest {
     void executeInstantiateSimpleEnum() {
         Object obj = Versions.instantiateEnum(R4, "Enumerations", "ResourceType", "PATIENT");
         assertEquals(Enumerations.ResourceType.PATIENT, obj);
+
+        obj = Versions.instantiateEnum(R4, "Enumerations", "FAKE", "PATIENT");
+        assertNull(obj);
     }
 
     @Test
