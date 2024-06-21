@@ -68,6 +68,15 @@ public enum FhirVersion {
         return bfdVersionString;
     }
 
+    public Class<?> getClassFromName(String name) {
+        try {
+            return Class.forName(getClassName(name));
+        } catch (Exception e) {
+            log.error(String.format("Unable to create a class from name: %s", name), e);
+            return null;
+        }
+    }
+
     public String getClassName(String name) {
         if (this.classLocation == null) {
             return null;
