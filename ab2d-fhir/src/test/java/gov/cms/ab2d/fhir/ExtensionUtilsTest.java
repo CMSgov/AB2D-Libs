@@ -26,8 +26,8 @@ class ExtensionUtilsTest {
         String mbiId = "MBI1";
         org.hl7.fhir.dstu3.model.ExplanationOfBenefit eob = new org.hl7.fhir.dstu3.model.ExplanationOfBenefit();
         IBase extension = ExtensionUtils.createMbiExtension(mbiId, true, STU3);
-
         ExtensionUtils.addExtension(eob, extension, STU3);
+g
         List<Extension> extensions = eob.getExtension();
         assertNotNull(extensions);
         assertEquals(1, extensions.size());
