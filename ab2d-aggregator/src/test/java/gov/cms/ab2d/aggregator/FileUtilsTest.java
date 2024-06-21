@@ -187,6 +187,16 @@ class FileUtilsTest {
         assertFalse(fulltmpdir.exists());
     }
 
+    @Test
+    void testDeleteAllInEmptyDirs() throws IOException {
+        File dir = createADir(System.getProperty(JAVA_TMPDIR) + File.separator + TST_DIR);
+        assertTrue(dir.exists());
+        assertTrue(deleteAllInDir(dir));
+        assertFalse(dir.exists());
+
+        assertTrue(deleteAllInDir(new File("does-not-exist")));
+    }
+
     static Path createFile(File dir, String fileName, String data) throws IOException {
         Files.createDirectories(Path.of(dir.getAbsolutePath()));
         Path p = Path.of(dir.getAbsolutePath(), fileName);

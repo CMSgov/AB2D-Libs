@@ -10,12 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static gov.cms.ab2d.aggregator.Aggregator.ONE_MEGA_BYTE;
 import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
+import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class AggregatorCallableTest {
@@ -30,7 +33,7 @@ class AggregatorCallableTest {
     private static final int MIB = 1048576;
 
     @Test
-    void doItAll(@TempDir File tmpDirFolder) throws IOException, InterruptedException {
+    void testDoItAllWithDataFile(@TempDir File tmpDirFolder) throws IOException, InterruptedException {
         long t1 = System.currentTimeMillis();
         AggregatorCallable callable = new AggregatorCallable(tmpDirFolder.getAbsolutePath(), JOB_ID, "contract",
                 MAX_MEG, STREAM_DIR, FINISH_DIR, MULTIPLIER);
@@ -55,6 +58,29 @@ class AggregatorCallableTest {
         }
         long t2 = System.currentTimeMillis();
         System.out.println("Time is: " + (t2 - t1) / 1000);
+    }
+
+    @Test
+    void testDoItAllWithErrorFile(@TempDir File tmpDirFolder) throws IOException, InterruptedException, ExecutionException {
+        AggregatorCallable callable = new AggregatorCallable(
+            tmpDirFolder.getAbsolutePath(), JOB_ID, "contract", MAX_MEG, STREAM_DIR, FINISH_DIR, MULTIPLIER
+        );
+        JobHelper.workerSetUpJobDirectories(JOB_ID, tmpDirFolder.getAbsolutePath(), STREAM_DIR, FINISH_DIR);
+        Future<Integer> future = executor.submit(callable);
+        // For each batch
+        for (int i = 0; i < 100; i++) {
+            // Create a file for the batch of beneficiaries
+            ClaimsStream stream = new ClaimsStream(JOB_ID, tmpDirFolder.getAbsolutePath(), ERROR, STREAM_DIR, FINISH_DIR, MIB);
+            // For each beneficiary
+            for (int b = 0; b < 250; b++) {
+                int length = RANDOM.nextInt(1000);
+                stream.write(AggregatorTest.getAlphaNumericString(length) + "\n");
+            }
+            stream.close();
+        }
+        JobHelper.workerFinishJob(tmpDirFolder.getAbsolutePath() + File.separator + JOB_ID + File.separator + STREAM_DIR);
+        // assert number of aggregations
+        assertEquals(13, future.get());
     }
 
     // Disabled because it takes a long time but keeping as it is useful when you are doing performance tests

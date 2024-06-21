@@ -133,6 +133,22 @@ public class BlueButtonClientR4Test {
     }
 
     @Test
+    void getCoverageDataFromYear() {
+        org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestPartDEnrolleesFromServer(R4, CONTRACT, 12, 2000);
+        assertNotNull(response);
+        List<Bundle.BundleEntryComponent> entries = response.getEntry();
+        assertTrue(entries.size() > 0);
+        Patient patient = (Patient) entries.get(0).getResource();
+        assertNotNull(patient);
+        List<Identifier> identifiers = patient.getIdentifier();
+        assertTrue(identifiers.stream()
+                .anyMatch(c -> c.getSystem().equalsIgnoreCase("http://hl7.org/fhir/sid/us-mbi")));
+        List<Extension> extensions = patient.getExtension();
+        assertTrue(extensions.stream()
+                .anyMatch(c -> c.getUrl().equalsIgnoreCase("https://bluebutton.cms.gov/resources/variables/rfrnc_yr")));
+    }
+
+    @Test
     void shouldGetMetadata() {
         org.hl7.fhir.r4.model.CapabilityStatement capabilityStatement = (org.hl7.fhir.r4.model.CapabilityStatement) bbc.capabilityStatement(R4);
 
