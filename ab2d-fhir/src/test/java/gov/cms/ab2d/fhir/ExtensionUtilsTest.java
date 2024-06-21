@@ -24,12 +24,14 @@ class ExtensionUtilsTest {
     void testAddExtension() {
         String mbiId = "MBI1";
         org.hl7.fhir.dstu3.model.ExplanationOfBenefit eob = new org.hl7.fhir.dstu3.model.ExplanationOfBenefit();
-        IBase extension = ExtensionUtils.createMbiExtension(mbiId, true, STU3);
-        ExtensionUtils.addExtension(eob, extension, STU3);
+        IBase extension1 = ExtensionUtils.createMbiExtension(mbiId, true, STU3);
+        IBase extension2 = ExtensionUtils.createMbiExtension(mbiId, false, STU3);
+        ExtensionUtils.addExtension(eob, extension1, STU3);
+        ExtensionUtils.addExtension(eob, extension2, STU3);
 
         List<Extension> extensions = eob.getExtension();
         assertNotNull(extensions);
-        assertEquals(1, extensions.size());
+        assertEquals(2, extensions.size());
         Extension ex = extensions.get(0);
         assertEquals(ID_EXT, ex.getUrl());
         Identifier id = (Identifier) ex.getValue();
