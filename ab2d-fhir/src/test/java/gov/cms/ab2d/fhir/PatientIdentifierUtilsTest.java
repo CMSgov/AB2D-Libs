@@ -6,6 +6,7 @@ import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,10 +21,27 @@ import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.HISTORIC;
 import static gov.cms.ab2d.fhir.PatientIdentifier.HISTORIC_MBI;
 import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID;
 import static gov.cms.ab2d.fhir.IdentifierUtils.CURRENCY_IDENTIFIER;
-import static gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class PatientIdentifierUtilsTest {
+
+    @Test
+    void testGetTypes() {
+        assertEquals(PatientIdentifier.MBI_ID, PatientIdentifier.Type.MBI.getSystem());
+        assertEquals(PatientIdentifier.Type.MBI, PatientIdentifier.Type.fromSystem(PatientIdentifier.MBI_ID));
+        assertEquals(null, PatientIdentifier.Type.fromSystem("does-not-exist"));
+    }
+
+    @Test
+    void testGetValueAsLong() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        assertNull(patientIdentifier.getValueAsLong());
+
+        patientIdentifier.setValue("1234");
+        assertEquals(1234, patientIdentifier.getValueAsLong());
+    }
+
     @Test
     void testGetMbis() {
         Patient patient = new Patient();
@@ -47,7 +65,7 @@ class PatientIdentifierUtilsTest {
         identifier3.addExtension(extension2);
         patient.setIdentifier(List.of(identifier, identifier2, identifier3));
 
-        List<PatientIdentifier> identifiers = gov.cms.ab2d.fhir.IdentifierUtils.getIdentifiers(patient);
+        List<PatientIdentifier> identifiers = IdentifierUtils.getIdentifiers(patient);
         assertEquals("mbi-1", IdentifierUtils.getCurrentMbi(identifiers).getValue());
         Set<PatientIdentifier> historical = IdentifierUtils.getHistoricMbi(identifiers);
         PatientIdentifier h = (PatientIdentifier) historical.toArray()[0];
@@ -59,7 +77,7 @@ class PatientIdentifierUtilsTest {
     void testStu3ExtractIds() throws IOException {
         Bundle resource = (Bundle) extractBundle(FhirVersion.STU3, "data/stu3patients.json");
         for (Bundle.BundleEntryComponent component : resource.getEntry()) {
-            List<PatientIdentifier> ids = getIdentifiers((Patient) component.getResource());
+            List<PatientIdentifier> ids = IdentifierUtils.getIdentifiers((Patient) component.getResource());
             assertEquals(5, ids.size());
             PatientIdentifier benId = IdentifierUtils.getBeneId(ids);
             assertEquals("-19990000001101", benId.getValue());
@@ -76,14 +94,97 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testNullInputs() {
+        assertNull(IdentifierUtils.getIdentifiers(null));
+    }
+
+    @Test
+    void testEmptyPatients() {
+        Patient patient = new Patient();
+        assertTrue(IdentifierUtils.getIdentifiers(patient).isEmpty());
+    }
+
+    @Test
+    void testEmptyPatientIds() {
+        Patient patient = new Patient();
+        patient.setIdentifier(List.of());
+        assertTrue(IdentifierUtils.getIdentifiers(patient).isEmpty());
+    }
+
+    @Test
+    void testMockInput() {
+        assertNull(IdentifierUtils.getIdentifier(mock(ICompositeType.class)));
+    }
+
+    @Test
+    void testRealInput() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem("https://bluebutton.cms.gov/resources/variables/bene_id");
+        identifier.setValue("test-1");
+        patient.setIdentifier(List.of(identifier));
+        assertNotNull(IdentifierUtils.getIdentifier(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetBeneId() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.BENE_ID);
+        patientIdentifier.setValue("test-1");
+        assertEquals("test-1", IdentifierUtils.getBeneId(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetBeneIdWrongType() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getBeneId(List.of(patientIdentifier)));
+    }
+
+    @Test
+    void testGetCurrentMbiCurrent() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.CURRENT);
+        assertEquals("test-1", IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetCurrentMbiHistoric() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.HISTORIC);
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
+    void testGetCurrentMbiUnknown() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.UNKNOWN);
+        assertEquals("test-1", IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)).getValue());
+    }
+
+    @Test
+    void testGetCurrentMbiWrongType() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.BENE_ID);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
-        List<String> historicMbis = List.of();
         org.hl7.fhir.r4.model.Bundle resource = (org.hl7.fhir.r4.model.Bundle) extractBundle(FhirVersion.R4, "data/r4patients.json");
         for (org.hl7.fhir.r4.model.Bundle.BundleEntryComponent component : resource.getEntry()) {
             org.hl7.fhir.r4.model.Patient patient = (org.hl7.fhir.r4.model.Patient) component.getResource();
-            List<PatientIdentifier> ids = getIdentifiers(patient);
+            List<PatientIdentifier> ids = IdentifierUtils.getIdentifiers(patient);
             assertEquals(3, ids.size());
 
             PatientIdentifier benId = IdentifierUtils.getBeneId(ids);
