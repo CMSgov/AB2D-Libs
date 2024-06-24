@@ -113,6 +113,10 @@ class FhirVersionTest {
       FhirVersion.R4.getClassFromName("doesNotExist");
     });
     assertNull(FhirVersion.R4.getClassFromName("doesNotExist"));
+    assertDoesNotThrow(() -> {
+      g.getClassFromName("doesNotExist");
+    });
+    assertNull(FhirVersion.STU3.getClassFromName("doesNotExist"));
   }
 
   @Test
