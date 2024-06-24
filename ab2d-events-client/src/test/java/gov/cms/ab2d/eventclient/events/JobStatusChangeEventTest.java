@@ -31,7 +31,7 @@ class JobStatusChangeEventTest {
     @Test
     void labelSplitIgnoresNullStrings() {
 
-        JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", "    ");
+        JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", null);
 
         assertTrue(event.asMessage().startsWith(" (test)"));
     }
