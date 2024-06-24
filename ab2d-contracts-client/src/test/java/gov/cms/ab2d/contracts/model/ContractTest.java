@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class g {
+class ContractTest {
     private static final String CONTRACT_NAME = "Name";
     private static final String PARENT_NAME = "Parent";
     private static final String MARKETING_NAME = "Marketing Name";
