@@ -18,7 +18,7 @@ class ContractTest {
     private static final String MARKETING_NAME = "Marketing Name";
     private static final String CONTRACT_NUMBER = "S12345";
     private static final OffsetDateTime NOW = OffsetDateTime.now();
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd H:m:s");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd H:m:s");
     private static final String NOW_STRING = NOW.format(FORMATTER).toString();
     private static final Long ID = 1L;
     private static final Long PARENT_ID = 2L;
