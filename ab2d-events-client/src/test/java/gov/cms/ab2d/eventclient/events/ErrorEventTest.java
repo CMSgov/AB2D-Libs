@@ -4,4 +4,9 @@ import org.junit.jupiter.api.Test;
 
 class ErrorEventTest {
 
+  @Test
+  void test() {
+
+  }
+
 }

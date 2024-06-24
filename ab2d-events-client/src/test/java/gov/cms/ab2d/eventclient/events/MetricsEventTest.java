@@ -4,4 +4,9 @@ import org.junit.jupiter.api.Test;
 
 class MetricsEventTest {
 
+  @Test
+  void test() {
+
+  }
+
 }

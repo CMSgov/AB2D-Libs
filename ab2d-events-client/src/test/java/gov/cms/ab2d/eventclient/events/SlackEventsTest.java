@@ -4,4 +4,9 @@ import org.junit.jupiter.api.Test;
 
 class SlackEventsTest {
 
+  @Test
+  void test() {
+
+  }
+
 }

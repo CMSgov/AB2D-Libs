@@ -4,4 +4,9 @@ import org.junit.jupiter.api.Test;
 
 class ApiResponseEventTest {
 
+  @Test
+  void test() {
+
+  }
+
 }
