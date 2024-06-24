@@ -39,11 +39,7 @@ public final class ExtensionUtils {
         if (resource == null || extension == null) {
             return;
         }
-        try {
-            Versions.invokeSetMethod(resource, "addExtension", extension, Class.forName(version.getClassName(EXTENSION_CLASSNAME)));
-        } catch (Exception ex) {
-            log.error("Unable to add Extension");
-        }
+        Versions.invokeSetMethod(resource, "addExtension", extension, version.getClassFromName(EXTENSION_CLASSNAME));
     }
 
     /**
@@ -64,21 +60,12 @@ public final class ExtensionUtils {
 
         Object currencyExtension = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(currencyExtension, "setUrl", CURRENCY_IDENTIFIER, String.class);
-        try {
-            Versions.invokeSetMethod(currencyExtension, SET_VALUE_METHOD_NAME, coding, Class.forName(version.getClassName("Type")));
-        } catch (Exception ex) {
-            log.error("Unable to setValue");
-        }
-
+        Versions.invokeSetMethod(currencyExtension, SET_VALUE_METHOD_NAME, coding, version.getClassFromName("Type"));
         Versions.invokeSetMethod(identifier, "setExtension", List.of(currencyExtension), List.class);
 
         Object ext = Versions.getObject(version, EXTENSION_CLASSNAME);
         Versions.invokeSetMethod(ext, "setUrl", ID_EXT, String.class);
-        try {
-            Versions.invokeSetMethod(ext, SET_VALUE_METHOD_NAME, identifier, Class.forName(version.getClassName("Type")));
-        } catch (Exception ex) {
-            log.error("Unable to setValue");
-        }
+        Versions.invokeSetMethod(ext, SET_VALUE_METHOD_NAME, identifier, version.getClassFromName("Type"));
         return (IBase) ext;
     }
 

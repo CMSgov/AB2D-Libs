@@ -75,6 +75,15 @@ public enum FhirVersion {
         return this.classLocation + "." + name;
     }
 
+    public Class<?> getClassFromName(String name) {
+        try {
+            return Class.forName(getClassName(name));
+        } catch (Exception e) {
+            log.error(String.format("Unable to create a class from name: %s", name), e);
+            return null;
+        }
+    }
+
     public Class<? extends IBaseBundle> getBundleClass() {
         try {
             return (Class<? extends IBaseBundle>) Class.forName(this.getClassName("Bundle"));
