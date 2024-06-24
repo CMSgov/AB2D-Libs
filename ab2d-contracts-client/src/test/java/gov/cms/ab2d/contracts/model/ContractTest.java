@@ -1,7 +1,5 @@
-package gov.cms.ab2d.contracts.utils;
+package gov.cms.ab2d.contracts.model;
 
-import gov.cms.ab2d.contracts.model.Contract;
-import gov.cms.ab2d.contracts.model.ContractDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContractTest {
+class ContractTest {
     private static final String CONTRACT_NAME = "Name";
     private static final String PARENT_NAME = "Parent";
     private static final String MARKETING_NAME = "Marketing Name";
