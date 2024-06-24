@@ -12,14 +12,6 @@ class ApiRequestEventTest {
   ApiRequestEvent apiRequestEvent;
 
   @Test
-  void testAsMessage() {
-    apiRequestEvent = new ApiRequestEvent();
-    apiRequestEvent.setUrl("localhost");
-    apiRequestEvent.setIpAddress("1.1.1.1");
-    assertEquals("request to localhost from 1.1.1.1", apiRequestEvent.asMessage());
-  }
-
-  @Test
   void testContructor() {
     assertDoesNotThrow(
       () -> {
@@ -27,6 +19,14 @@ class ApiRequestEventTest {
         new ApiRequestEvent("CMS", "1234", "localhost", "1.1.1.1", "1234", "1234");
       }
     );
+  }
+
+  @Test
+  void testAsMessage() {
+    apiRequestEvent = new ApiRequestEvent();
+    apiRequestEvent.setUrl("localhost");
+    apiRequestEvent.setIpAddress("1.1.1.1");
+    assertEquals("request to localhost from 1.1.1.1", apiRequestEvent.asMessage());
   }
 
   @Test
