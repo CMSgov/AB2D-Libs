@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JobStatusChangeEventTest {
+class JobStatusChangeEventTest {
 
 
     @DisplayName("Label status change event correctly")
     @Test
-    public void labelSplitFromDescription() {
+    void labelSplitFromDescription() {
 
         JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", "IMPORTANT status");
 
@@ -20,7 +20,7 @@ public class JobStatusChangeEventTest {
 
     @DisplayName("Label status change event correctly")
     @Test
-    public void labelSplitIgnoresBlankStrings() {
+    void labelSplitIgnoresBlankStrings() {
 
         JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", "    ");
 
@@ -29,7 +29,7 @@ public class JobStatusChangeEventTest {
 
     @DisplayName("Label status change event correctly")
     @Test
-    public void labelSplitIgnoresNullStrings() {
+    void labelSplitIgnoresNullStrings() {
 
         JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", "    ");
 
@@ -38,7 +38,7 @@ public class JobStatusChangeEventTest {
 
     @DisplayName("Label status change event correctly")
     @Test
-    public void labelSplitHandlesOneWord() {
+    void labelSplitHandlesOneWord() {
 
         JobStatusChangeEvent event = new JobStatusChangeEvent("test", "test", "test", "test", "ONEWORD");
 
