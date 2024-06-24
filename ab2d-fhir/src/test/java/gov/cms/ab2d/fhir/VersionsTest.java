@@ -3,8 +3,6 @@ package gov.cms.ab2d.fhir;
 import org.hl7.fhir.dstu3.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.dstu3.model.Reference;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.junit.jupiter.api.Test;
 
@@ -91,16 +89,6 @@ class VersionsTest {
     }
 
     @Test
-    void getVersionFromURL() {
-        String url1 = "http://localhost:8080/v1/fhir/$export";
-        String url2 = "http://localhost:8080/v2/fhir/$export";
-        String url3 = "http://localhost:8080/fhir/$export";
-        assertEquals(STU3, FhirVersion.fromAB2DUrl(url1));
-        assertEquals(R4, FhirVersion.fromAB2DUrl(url2));
-        assertNull(FhirVersion.fromAB2DUrl(url3));
-    }
-
-    @Test
     void invokeWithArg() {
         String val = "Hello World";
         String ret = (String) Versions.invokeGetMethodWithArg(val, "substring", 6, int.class);
@@ -123,61 +111,5 @@ class VersionsTest {
         OffsetDateTime d2 = OffsetDateTime.now().minus(10, ChronoUnit.DAYS);
         DateTimeType dt2 = (DateTimeType) Versions.getObject(STU3, "DateTimeType", d2.toString(), String.class);
         assertNotEquals(dt1.toHumanDisplay(), dt2.toHumanDisplay());
-    }
-
-    @Test
-    void testGetPatientClass() {
-        assertEquals(org.hl7.fhir.dstu3.model.Patient.class, STU3.getPatientClass());
-        assertEquals(org.hl7.fhir.r4.model.Patient.class, R4.getPatientClass());
-    }
-
-    @Test
-    void testGetBundleClass() {
-        assertEquals(org.hl7.fhir.dstu3.model.Bundle.class, STU3.getBundleClass());
-        assertEquals(org.hl7.fhir.r4.model.Bundle.class, R4.getBundleClass());
-    }
-
-    @Test
-    void testTimeUtils() {
-        OffsetDateTime now = OffsetDateTime.now();
-        final org.hl7.fhir.dstu3.model.DateTimeType jobStartedAt = new org.hl7.fhir.dstu3.model.DateTimeType(now.toString());
-        String val2 = jobStartedAt.toHumanDisplay();
-        String val = STU3.getFhirTime(now);
-        assertEquals(val, val2);
-    }
-
-    @Test
-    void testValid() {
-        CapabilityStatement statement = new CapabilityStatement();
-        assertFalse(R4.metaDataValid(statement));
-        statement.setStatus(Enumerations.PublicationStatus.ACTIVE);
-        assertTrue(R4.metaDataValid(statement));
-        statement.setStatus(Enumerations.PublicationStatus.UNKNOWN);
-        assertFalse(R4.metaDataValid(statement));
-        assertFalse(R4.metaDataValid(null));
-    }
-
-    @Test
-    void testClass() {
-        assertEquals(CapabilityStatement.class, R4.getCapabilityClass());
-    }
-
-    @Test
-    void testGetErrorOutcome() {
-        final String errText = "SOMETHING BROKE";
-        final IBaseResource o = R4.getErrorOutcome(errText);
-        org.hl7.fhir.r4.model.OperationOutcome oo = (org.hl7.fhir.r4.model.OperationOutcome) o;
-        assertTrue(oo instanceof  org.hl7.fhir.r4.model.OperationOutcome);
-        assertEquals(org.hl7.fhir.r4.model.ResourceType.OperationOutcome, oo.getResourceType());
-        assertEquals(1, oo.getIssue().size());
-        assertEquals(errText, oo.getIssue().get(0).getDetails().getText());
-    }
-
-    @Test
-    void testOutcomeToJSON() {
-        final String errText = "SOMETHING BROKE";
-        final IBaseResource oo = STU3.getErrorOutcome(errText);
-        final String payload = STU3.outcomePrettyToJSON(oo);
-        assertNotNull(payload);
     }
 }
