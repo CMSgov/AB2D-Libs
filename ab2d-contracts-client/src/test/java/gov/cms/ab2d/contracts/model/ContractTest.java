@@ -5,18 +5,21 @@ import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ContractTest {
+class g {
     private static final String CONTRACT_NAME = "Name";
     private static final String PARENT_NAME = "Parent";
     private static final String MARKETING_NAME = "Marketing Name";
     private static final String CONTRACT_NUMBER = "S12345";
     private static final OffsetDateTime NOW = OffsetDateTime.now();
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd H:m:s");
+    private static final String NOW_STRING = NOW.format(FORMATTER).toString();
     private static final Long ID = 1L;
     private static final Long PARENT_ID = 2L;
     private static final Integer MEDICARE_ELIGIBLE = 95;
@@ -52,8 +55,32 @@ class ContractTest {
                 TOTAL_ENROLLMENT - 1, MEDICARE_ELIGIBLE));
         assertTrue(contract.hasChanges(MARKETING_NAME, PARENT_ID, PARENT_NAME, MARKETING_NAME,
                 null, null));
+        assertFalse(contract.hasChanges(CONTRACT_NAME, PARENT_ID, PARENT_NAME, MARKETING_NAME,
+                TOTAL_ENROLLMENT, MEDICARE_ELIGIBLE));
     }
 
+    @Test
+    void testUpdateAttestationCaseOne() {
+        assertTrue(contract.updateAttestation(false, NOW_STRING));
+    }
+
+    @Test
+    void testUpdateAttestationCaseTwo() {
+        contract.setUpdateMode(Contract.UpdateMode.MANUAL);
+        assertFalse(contract.updateAttestation(false, NOW_STRING));
+    }
+
+    @Test
+    void testUpdateAttestationCaseThree() {
+        contract.setAttestedOn(null);
+        assertTrue(contract.updateAttestation(true, NOW_STRING));
+    }
+
+    @Test
+    void testUpdateAttestationCaseFour() {
+        contract.setAttestedOn(null);
+        assertFalse(contract.updateAttestation(false, NOW_STRING));
+    }
 
     @Test
     void testOther() {
