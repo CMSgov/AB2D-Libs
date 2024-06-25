@@ -3,6 +3,7 @@ package gov.cms.ab2d.fhir;
 import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -95,6 +96,27 @@ class FhirVersionTest {
     ReflectionTestUtils.setField(FhirVersion.R4, "classLocation", null);
     assertNull(FhirVersion.R4.getClassName("Patient"));
     ReflectionTestUtils.setField(FhirVersion.R4, "classLocation", classLocation);
+  }
+
+  @Test
+  void testGetClassFromName() {
+    assertEquals(
+      org.hl7.fhir.dstu3.model.Patient.class,
+      FhirVersion.STU3.getClassFromName("Patient")
+    );
+    assertEquals(
+      org.hl7.fhir.r4.model.Patient.class,
+      FhirVersion.R4.getClassFromName("Patient")
+    );
+
+    assertDoesNotThrow(() -> {
+      FhirVersion.R4.getClassFromName("doesNotExist");
+    });
+    assertNull(FhirVersion.R4.getClassFromName("doesNotExist"));
+    assertDoesNotThrow(() -> {
+      FhirVersion.STU3.getClassFromName("doesNotExist");
+    });
+    assertNull(FhirVersion.STU3.getClassFromName("doesNotExist"));
   }
 
   @Test
