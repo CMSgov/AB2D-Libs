@@ -121,7 +121,7 @@ public abstract class LoggableEvent {
             if (otherTimeOfEvent != null) {
                 return false;
             }
-        } else if (thisTimeOfEvent.toEpochSecond() != otherTimeOfEvent.toEpochSecond()) {
+        } else if (otherTimeOfEvent == null || thisTimeOfEvent.toEpochSecond() != otherTimeOfEvent.toEpochSecond()) {
             return false;
         }
 
