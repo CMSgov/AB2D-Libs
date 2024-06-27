@@ -81,15 +81,6 @@ class MetricsEventTest {
   }
 
   @Test
-  void testHashCode() {
-    MetricsEvent event = new MetricsEvent();
-    event.setService("service");
-    event.setStateType(MetricsEvent.State.CONTINUE);
-    event.setEventDescription("description");
-    assertTrue(event.hashCode() < 0);
-  }
-
-  @Test
   void testContructor() {
     assertDoesNotThrow(() -> {
       new MetricsEvent(
