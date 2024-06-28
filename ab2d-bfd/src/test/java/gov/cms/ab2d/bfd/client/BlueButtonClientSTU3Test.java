@@ -200,16 +200,14 @@ public class BlueButtonClientSTU3Test {
 
     @Test
     void shouldGetEOBFromPatientIDSince() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, OffsetDateTime.parse(
-                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), null, CONTRACT);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, null, CONTRACT);
 
         validation(response);
     }
 
     @Test
     void shouldGetEOBFromPatientIDUtil() {
-        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, null, OffsetDateTime.parse(
-                "2024-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
+        org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, null, CONTRACT);
 
         validation(response);
     }
@@ -217,8 +215,7 @@ public class BlueButtonClientSTU3Test {
     @Test
     void shouldGetEOBFromPatientIDSinceAndUtil() {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_PATIENT_ID, OffsetDateTime.parse(
-                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), OffsetDateTime.parse(
-                "2024-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
+                "2020-02-13T00:00:00.000-05:00", DateTimeFormatter.ISO_DATE_TIME), CONTRACT);
 
         validation(response);
     }

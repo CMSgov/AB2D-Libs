@@ -89,7 +89,7 @@ class BFDSearchImplTest {
     // Business logic & assertion(s)
     assertThrows(
       RuntimeException.class,
-      () -> bfdSearchImpl.searchEOB(patientId, since, until, pageSize, bulkJobId, version, contractNum)
+      () -> bfdSearchImpl.searchEOB(patientId, since, pageSize, bulkJobId, version, contractNum)
     );
   }
 
@@ -105,7 +105,7 @@ class BFDSearchImplTest {
     BFDSearchImpl bfdSearchImpl = new BFDSearchImpl(httpClient, environment, bfdClientVersions);
 
     // Business logic & assertion(s)
-    IBaseBundle result = bfdSearchImpl.searchEOB(patientId, since, until, pageSize, bulkJobId, version, contractNum);
+    IBaseBundle result = bfdSearchImpl.searchEOB(patientId, since, pageSize, bulkJobId, version, contractNum);
     assertNotNull(result);
   }
 
@@ -121,7 +121,7 @@ class BFDSearchImplTest {
     BFDSearchImpl bfdSearchImpl = new BFDSearchImpl(httpClient, environment, bfdClientVersions);
 
     // Business logic & assertion(s)
-    IBaseBundle result = bfdSearchImpl.searchEOB(patientId, null, null, 0, bulkJobId, version, contractNum);
+    IBaseBundle result = bfdSearchImpl.searchEOB(patientId, null, 0, bulkJobId, version, contractNum);
     assertNotNull(result);
   }
 
@@ -139,7 +139,7 @@ class BFDSearchImplTest {
     // Business logic & assertion(s)
     assertThrows(
       ResourceNotFoundException.class,
-      () -> bfdSearchImpl.searchEOB(patientId, since, until, pageSize, bulkJobId, version, contractNum)
+      () -> bfdSearchImpl.searchEOB(patientId, since, pageSize, bulkJobId, version, contractNum)
     );
   }
 
@@ -157,7 +157,7 @@ class BFDSearchImplTest {
     // Business logic & assertion(s)
     assertThrows(
       RuntimeException.class,
-      () -> bfdSearchImpl.searchEOB(patientId, since, until, pageSize, bulkJobId, version, contractNum)
+      () -> bfdSearchImpl.searchEOB(patientId, since, pageSize, bulkJobId, version, contractNum)
     );
   }
 
