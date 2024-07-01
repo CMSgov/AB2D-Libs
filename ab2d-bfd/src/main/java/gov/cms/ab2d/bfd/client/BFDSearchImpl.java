@@ -47,7 +47,6 @@ public class BFDSearchImpl implements BFDSearch {
      */
     @Trace
     @Override
-   // public IBaseBundle searchEOB(long patientId, OffsetDateTime since, OffsetDateTime until, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
     public IBaseBundle searchEOB(long patientId, OffsetDateTime since, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
         String urlLocation = bfdClientVersions.getUrl(version);
         StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
@@ -64,10 +63,6 @@ public class BFDSearchImpl implements BFDSearch {
                 url.append("&_lastUpdated=le").append(since.plusMonths(4));
             }
         }
-
-//        if (until != null) {
-//            url.append("&_lastUpdated=le").append(until);
-//        }
 
         if (pageSize > 0) {
             url.append("&_count=").append(pageSize);
