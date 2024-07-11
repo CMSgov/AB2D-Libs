@@ -79,8 +79,7 @@ public class BFDClientImpl implements BFDClient {
             exclude = { ResourceNotFoundException.class }
     )
     public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, String contractNum) {
-        return requestEOBFromServer(version, patientID, null, contractNum);
-      //  return requestEOBFromServer(version, patientID, null, null, contractNum);
+        return requestEOBFromServer(version, patientID, null, null, contractNum);
     }
 
     /**
@@ -92,6 +91,7 @@ public class BFDClientImpl implements BFDClient {
      * @param version The FHIR version
      * @param patientID The requested patient's ID
      * @param sinceTime The start date for the request
+     * @param untilTime The stop date for the request
      * @return {@link IBaseBundle} Containing a number (possibly 0) of Resources
      * objects
      * @throws ResourceNotFoundException when the requested patient does not exist
@@ -104,12 +104,12 @@ public class BFDClientImpl implements BFDClient {
             backoff = @Backoff(delayExpression = "${bfd.retry.backoffDelay:250}", multiplier = 2),
             exclude = { ResourceNotFoundException.class }
     )
-    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, String contractNum) {
-    final Segment bfdSegment = NewRelic.getAgent().getTransaction().startSegment("BFD Call for patient with patient ID " + patientID +
-                " using since " + sinceTime);
+    public IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, OffsetDateTime untilTime, String contractNum) {
+        final Segment bfdSegment = NewRelic.getAgent().getTransaction().startSegment("BFD Call for patient with patient ID " + patientID +
+                " using since " + sinceTime + " and until " + untilTime);
         bfdSegment.setMetricName("RequestEOB");
 
-        IBaseBundle result = bfdSearch.searchEOB(patientID, sinceTime, pageSize, getJobId(), version, contractNum);
+        IBaseBundle result = bfdSearch.searchEOB(patientID, sinceTime, untilTime, pageSize, getJobId(), version, contractNum);
 
         bfdSegment.end();
 
