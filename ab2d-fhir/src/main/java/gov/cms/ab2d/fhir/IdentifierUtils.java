@@ -206,7 +206,7 @@ public final class IdentifierUtils {
         return getCurrencyFromTypeCodingExtension(identifier);
     }
 
-    private static PatientIdentifier.Currency getCurrencyFromTypeCodingExtension(ICompositeType identifier) {
+    public static PatientIdentifier.Currency getCurrencyFromTypeCodingExtension(ICompositeType identifier) {
         Object type = Versions.invokeGetMethod(identifier, "getType");
         List vals = (List) Versions.invokeGetMethod(type, "getCoding");
 

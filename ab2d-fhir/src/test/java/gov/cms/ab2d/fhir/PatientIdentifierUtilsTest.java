@@ -187,6 +187,177 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsCurrent() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl(CURRENCY_IDENTIFIER);
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode(CURRENT_MBI);
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.CURRENT, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsHistoric() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl(CURRENCY_IDENTIFIER);
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode(HISTORIC_MBI);
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.HISTORIC, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknown() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl(CURRENCY_IDENTIFIER);
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode("unknown");
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenCodingEmpty() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenCodingInvalid() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem("invalid_system");
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl(CURRENCY_IDENTIFIER);
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode(CURRENT_MBI);
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("invalid_code");
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenUrlNull() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl(null);
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode(CURRENT_MBI);
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenUrlInvalid() {
+        Patient patient = new Patient();
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+
+        Coding coding = new Coding();
+        coding.setSystem(MBI_ID_R4);
+        coding.setCode("MB");
+        identifier.getType().addCoding(coding);
+
+        identifier.setValue("mbi-1");
+        
+        Extension extension = new Extension();
+        extension.setUrl("invalid_url");
+        Coding extCoding = new Coding();
+        extCoding.setSystem(CURRENCY_IDENTIFIER);
+        extCoding.setCode(CURRENT_MBI);
+        extension.setValue(extCoding);
+        identifier.getType().getCoding().get(0).addExtension(extension);
+
+        patient.setIdentifier(List.of(identifier));
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
     void testReturnsFalseIfCodingNotExist() {
         PatientIdentifier patientIdentifier = new PatientIdentifier();
         patientIdentifier.setType(PatientIdentifier.Type.MBI);
@@ -200,8 +371,8 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsFalseIfCodingInvalid() {
-        String codeSystem = "INVALID";
-        String codeValue = "INVALID";
+        String codeSystem = "invalid_system";
+        String codeValue = "invalid_value";
         assertFalse(IdentifierUtils.checkCodingIsValid(codeSystem, codeValue));
     }
 
@@ -222,7 +393,7 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsFalseIfURLInvalid() {
-        String url = "INVALID";
+        String url = "invalid_url";
         assertFalse(IdentifierUtils.checkCurrencyUrlIsValid(url));
     }
 
