@@ -210,11 +210,11 @@ public final class IdentifierUtils {
         Object type = Versions.invokeGetMethod(identifier, "getType");
         List vals = (List) Versions.invokeGetMethod(type, "getCoding");
 
-        if (checkTypeAndValsExists(type, vals)) {
+        if (!checkTypeAndCodingExists(type, vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
-        if (!checkCodeSystemAndValueIsValid(vals)) {
+        if (!checkCodingIsValid(vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
@@ -240,17 +240,17 @@ public final class IdentifierUtils {
         return PatientIdentifier.Currency.UNKNOWN;
     }
 
-    private static boolean checkTypeAndValsExists(Object type, List vals) {
+    public static boolean checkTypeAndCodingExists(Object type, List vals) {
         if (type == null) {
-            return true;
+            return false;
         }
         if (vals == null || vals.isEmpty()) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
-    private static boolean checkCodeSystemAndValueIsValid(List vals) {
+    public static boolean checkCodingIsValid(List vals) {
         if (vals == null || vals.isEmpty()) {
             return false;
         }
@@ -264,7 +264,7 @@ public final class IdentifierUtils {
         return false;
     }
 
-    private static boolean checkExtensionsHasValidUrl(List extensions) {
+    public static boolean checkExtensionsHasValidUrl(List extensions) {
         if (extensions != null && !extensions.isEmpty()) {
             Object extension = extensions.get(0);
             String url = (String) Versions.invokeGetMethod(extension, "getUrl");

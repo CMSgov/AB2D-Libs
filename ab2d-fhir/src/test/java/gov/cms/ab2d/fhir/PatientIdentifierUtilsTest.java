@@ -178,6 +178,28 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetCurrentMbiTypeNotExists() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(null);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
+    void testReturnsFalseIfCodingNotExist() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+        patientIdentifier.setCurrency(PatientIdentifier.Currency.UNKNOWN);
+
+        Object type = Versions.invokeGetMethod(patientIdentifier, "getType");
+        List vals = (List) Versions.invokeGetMethod(type, "getCoding");
+        System.out.println("TEST-VALS = " + vals);
+
+        assertFalse(IdentifierUtils.checkTypeAndCodingExists(type, vals));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
