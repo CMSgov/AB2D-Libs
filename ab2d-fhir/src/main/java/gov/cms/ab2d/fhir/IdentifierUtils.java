@@ -214,14 +214,14 @@ public final class IdentifierUtils {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
-        if (!checkCodeSystemAndValueIsValid()) {
+        if (!checkCodeSystemAndValueIsValid(vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
         Object val = vals.get(0);
         List extensions = (List) Versions.invokeGetMethod(val, "getExtension");
         
-        if (!checkExtensionsHasValidUrl()) {
+        if (!checkExtensionsHasValidUrl(extensions)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
         
