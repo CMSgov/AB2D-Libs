@@ -20,6 +20,7 @@ import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.CURRENT;
 import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.HISTORIC;
 import static gov.cms.ab2d.fhir.PatientIdentifier.HISTORIC_MBI;
 import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID;
+import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID_R4;
 import static gov.cms.ab2d.fhir.IdentifierUtils.CURRENCY_IDENTIFIER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -190,13 +191,39 @@ class PatientIdentifierUtilsTest {
         PatientIdentifier patientIdentifier = new PatientIdentifier();
         patientIdentifier.setType(PatientIdentifier.Type.MBI);
         patientIdentifier.setValue("test-1");
-        patientIdentifier.setCurrency(PatientIdentifier.Currency.UNKNOWN);
 
         Object type = Versions.invokeGetMethod(patientIdentifier, "getType");
-        List vals = (List) Versions.invokeGetMethod(type, "getCoding");
-        System.out.println("TEST-VALS = " + vals);
+        List vals = (List) Versions.invokeGetMethod(type, "getCode");
 
         assertFalse(IdentifierUtils.checkTypeAndCodingExists(type, vals));
+    }
+
+    @Test
+    void testReturnsFalseIfCodingInvalid() {
+        String codeSystem = "INVALID";
+        String codeValue = "INVALID";
+        assertFalse(IdentifierUtils.checkCodingIsValid(codeSystem, codeValue));
+    }
+
+    @Test
+    void testReturnsTrueIfCodingValid() {
+        String codeSystem = MBI_ID_R4;
+        String mbCodeValue = "MB";
+        assertTrue(IdentifierUtils.checkCodingIsValid(codeSystem, mbCodeValue));
+        String mcCodeValue = "MC";
+        assertTrue(IdentifierUtils.checkCodingIsValid(codeSystem, mcCodeValue));
+    }
+
+    @Test
+    void testReturnsTrueIfURLValid() {
+        String url = IdentifierUtils.CURRENCY_IDENTIFIER;
+        assertTrue(IdentifierUtils.checkCurrencyUrlIsValid(url));
+    }
+
+    @Test
+    void testReturnsFalseIfURLInvalid() {
+        String url = "INVALID";
+        assertFalse(IdentifierUtils.checkCurrencyUrlIsValid(url));
     }
 
     @Test

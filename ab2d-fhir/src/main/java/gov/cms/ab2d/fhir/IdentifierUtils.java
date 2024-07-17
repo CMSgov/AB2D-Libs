@@ -214,18 +214,24 @@ public final class IdentifierUtils {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
-        if (!checkCodingIsValid(vals)) {
+        Object val = vals.get(0);
+        String codeSystem = (String) Versions.invokeGetMethod(val, GET_SYSTEM);
+        String codeValue = (String) Versions.invokeGetMethod(val, GET_CODE);
+        if (!checkCodingIsValid(codeSystem, codeValue)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
-        Object val = vals.get(0);
         List extensions = (List) Versions.invokeGetMethod(val, "getExtension");
-        
-        if (!checkExtensionsHasValidUrl(extensions)) {
+        if (extensions == null || extensions.isEmpty()) {
+            return PatientIdentifier.Currency.UNKNOWN;
+        }
+
+        Object extension = extensions.get(0);
+        String url = (String) Versions.invokeGetMethod(extension, "getUrl");
+        if (!checkCurrencyUrlIsValid(url)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
         
-        Object extension = extensions.get(0);
         Object currValue = Versions.invokeGetMethod(extension, GET_VALUE);
         String extValueSystem = (String) Versions.invokeGetMethod(currValue, GET_SYSTEM);
         if (CURRENCY_IDENTIFIER.equalsIgnoreCase(extValueSystem)) {
@@ -241,38 +247,15 @@ public final class IdentifierUtils {
     }
 
     public static boolean checkTypeAndCodingExists(Object type, List vals) {
-        if (type == null) {
-            return false;
-        }
-        if (vals == null || vals.isEmpty()) {
-            return false;
-        }
-        return true;
+        return (type != null && vals != null && !vals.isEmpty());
     }
 
-    public static boolean checkCodingIsValid(List vals) {
-        if (vals == null || vals.isEmpty()) {
-            return false;
-        }
-
-        Object val = vals.get(0);
-        String codeSystem = (String) Versions.invokeGetMethod(val, GET_SYSTEM);
-        String codeValue = (String) Versions.invokeGetMethod(val, GET_CODE);
-        if (codeSystem != null && codeSystem.equalsIgnoreCase(MBI_ID_R4) && ("MB".equalsIgnoreCase(codeValue) || "MC".equalsIgnoreCase(codeValue))) {
-            return true;
-        }
-        return false;
+    public static boolean checkCodingIsValid(String codeSystem, String codeValue) {
+        return ((codeSystem != null && codeSystem.equalsIgnoreCase(MBI_ID_R4)) && ("MB".equalsIgnoreCase(codeValue) || "MC".equalsIgnoreCase(codeValue)));
     }
 
-    public static boolean checkExtensionsHasValidUrl(List extensions) {
-        if (extensions != null && !extensions.isEmpty()) {
-            Object extension = extensions.get(0);
-            String url = (String) Versions.invokeGetMethod(extension, "getUrl");
-            if (url != null && url.equalsIgnoreCase(CURRENCY_IDENTIFIER)) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean checkCurrencyUrlIsValid(String url) {
+        return (url != null && url.equalsIgnoreCase(CURRENCY_IDENTIFIER));
     }
 
     /**
