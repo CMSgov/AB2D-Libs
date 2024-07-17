@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.hl7.fhir.instance.model.api.IDomainResource;
+import org.hl7.fhir.dstu3.model.Coding;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,7 +209,7 @@ public final class IdentifierUtils {
 
     public static PatientIdentifier.Currency getCurrencyFromTypeCodingExtension(ICompositeType identifier) {
         Object type = Versions.invokeGetMethod(identifier, "getType");
-        List vals = (List) Versions.invokeGetMethod(type, "getCoding");
+        List<Coding> vals = (List) Versions.invokeGetMethod(type, "getCoding");
 
         if (!checkTypeAndCodingExists(type, vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
@@ -246,7 +247,7 @@ public final class IdentifierUtils {
         return PatientIdentifier.Currency.UNKNOWN;
     }
 
-    public static boolean checkTypeAndCodingExists(Object type, List vals) {
+    public static boolean checkTypeAndCodingExists(Object type, List<Coding> vals) {
         return (type != null && vals != null && !vals.isEmpty());
     }
 
