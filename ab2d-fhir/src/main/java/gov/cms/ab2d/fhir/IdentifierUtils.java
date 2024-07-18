@@ -211,25 +211,22 @@ public final class IdentifierUtils {
         Object type = Versions.invokeGetMethod(identifier, "getType");
         List<Coding> vals = (List) Versions.invokeGetMethod(type, "getCoding");
 
-        if (!checkTypeAndCodingExists(type, vals)) {
+        if (checkTypeAndCodingNotExists(type, vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
         Object val = vals.get(0);
         String codeSystem = (String) Versions.invokeGetMethod(val, GET_SYSTEM);
         String codeValue = (String) Versions.invokeGetMethod(val, GET_CODE);
-        if (!checkCodingIsValid(codeSystem, codeValue)) {
-            return PatientIdentifier.Currency.UNKNOWN;
-        }
 
-        List extensions = (List) Versions.invokeGetMethod(val, "getExtension");
-        if (extensions == null || extensions.isEmpty()) {
+        List<IBaseExtension> extensions = (List) Versions.invokeGetMethod(val, "getExtension");
+        if (checkCodingIsNotValid(codeSystem, codeValue) || checkExtensionsNotExists(extensions)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
 
         Object extension = extensions.get(0);
         String url = (String) Versions.invokeGetMethod(extension, "getUrl");
-        if (!checkCurrencyUrlIsValid(url)) {
+        if (checkCurrencyUrlIsNotValid(url)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
         
@@ -247,16 +244,20 @@ public final class IdentifierUtils {
         return PatientIdentifier.Currency.UNKNOWN;
     }
 
-    public static boolean checkTypeAndCodingExists(Object type, List<Coding> vals) {
-        return (type != null && vals != null && !vals.isEmpty());
+    public static boolean checkTypeAndCodingNotExists(Object type, List<Coding> vals) {
+        return (type == null || vals == null || vals.isEmpty());
     }
 
-    public static boolean checkCodingIsValid(String codeSystem, String codeValue) {
-        return ((codeSystem != null && codeSystem.equalsIgnoreCase(MBI_ID_R4)) && ("MB".equalsIgnoreCase(codeValue) || "MC".equalsIgnoreCase(codeValue)));
+    public static boolean checkCodingIsNotValid(String codeSystem, String codeValue) {
+        return (codeSystem == null || !codeSystem.equalsIgnoreCase(MBI_ID_R4)) || (!codeValue.equalsIgnoreCase("MB") && !codeValue.equalsIgnoreCase("MC"));
     }
 
-    public static boolean checkCurrencyUrlIsValid(String url) {
-        return (url != null && url.equalsIgnoreCase(CURRENCY_IDENTIFIER));
+    public static boolean checkExtensionsNotExists(List<IBaseExtension> extensions) {
+        return (extensions == null || extensions.isEmpty());
+    }
+
+    public static boolean checkCurrencyUrlIsNotValid(String url) {
+        return (url == null || !url.equalsIgnoreCase(CURRENCY_IDENTIFIER));
     }
 
     /**

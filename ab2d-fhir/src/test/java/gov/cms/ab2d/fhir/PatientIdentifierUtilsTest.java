@@ -2,9 +2,10 @@ package gov.cms.ab2d.fhir;
 
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Extension;
+import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 
 import static gov.cms.ab2d.fhir.PatientIdentifier.CURRENT_MBI;
@@ -358,43 +360,57 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
-    void testReturnsFalseIfCodingNotExist() {
+    void testReturnsTrueIfCodingNotExist() {
         PatientIdentifier patientIdentifier = new PatientIdentifier();
         patientIdentifier.setType(PatientIdentifier.Type.MBI);
         patientIdentifier.setValue("test-1");
 
         Object type = Versions.invokeGetMethod(patientIdentifier, "getType");
-        List vals = (List) Versions.invokeGetMethod(type, "getCode");
+        List<Coding> vals = (List) Versions.invokeGetMethod(type, "getCode");
 
-        assertFalse(IdentifierUtils.checkTypeAndCodingExists(type, vals));
+        assertTrue(IdentifierUtils.checkTypeAndCodingNotExists(type, vals));
     }
 
     @Test
-    void testReturnsFalseIfCodingInvalid() {
+    void testReturnsTrueIfCodingNotValid() {
         String codeSystem = "invalid_system";
         String codeValue = "invalid_value";
-        assertFalse(IdentifierUtils.checkCodingIsValid(codeSystem, codeValue));
+        assertTrue(IdentifierUtils.checkCodingIsNotValid(codeSystem, codeValue));
     }
 
     @Test
-    void testReturnsTrueIfCodingValid() {
+    void testReturnsFalseIfCodingValid() {
         String codeSystem = MBI_ID_R4;
         String mbCodeValue = "MB";
-        assertTrue(IdentifierUtils.checkCodingIsValid(codeSystem, mbCodeValue));
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(codeSystem, mbCodeValue));
         String mcCodeValue = "MC";
-        assertTrue(IdentifierUtils.checkCodingIsValid(codeSystem, mcCodeValue));
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(codeSystem, mcCodeValue));
     }
 
     @Test
-    void testReturnsTrueIfURLValid() {
+    void testReturnsTrueIfExtensionsNotExists() {
+        List<IBaseExtension> extensions = new ArrayList<>();
+        assertTrue(IdentifierUtils.checkExtensionsNotExists(extensions));
+    }
+
+    @Test
+    void testReturnsFalseIfExtensionsExists() {
+        List<IBaseExtension> extensions = new ArrayList<>();
+        Extension extension = new Extension();
+        extensions.add(extension);
+        assertFalse(IdentifierUtils.checkExtensionsNotExists(extensions));
+    }
+
+    @Test
+    void testReturnsFalseIfURLValid() {
         String url = IdentifierUtils.CURRENCY_IDENTIFIER;
-        assertTrue(IdentifierUtils.checkCurrencyUrlIsValid(url));
+        assertFalse(IdentifierUtils.checkCurrencyUrlIsNotValid(url));
     }
 
     @Test
     void testReturnsFalseIfURLInvalid() {
         String url = "invalid_url";
-        assertFalse(IdentifierUtils.checkCurrencyUrlIsValid(url));
+        assertTrue(IdentifierUtils.checkCurrencyUrlIsNotValid(url));
     }
 
     @Test
