@@ -303,9 +303,7 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsTrueIfCodingNotValid() {
-        String codeSystem = "invalid_system";
-        String codeValue = "invalid_value";
-        assertTrue(IdentifierUtils.checkCodingIsNotValid(codeSystem, codeValue));
+        assertTrue(IdentifierUtils.checkCodingIsNotValid("invalid_system", "invalid_value"));
     }
 
     @Test
@@ -333,14 +331,12 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsFalseIfURLValid() {
-        String url = IdentifierUtils.CURRENCY_IDENTIFIER;
-        assertFalse(IdentifierUtils.checkCurrencyUrlIsNotValid(url));
+        assertFalse(IdentifierUtils.checkCurrencyUrlIsNotValid(IdentifierUtils.CURRENCY_IDENTIFIER));
     }
 
     @Test
     void testReturnsTrueIfURLInvalid() {
-        String url = "invalid_url";
-        assertTrue(IdentifierUtils.checkCurrencyUrlIsNotValid(url));
+        assertTrue(IdentifierUtils.checkCurrencyUrlIsNotValid("invalid_url"));
     }
 
     @Test
