@@ -408,7 +408,7 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
-    void testReturnsFalseIfURLInvalid() {
+    void testReturnsTrueIfURLInvalid() {
         String url = "invalid_url";
         assertTrue(IdentifierUtils.checkCurrencyUrlIsNotValid(url));
     }
