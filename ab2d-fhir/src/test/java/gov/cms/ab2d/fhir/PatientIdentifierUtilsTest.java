@@ -314,7 +314,7 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsTrueIfExtensionsNotExists() {
-        assertTrue(IdentifierUtils.checkExtensionsNotExists(new ArrayList()<>));
+        assertTrue(IdentifierUtils.checkExtensionsNotExists(new ArrayList<>()));
     }
 
     @Test
