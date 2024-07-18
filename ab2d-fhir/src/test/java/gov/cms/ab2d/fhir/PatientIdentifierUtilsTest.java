@@ -308,17 +308,13 @@ class PatientIdentifierUtilsTest {
 
     @Test
     void testReturnsFalseIfCodingValid() {
-        String codeSystem = MBI_ID_R4;
-        String mbCodeValue = "MB";
-        assertFalse(IdentifierUtils.checkCodingIsNotValid(codeSystem, mbCodeValue));
-        String mcCodeValue = "MC";
-        assertFalse(IdentifierUtils.checkCodingIsNotValid(codeSystem, mcCodeValue));
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(MBI_ID_R4, "MB"));
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(MBI_ID_R4, "MC"));
     }
 
     @Test
     void testReturnsTrueIfExtensionsNotExists() {
-        List<IBaseExtension> extensions = new ArrayList<>();
-        assertTrue(IdentifierUtils.checkExtensionsNotExists(extensions));
+        assertTrue(IdentifierUtils.checkExtensionsNotExists(new ArrayList()<>));
     }
 
     @Test
