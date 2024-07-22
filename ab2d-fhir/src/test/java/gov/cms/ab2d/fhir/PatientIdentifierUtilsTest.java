@@ -2,9 +2,10 @@ package gov.cms.ab2d.fhir;
 
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Coding;
-import org.hl7.fhir.dstu3.model.Extension;
 import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Extension;
+import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 
 import static gov.cms.ab2d.fhir.PatientIdentifier.CURRENT_MBI;
@@ -20,6 +22,7 @@ import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.CURRENT;
 import static gov.cms.ab2d.fhir.PatientIdentifier.Currency.HISTORIC;
 import static gov.cms.ab2d.fhir.PatientIdentifier.HISTORIC_MBI;
 import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID;
+import static gov.cms.ab2d.fhir.PatientIdentifier.MBI_ID_R4;
 import static gov.cms.ab2d.fhir.IdentifierUtils.CURRENCY_IDENTIFIER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -178,6 +181,161 @@ class PatientIdentifierUtilsTest {
     }
 
     @Test
+    void testGetCurrentMbiTypeNotExists() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(null);
+        patientIdentifier.setValue("test-1");
+        assertNull(IdentifierUtils.getCurrentMbi(List.of(patientIdentifier)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsCurrent() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "MB");
+
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, CURRENT_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.CURRENT, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsHistoric() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "MB");
+
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, HISTORIC_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.HISTORIC, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknown() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "MB");
+
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, "unknown");
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenCodingEmpty() {
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(null, null);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenCodingSystemInvalid() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode("invalid_system", "MB");
+        
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, CURRENT_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenCodingCodeInvalid() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "invalid_code");
+        
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, CURRENT_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenUrlNull() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "MB");
+        
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, CURRENT_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode(null, extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testGetCurrencyFromTypeCodingExtensionReturnsUnknownWhenUrlInvalid() {
+        Coding coding = setupCodingForTestingCurrencyTypeCode(MBI_ID_R4, "MB");
+        
+        Coding extCoding = setupCodingForTestingCurrencyTypeCode(CURRENCY_IDENTIFIER, CURRENT_MBI);
+        Extension extension = setupExtensionForTestingCurrencyTypeCode("invalid_url", extCoding);
+
+        Identifier identifier = setupIdentifierForTestingCurrencyTypeCode(coding, extension);
+        Patient patient = setupPatientForTestingCurrencyTypeCode(identifier);
+
+        assertEquals(PatientIdentifier.Currency.UNKNOWN, IdentifierUtils.getCurrencyFromTypeCodingExtension(patient.getIdentifier().get(0)));
+    }
+
+    @Test
+    void testReturnsTrueIfCodingNotExist() {
+        PatientIdentifier patientIdentifier = new PatientIdentifier();
+        patientIdentifier.setType(PatientIdentifier.Type.MBI);
+        patientIdentifier.setValue("test-1");
+
+        Object type = Versions.invokeGetMethod(patientIdentifier, "getType");
+        List<Coding> vals = (List) Versions.invokeGetMethod(type, "getCode");
+
+        assertTrue(IdentifierUtils.checkTypeAndCodingNotExists(type, vals));
+    }
+
+    @Test
+    void testReturnsTrueIfCodingNotValid() {
+        assertTrue(IdentifierUtils.checkCodingIsNotValid("invalid_system", "invalid_value"));
+    }
+
+    @Test
+    void testReturnsFalseIfCodingValid() {
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(MBI_ID_R4, "MB"));
+        assertFalse(IdentifierUtils.checkCodingIsNotValid(MBI_ID_R4, "MC"));
+    }
+
+    @Test
+    void testReturnsTrueIfExtensionsNotExists() {
+        assertTrue(IdentifierUtils.checkExtensionsNotExists(new ArrayList<>()));
+    }
+
+    @Test
+    void testReturnsFalseIfExtensionsExists() {
+        List<IBaseExtension> extensions = new ArrayList<>();
+        Extension extension = new Extension();
+        extensions.add(extension);
+        assertFalse(IdentifierUtils.checkExtensionsNotExists(extensions));
+    }
+
+    @Test
+    void testReturnsFalseIfURLValid() {
+        assertFalse(IdentifierUtils.checkCurrencyUrlIsNotValid(IdentifierUtils.CURRENCY_IDENTIFIER));
+    }
+
+    @Test
+    void testReturnsTrueIfURLInvalid() {
+        assertTrue(IdentifierUtils.checkCurrencyUrlIsNotValid("invalid_url"));
+    }
+
+    @Test
     void testR4ExtractIds() throws IOException {
         List<String> beneIds = List.of("-19990000001101", "-19990000001102", "-19990000001103");
         List<String> currentMbis = List.of("3S24A00AA00", "4S24A00AA00", "5S24A00AA00");
@@ -210,6 +368,42 @@ class PatientIdentifierUtilsTest {
 
             */
         }
+    }
+
+    Extension setupExtensionForTestingCurrencyTypeCode(String url, Coding extCoding) {
+        Extension extension = new Extension();
+        extension.setUrl(url);
+
+        if (extCoding != null) {
+            extension.setValue(extCoding);
+        }
+        return extension;
+    }
+
+    Coding setupCodingForTestingCurrencyTypeCode(String system, String code) {
+        Coding coding = new Coding();
+        coding.setSystem(system);
+        coding.setCode(code);
+        return coding;
+    }
+
+    Identifier setupIdentifierForTestingCurrencyTypeCode(Coding coding, Extension extension) {
+        Identifier identifier = new Identifier();
+        identifier.setSystem(MBI_ID);
+        identifier.setValue("mbi-1");
+        if (coding != null) {
+            identifier.getType().addCoding(coding);
+        }
+        if (extension != null) {
+            identifier.getType().getCoding().get(0).addExtension(extension);
+        }
+        return identifier;
+    }
+
+    Patient setupPatientForTestingCurrencyTypeCode(Identifier identifier) {
+        Patient patient = new Patient();
+        patient.setIdentifier(List.of(identifier));
+        return patient;
     }
 
     IBaseResource extractBundle(FhirVersion version, String fileName) throws IOException {

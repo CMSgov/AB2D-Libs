@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.ICompositeType;
 import org.hl7.fhir.instance.model.api.IDomainResource;
+import org.hl7.fhir.dstu3.model.Coding;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -206,39 +207,57 @@ public final class IdentifierUtils {
         return getCurrencyFromTypeCodingExtension(identifier);
     }
 
-    private static PatientIdentifier.Currency getCurrencyFromTypeCodingExtension(ICompositeType identifier) {
+    public static PatientIdentifier.Currency getCurrencyFromTypeCodingExtension(ICompositeType identifier) {
         Object type = Versions.invokeGetMethod(identifier, "getType");
-        if (type == null) {
+        List<Coding> vals = (List) Versions.invokeGetMethod(type, "getCoding");
+
+        if (checkTypeAndCodingNotExists(type, vals)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
-        List vals = (List) Versions.invokeGetMethod(type, "getCoding");
-        if (vals == null || vals.isEmpty()) {
-            return PatientIdentifier.Currency.UNKNOWN;
-        }
+
         Object val = vals.get(0);
         String codeSystem = (String) Versions.invokeGetMethod(val, GET_SYSTEM);
         String codeValue = (String) Versions.invokeGetMethod(val, GET_CODE);
-        if (codeSystem != null && codeSystem.equalsIgnoreCase(MBI_ID_R4) && ("MB".equalsIgnoreCase(codeValue) || "MC".equalsIgnoreCase(codeValue))) {
-            List extensions = (List) Versions.invokeGetMethod(val, "getExtension");
-            if (extensions != null && extensions.size() > 0) {
-                Object extension = extensions.get(0);
-                String url = (String) Versions.invokeGetMethod(extension, "getUrl");
-                if (url != null && url.equalsIgnoreCase(CURRENCY_IDENTIFIER)) {
-                    Object currValue = Versions.invokeGetMethod(extension, GET_VALUE);
-                    String extValueSystem = (String) Versions.invokeGetMethod(currValue, GET_SYSTEM);
-                    if (CURRENCY_IDENTIFIER.equalsIgnoreCase(extValueSystem)) {
-                        String currValueCode = (String) Versions.invokeGetMethod(currValue, GET_CODE);
-                        if (CURRENT_MBI.equalsIgnoreCase(currValueCode)) {
-                            return PatientIdentifier.Currency.CURRENT;
-                        }
-                        if (HISTORIC_MBI.equalsIgnoreCase(currValueCode)) {
-                            return PatientIdentifier.Currency.HISTORIC;
-                        }
-                    }
-                }
+
+        List<IBaseExtension> extensions = (List) Versions.invokeGetMethod(val, "getExtension");
+        if (checkCodingIsNotValid(codeSystem, codeValue) || checkExtensionsNotExists(extensions)) {
+            return PatientIdentifier.Currency.UNKNOWN;
+        }
+
+        Object extension = extensions.get(0);
+        String url = (String) Versions.invokeGetMethod(extension, "getUrl");
+        if (checkCurrencyUrlIsNotValid(url)) {
+            return PatientIdentifier.Currency.UNKNOWN;
+        }
+        
+        Object currValue = Versions.invokeGetMethod(extension, GET_VALUE);
+        String extValueSystem = (String) Versions.invokeGetMethod(currValue, GET_SYSTEM);
+        if (CURRENCY_IDENTIFIER.equalsIgnoreCase(extValueSystem)) {
+            String currValueCode = (String) Versions.invokeGetMethod(currValue, GET_CODE);
+            if (CURRENT_MBI.equalsIgnoreCase(currValueCode)) {
+                return PatientIdentifier.Currency.CURRENT;
+            }
+            if (HISTORIC_MBI.equalsIgnoreCase(currValueCode)) {
+                return PatientIdentifier.Currency.HISTORIC;
             }
         }
         return PatientIdentifier.Currency.UNKNOWN;
+    }
+
+    public static boolean checkTypeAndCodingNotExists(Object type, List<Coding> vals) {
+        return (type == null || vals == null || vals.isEmpty());
+    }
+
+    public static boolean checkCodingIsNotValid(String codeSystem, String codeValue) {
+        return (codeSystem == null || !codeSystem.equalsIgnoreCase(MBI_ID_R4)) || (!codeValue.equalsIgnoreCase("MB") && !codeValue.equalsIgnoreCase("MC"));
+    }
+
+    public static boolean checkExtensionsNotExists(List<IBaseExtension> extensions) {
+        return (extensions == null || extensions.isEmpty());
+    }
+
+    public static boolean checkCurrencyUrlIsNotValid(String url) {
+        return (url == null || !url.equalsIgnoreCase(CURRENCY_IDENTIFIER));
     }
 
     /**
