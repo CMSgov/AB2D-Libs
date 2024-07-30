@@ -58,10 +58,6 @@ public class BFDSearchImpl implements BFDSearch {
             if (contractNum.equals("S4802") || contractNum.equals("Z1001")) {
                 url.append("&_lastUpdated=le").append(since.plusMonths(1));
             }
-            //AB2D-6167 Create customized script for Humana
-            if (contractNum.equals("S5884")) {
-                url.append("&_lastUpdated=le").append(since.plusMonths(2));
-            }
         }
 
         if (pageSize > 0) {
