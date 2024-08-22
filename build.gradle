@@ -38,10 +38,10 @@ ext {
     commonsLangVersion='3.12.0'
     lombokVersion = '1.18.28'
     hapiVersion = '7.2.2'
-    springBootVersion='2.7.6'
-    springCloudAwsVersion='2.4.4'
+    springBootVersion='3.2.8'
+    springCloudAwsVersion='3.1.1'
     newRelicVersion='8.4.0'
-    testContainerVersion='1.18.3'
+    testContainerVersion='1.20.1'
     mockServerVersion='5.15.0'
     liquibaseVersion="4.23.0"
     jacksonVersion = "2.15.2"
@@ -133,8 +133,8 @@ subprojects {
         println("Artifactory password not set")
     }
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
     group 'gov.cms.ab2d'
 
@@ -156,8 +156,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+//        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+ //       out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -173,7 +173,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled true
+//            xml.enabled true
         }
     }
 

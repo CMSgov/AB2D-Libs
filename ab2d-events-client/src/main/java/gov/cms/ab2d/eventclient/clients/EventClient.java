@@ -2,8 +2,10 @@ package gov.cms.ab2d.eventclient.clients;
 
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+@Repository
 public interface EventClient {
 
     enum LogType {

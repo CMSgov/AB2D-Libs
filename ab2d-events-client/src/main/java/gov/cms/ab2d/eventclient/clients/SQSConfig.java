@@ -1,12 +1,6 @@
 package gov.cms.ab2d.eventclient.clients;
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSAsync;
-import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
-import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -15,16 +9,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import io.awspring.cloud.messaging.config.QueueMessageHandlerFactory;
-import io.awspring.cloud.messaging.support.NotificationMessageArgumentResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
+import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
+import software.amazon.awssdk.services.sqs.model.SqsException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Configuration
 @Slf4j
@@ -53,33 +53,32 @@ public class SQSConfig {
 
     @Primary
     @Bean
-    public AmazonSQSAsync amazonSQSAsync() {
+    public SqsClient amazonSQSAsync() throws URISyntaxException {
         log.info("Locakstack url " + url);
-        if (null != url) {
-            return (AmazonSQSAsync) createQueue(AmazonSQSAsyncClientBuilder
-                    .standard()
-                    .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
-                    .withEndpointConfiguration(getEndpointConfig(url))
+        if (url != null) {
+            return createQueue(SqsClient.builder()
+                    .credentialsProvider(DefaultCredentialsProvider.create())
+                    .endpointOverride(new URI(url))
+                    .region(Region.US_EAST_1)
                     .build());
         }
-        return AmazonSQSAsyncClientBuilder
-                .standard()
-                .withCredentials(DefaultAWSCredentialsProviderChain.getInstance())
-                .withRegion(Regions.US_EAST_1)
-                .build();
+        return createQueue(SqsClient.builder()
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .region(Region.US_EAST_1)
+                .build());
     }
 
     @Bean
-    public SQSEventClient sqsEventClient(AmazonSQS amazonSQS) {
+    public SQSEventClient sqsEventClient(SqsClient amazonSQS) {
         return new SQSEventClient(amazonSQS, objectMapper(), sqsQueueName);
     }
 
-    @Bean
-    public QueueMessageHandlerFactory queueMessageHandlerFactory(MessageConverter messageConverter) {
-        var factory = new QueueMessageHandlerFactory();
-        factory.setArgumentResolvers(List.of(new NotificationMessageArgumentResolver(messageConverter)));
-        return factory;
-    }
+//    @Bean
+//    public QueueMessageHandlerFactory queueMessageHandlerFactory(MessageConverter messageConverter) {
+//        var factory = new QueueMessageHandlerFactory();
+//        factory.setArgumentResolvers(List.of(new NotificationMessageArgumentResolver(messageConverter)));
+//        return factory;
+//    }
 
     /*
         This is a static method to avoid breaking existing projects mapping.
@@ -103,18 +102,32 @@ public class SQSConfig {
     }
 
     // Until localstack is built out more, create the queue here when running locally
-    private AmazonSQS createQueue(AmazonSQS amazonSQS) {
+//    private AmazonSQS createQueue(AmazonSQS amazonSQS) {
+//        try {
+//            amazonSQS.getQueueUrl(sqsQueueName);
+//            log.info("Queue already exists");
+//        } catch (QueueDoesNotExistException e) {
+//            amazonSQS.createQueue(sqsQueueName);
+//            log.info("Queue created");
+//        }
+//        return amazonSQS;
+//    }
+
+    public SqsClient createQueue(SqsClient sqsClient) {
         try {
-            amazonSQS.getQueueUrl(sqsQueueName);
-            log.info("Queue already exists");
-        } catch (QueueDoesNotExistException e) {
-            amazonSQS.createQueue(sqsQueueName);
+            CreateQueueRequest createQueueRequest = CreateQueueRequest.builder()
+                    .queueName(sqsQueueName)
+                    .build();
+
+            sqsClient.createQueue(createQueueRequest);
             log.info("Queue created");
+        } catch (SqsException e) {
+            log.info(e.getMessage());
         }
-        return amazonSQS;
+        return sqsClient;
     }
 
-    private AwsClientBuilder.EndpointConfiguration getEndpointConfig(String localstackURl) {
-        return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
-    }
+//    private AwsClientBuilder.EndpointConfiguration getEndpointConfig(String localstackURl) {
+//        return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
+//    }
 }
