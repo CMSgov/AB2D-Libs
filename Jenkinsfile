@@ -8,8 +8,8 @@ pipeline {
     }
 
     tools {
-        gradle "gradle-7.2"
-        jdk 'openjdk17'
+        gradle "gradle-8.10"
+        jdk 'openjdk21'
     }
 
     stages {
