@@ -3,8 +3,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    implementation 'com.amazonaws:aws-java-sdk-sns:1.12.504'
-    implementation 'software.amazon.awssdk:sns:2.20.101'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+    implementation 'software.amazon.awssdk:sns:2.27.9'
     implementation(project(":ab2d-events-client"))
 
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"

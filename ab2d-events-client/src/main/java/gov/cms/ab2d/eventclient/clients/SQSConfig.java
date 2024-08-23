@@ -18,7 +18,6 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
@@ -57,13 +56,13 @@ public class SQSConfig {
         log.info("Locakstack url " + url);
         if (url != null) {
             return createQueue(SqsClient.builder()
-                    .credentialsProvider(DefaultCredentialsProvider.create())
+                    .credentialsProvider(DefaultCredentialsProvider.builder().build())
                     .endpointOverride(new URI(url))
                     .region(Region.US_EAST_1)
                     .build());
         }
         return createQueue(SqsClient.builder()
-                .credentialsProvider(DefaultCredentialsProvider.create())
+                .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.US_EAST_1)
                 .build());
     }
@@ -72,13 +71,6 @@ public class SQSConfig {
     public SQSEventClient sqsEventClient(SqsClient amazonSQS) {
         return new SQSEventClient(amazonSQS, objectMapper(), sqsQueueName);
     }
-
-//    @Bean
-//    public QueueMessageHandlerFactory queueMessageHandlerFactory(MessageConverter messageConverter) {
-//        var factory = new QueueMessageHandlerFactory();
-//        factory.setArgumentResolvers(List.of(new NotificationMessageArgumentResolver(messageConverter)));
-//        return factory;
-//    }
 
     /*
         This is a static method to avoid breaking existing projects mapping.
@@ -101,18 +93,6 @@ public class SQSConfig {
         return jacksonMessageConverter;
     }
 
-    // Until localstack is built out more, create the queue here when running locally
-//    private AmazonSQS createQueue(AmazonSQS amazonSQS) {
-//        try {
-//            amazonSQS.getQueueUrl(sqsQueueName);
-//            log.info("Queue already exists");
-//        } catch (QueueDoesNotExistException e) {
-//            amazonSQS.createQueue(sqsQueueName);
-//            log.info("Queue created");
-//        }
-//        return amazonSQS;
-//    }
-
     public SqsClient createQueue(SqsClient sqsClient) {
         try {
             CreateQueueRequest createQueueRequest = CreateQueueRequest.builder()
@@ -122,12 +102,9 @@ public class SQSConfig {
             sqsClient.createQueue(createQueueRequest);
             log.info("Queue created");
         } catch (SqsException e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         }
         return sqsClient;
     }
 
-//    private AwsClientBuilder.EndpointConfiguration getEndpointConfig(String localstackURl) {
-//        return new AwsClientBuilder.EndpointConfiguration(localstackURl, region);
-//    }
 }

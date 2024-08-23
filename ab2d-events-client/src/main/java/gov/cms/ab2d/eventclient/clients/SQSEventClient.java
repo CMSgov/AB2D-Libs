@@ -105,20 +105,6 @@ public class SQSEventClient implements EventClient {
         }
     }
 
-//    private void sendMessage(SQSMessages message) {
-//        String queueUrl = amazonSQS.getQueueUrl(queueName).getQueueUrl();
-//        try {
-//            SendMessageRequest sendMessageRequest = SendMessageRequest.builder()
-//                    .queueUrl(queueUrl)
-//                    .messageBody(mapper.writeValueAsString(message))
-//                    .build();
-//
-//            amazonSQS.sendMessage(sendMessageRequest);
-//        } catch (JsonProcessingException | UnsupportedOperationException e) {
-//            log.info(e.getMessage());
-//        }
-//    }
-
     public void sendMessage(SQSMessages message) {
         try {
             GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder()
