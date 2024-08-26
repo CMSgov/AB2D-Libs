@@ -40,7 +40,7 @@ ext {
     hapiVersion = '7.2.2'
     springBootVersion='2.7.6'
     springCloudAwsVersion='2.4.4'
-    springWebVersion="5.3.24"
+    springWebVersion="5.3.26"
     newRelicVersion='8.4.0'
     testContainerVersion='1.18.3'
     mockServerVersion='5.15.0'
