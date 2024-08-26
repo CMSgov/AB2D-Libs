@@ -26,7 +26,7 @@ ext {
     bfdVersion='2.2.4'
     aggregatorVersion='1.3.4'
     filtersVersion='1.9.5'
-    eventClientVersion='1.12.9'
+    eventClientVersion='1.12.10'
     propertiesClientVersion='1.2.5'
     contractClientVersion='1.2.4'
     snsClientVersion='0.2.4'
@@ -40,6 +40,7 @@ ext {
     hapiVersion = '7.2.2'
     springBootVersion='2.7.6'
     springCloudAwsVersion='2.4.4'
+    springWebVersion="5.3.26"
     newRelicVersion='8.4.0'
     testContainerVersion='1.18.3'
     mockServerVersion='5.15.0'

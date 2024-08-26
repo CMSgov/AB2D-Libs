@@ -229,7 +229,7 @@ public final class IdentifierUtils {
         if (checkCurrencyUrlIsNotValid(url)) {
             return PatientIdentifier.Currency.UNKNOWN;
         }
-        
+
         Object currValue = Versions.invokeGetMethod(extension, GET_VALUE);
         String extValueSystem = (String) Versions.invokeGetMethod(currValue, GET_SYSTEM);
         if (CURRENCY_IDENTIFIER.equalsIgnoreCase(extValueSystem)) {

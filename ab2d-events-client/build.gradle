@@ -3,7 +3,8 @@ dependencies {
     implementation(platform(annotationProcessor("com.slack.api:slack-api-client:$slackAPIVersion")))
     implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
-    implementation "org.springframework:spring-web:${springBootVersion}"
+    implementation "org.springframework:spring-web:${springWebVersion}"
+    implementation "org.springframework:spring-webmvc:${springWebVersion}"
     implementation "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
     implementation "io.awspring.cloud:spring-cloud-starter-aws:${springCloudAwsVersion}"
