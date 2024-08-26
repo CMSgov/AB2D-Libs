@@ -134,8 +134,8 @@ subprojects {
         println("Artifactory password not set")
     }
 
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     group 'gov.cms.ab2d'
 
