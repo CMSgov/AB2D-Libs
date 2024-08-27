@@ -22,10 +22,10 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.2.9'
-    bfdVersion='2.2.5'
+    fhirVersion='1.2.10'
+    bfdVersion='2.3.0'
     aggregatorVersion='1.3.4'
-    filtersVersion='1.9.6'
+    filtersVersion='1.9.7'
     eventClientVersion='1.12.10'
     propertiesClientVersion='1.2.5'
     contractClientVersion='1.2.4'
@@ -37,7 +37,7 @@ ext {
 
     commonsLangVersion='3.12.0'
     lombokVersion = '1.18.28'
-    hapiVersion = '6.8.0'
+    hapiVersion = '6.6.2'
     springBootVersion='2.7.6'
     springCloudAwsVersion='2.4.4'
     springWebVersion="5.3.26"
