@@ -33,8 +33,7 @@ import software.amazon.awssdk.services.sqs.model.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(properties = {"spring.liquibase.enabled=false"})
 @ExtendWith(OutputCaptureExtension.class)
@@ -174,5 +173,23 @@ public class SendSqsEventTest {
 
         new SQSConfig("", "", Ab2dEnvironment.SANDBOX);
         assertEquals("ab2d-sbx-sandbox-events-sqs", System.getProperty("sqs.queue-name"));
+    }
+
+    @Test
+    void sendLogsTest(){
+        SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
+        ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
+                "File Deleted");
+        sqsEventClient.sendLogs(event);
+        Mockito.verify(amazonSQSSpy, times(1)).sendMessage(any(SendMessageRequest.class));
+    }
+
+    @Test
+    void sendAlertTest(){
+        SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
+        SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
+        sqsEventClient.alert("message", List.of(Ab2dEnvironment.IMPL));
+        Mockito.verify(amazonSQSSpy, times(1)).sendMessage(any(SendMessageRequest.class));
     }
 }
