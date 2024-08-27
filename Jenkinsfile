@@ -8,7 +8,7 @@ pipeline {
     }
 
     tools {
-        gradle "gradle-8.10"
+        gradle "gradle-7.2"
         jdk 'openjdk17'
     }
 
