@@ -11,7 +11,6 @@ import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import gov.cms.ab2d.eventclient.clients.SQSEventClient;
 
 import java.lang.UnsupportedOperationException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,15 +55,8 @@ public class SendSqsEventTest {
         assertTrue(url.contains(LOCAL_EVENTS_SQS));
     }
 
-//    @Test
-//    void testQueueUrlNoExistingQueue() {
-//        Assertions.assertThrows(QueueDoesNotExistException.class, () -> {
-//            amazonSQS.getQueueUrl(DEV_EVENTS_SQS);
-//        });
-//    }
-
     @Test
-    void testSendMessages() throws JsonProcessingException, URISyntaxException {
+    void testSendMessages() throws JsonProcessingException {
         SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
