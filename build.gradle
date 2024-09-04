@@ -26,7 +26,7 @@ ext {
     bfdVersion='3.0.0'
     aggregatorVersion='2.0.0'
     filtersVersion='2.0.0'
-    eventClientVersion='2.0.0'
+    eventClientVersion='3.0.0'
     propertiesClientVersion='2.0.0'
     contractClientVersion='2.0.0'
     snsClientVersion='1.0.0'
