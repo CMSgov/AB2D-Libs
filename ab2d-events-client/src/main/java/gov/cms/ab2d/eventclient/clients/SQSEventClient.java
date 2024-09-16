@@ -13,7 +13,6 @@ import gov.cms.ab2d.eventclient.messages.SQSMessages;
 import gov.cms.ab2d.eventclient.messages.SlackSQSMessage;
 import gov.cms.ab2d.eventclient.messages.TraceAndAlertSQSMessage;
 import gov.cms.ab2d.eventclient.messages.TraceSQSMessage;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

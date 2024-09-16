@@ -66,7 +66,6 @@ public class SQSConfig {
                 .build();
     }
 
-
     @Bean
     public SQSEventClient sqsEventClient(SqsAsyncClient amazonSQS) {
         return new SQSEventClient(amazonSQS, objectMapper(), sqsQueueName);
