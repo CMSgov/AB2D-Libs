@@ -9,12 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
-import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
@@ -26,7 +24,6 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.net.URI;
 
-//@Import(SqsBootstrapConfiguration.class)
 @Configuration
 @Slf4j
 public class SQSConfig {
