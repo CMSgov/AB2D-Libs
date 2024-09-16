@@ -3,11 +3,13 @@ package gov.cms.ab2d.eventclient.messages;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import java.util.List;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@Builder
 public class TraceAndAlertSQSMessage extends SQSMessages {
 
     private LoggableEvent loggableEvent;

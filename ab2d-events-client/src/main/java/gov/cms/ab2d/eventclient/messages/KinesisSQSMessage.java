@@ -1,11 +1,12 @@
 package gov.cms.ab2d.eventclient.messages;
 
 import gov.cms.ab2d.eventclient.events.LoggableEvent;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
+@Builder
 public class KinesisSQSMessage extends SQSMessages {
     private LoggableEvent loggableEvent;
 

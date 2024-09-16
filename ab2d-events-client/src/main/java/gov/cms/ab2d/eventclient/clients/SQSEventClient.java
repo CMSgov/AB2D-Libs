@@ -15,21 +15,22 @@ import gov.cms.ab2d.eventclient.messages.TraceAndAlertSQSMessage;
 import gov.cms.ab2d.eventclient.messages.TraceSQSMessage;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import lombok.extern.slf4j.Slf4j;
-import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 
 @Slf4j
 public class SQSEventClient implements EventClient {
-    private final SqsClient amazonSQS;
+    private final SqsAsyncClient amazonSQS;
     private final ObjectMapper mapper;
 
     private final String queueName;
 
-    public SQSEventClient(SqsClient amazonSQS, ObjectMapper mapper, String queueName) {
+    public SQSEventClient(SqsAsyncClient amazonSQS, ObjectMapper mapper, String queueName) {
         this.amazonSQS = amazonSQS;
         this.mapper = mapper;
         this.queueName = queueName;
@@ -111,7 +112,7 @@ public class SQSEventClient implements EventClient {
                     .queueName(queueName)
                     .build();
 
-            String queueUrl = amazonSQS.getQueueUrl(getQueueRequest).queueUrl();
+            String queueUrl = amazonSQS.getQueueUrl(getQueueRequest).get().queueUrl();
             SendMessageRequest sendMessageRequest = SendMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .messageBody(mapper.writeValueAsString(message))
@@ -119,7 +120,8 @@ public class SQSEventClient implements EventClient {
 
             amazonSQS.sendMessage(sendMessageRequest);
 
-        } catch (JsonProcessingException | UnsupportedOperationException | SqsException e) {
+        } catch (JsonProcessingException | UnsupportedOperationException | SqsException | InterruptedException |
+                 ExecutionException e) {
             log.info(e.getMessage());
         }
     }

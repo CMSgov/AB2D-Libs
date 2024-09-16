@@ -1,13 +1,23 @@
 package gov.cms.ab2d.eventclient.events;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.time.OffsetDateTime;
+
+import gov.cms.ab2d.eventclient.messages.GeneralSQSMessage;
+import gov.cms.ab2d.eventclient.messages.KinesisSQSMessage;
 import lombok.Data;
 
 /**
  * Interface describing a loggable event
  */
 @Data
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ApiRequestEvent.class, name = "ApiRequestEvent"),
+        @JsonSubTypes.Type(value = ApiResponseEvent.class, name = "ApiResponseEvent"),
+})
 public abstract class LoggableEvent {
     protected LoggableEvent() { }
 

@@ -13,6 +13,8 @@ import gov.cms.ab2d.eventclient.clients.SQSEventClient;
 import java.lang.UnsupportedOperationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.http.HttpStatus;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,19 +47,19 @@ public class SendSqsEventTest {
     public static final String DEV_EVENTS_SQS = "ab2d-dev-events-sqs";
 
     @Autowired
-    private SqsClient amazonSQS;
+    private SqsAsyncClient amazonSQS;
 
     private final ObjectMapper mapper = SQSConfig.objectMapper();
 
     @Test
-    void testQueueUrl() {
-        String url = amazonSQS.getQueueUrl(GetQueueUrlRequest.builder().queueName(LOCAL_EVENTS_SQS).build()).queueUrl();
+    void testQueueUrl() throws ExecutionException, InterruptedException {
+        String url = amazonSQS.getQueueUrl(GetQueueUrlRequest.builder().queueName(LOCAL_EVENTS_SQS).build()).get().queueUrl();
         assertTrue(url.contains(LOCAL_EVENTS_SQS));
     }
 
     @Test
-    void testSendMessages() throws JsonProcessingException {
-        SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
+    void testSendMessages() throws JsonProcessingException, ExecutionException, InterruptedException {
+        SqsAsyncClient amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
@@ -69,19 +71,19 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message1 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
-        List<Message> message2 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        List<Message> message1 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
+        List<Message> message2 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
 
         assertTrue(message1.get(0).body().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).body().contains(mapper.writeValueAsString(sentApiResponseEvent)));
     }
 
     @Test
-    void testSendMessagesDifferentQueue() throws JsonProcessingException {
+    void testSendMessagesDifferentQueue() throws JsonProcessingException, ExecutionException, InterruptedException {
         amazonSQS.createQueue( CreateQueueRequest.builder()
                 .queueName("ab2d-dev-events-sqs")
                 .build());
-        SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
+        SqsAsyncClient amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, DEV_EVENTS_SQS);
 
         final ArgumentCaptor<LoggableEvent> captor = ArgumentCaptor.forClass(LoggableEvent.class);
@@ -93,16 +95,16 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(2)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message1 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(DEV_EVENTS_SQS).build()).messages();
-        List<Message> message2 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(DEV_EVENTS_SQS).build()).messages();
+        List<Message> message1 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(DEV_EVENTS_SQS).build()).get().messages();
+        List<Message> message2 = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(DEV_EVENTS_SQS).build()).get().messages();
 
         assertTrue(message1.get(0).body().contains(mapper.writeValueAsString(sentApiRequestEvent)));
         assertTrue(message2.get(0).body().contains(mapper.writeValueAsString(sentApiResponseEvent)));
     }
 
     @Test
-    void logWithSQS() {
-        SqsClient amazonSQSSpy = Mockito.spy(amazonSQS);
+    void logWithSQS() throws ExecutionException, InterruptedException {
+        SqsAsyncClient amazonSQSSpy = Mockito.spy(amazonSQS);
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSSpy, mapper, LOCAL_EVENTS_SQS);
 
         ErrorEvent event = new ErrorEvent("user", "jobId", ErrorEvent.ErrorType.FILE_ALREADY_DELETED,
@@ -120,34 +122,34 @@ public class SendSqsEventTest {
 
         Mockito.verify(amazonSQSSpy, timeout(1000).times(7)).sendMessage(any(SendMessageRequest.class));
 
-        List<Message> message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        List<Message> message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("GeneralSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("TraceSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("AlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("SlackSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("KinesisSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("TraceAndAlertSQSMessage"));
 
-        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).messages();
+        message = amazonSQS.receiveMessage(ReceiveMessageRequest.builder().queueUrl(LOCAL_EVENTS_SQS).build()).get().messages();
         assertTrue(message.get(0).body().contains("LogAndTraceSQSMessage"));
     }
 
     @Test
     void testFailedMapping(CapturedOutput output) {
-        SqsClient amazonSQSMock = Mockito.mock(SqsClient.class);
+        SqsAsyncClient amazonSQSMock = Mockito.mock(SqsAsyncClient.class);
         GetQueueUrlResponse queueURL = Mockito.mock(GetQueueUrlResponse.class);
 
-        when(amazonSQSMock.getQueueUrl(any(GetQueueUrlRequest.class))).thenReturn(queueURL);
+        when(amazonSQSMock.getQueueUrl(any(GetQueueUrlRequest.class))).thenReturn(CompletableFuture.completedFuture(queueURL));
         when(queueURL.queueUrl()).thenReturn("http://localhost:4321");
         when(amazonSQSMock.sendMessage(any(SendMessageRequest.class))).thenThrow(new UnsupportedOperationException("foobar"));
         SQSEventClient sqsEventClient = new SQSEventClient(amazonSQSMock, mapper, LOCAL_EVENTS_SQS);
