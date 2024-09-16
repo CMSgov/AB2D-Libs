@@ -6,9 +6,7 @@ import java.util.List;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
-@Builder
+@Data
 public class AlertSQSMessage extends SQSMessages {
 
     private String message;

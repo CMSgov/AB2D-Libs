@@ -7,9 +7,7 @@ import java.util.List;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
-@Builder
+@Data
 public class LogAndTraceSQSMessage extends SQSMessages {
 
     private LoggableEvent loggableEvent;

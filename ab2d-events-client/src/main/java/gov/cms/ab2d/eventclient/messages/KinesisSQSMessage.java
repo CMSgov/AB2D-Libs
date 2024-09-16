@@ -4,9 +4,7 @@ import gov.cms.ab2d.eventclient.events.LoggableEvent;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
-@Getter
-@Setter
-@Builder
+@Data
 public class KinesisSQSMessage extends SQSMessages {
     private LoggableEvent loggableEvent;
 
