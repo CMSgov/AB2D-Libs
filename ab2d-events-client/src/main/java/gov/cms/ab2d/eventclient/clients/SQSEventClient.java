@@ -14,7 +14,6 @@ import gov.cms.ab2d.eventclient.messages.SlackSQSMessage;
 import gov.cms.ab2d.eventclient.messages.TraceAndAlertSQSMessage;
 import gov.cms.ab2d.eventclient.messages.TraceSQSMessage;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
@@ -110,8 +109,7 @@ public class SQSEventClient implements EventClient {
             GetQueueUrlRequest getQueueRequest = GetQueueUrlRequest.builder()
                     .queueName(queueName)
                     .build();
-
-            String queueUrl = amazonSQS.getQueueUrl(getQueueRequest).get().queueUrl();
+            String queueUrl = amazonSQS.getQueueUrl(getQueueRequest).join().queueUrl();
             SendMessageRequest sendMessageRequest = SendMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .messageBody(mapper.writeValueAsString(message))
@@ -119,8 +117,7 @@ public class SQSEventClient implements EventClient {
 
             amazonSQS.sendMessage(sendMessageRequest);
 
-        } catch (JsonProcessingException | UnsupportedOperationException | SqsException | InterruptedException |
-                 ExecutionException e) {
+        } catch (JsonProcessingException | UnsupportedOperationException | SqsException e) {
             log.info(e.getMessage());
         }
     }

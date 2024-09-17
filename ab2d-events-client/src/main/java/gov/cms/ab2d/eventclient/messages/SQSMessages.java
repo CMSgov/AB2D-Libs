@@ -19,5 +19,5 @@ import lombok.extern.slf4j.Slf4j;
         @JsonSubTypes.Type(value = TraceSQSMessage.class, name = "TraceSQSMessage"),
 })
 public abstract class SQSMessages {
-    public SQSMessages() { }
+    protected SQSMessages() { }
 }
