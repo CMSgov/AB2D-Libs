@@ -18,12 +18,11 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 @Configuration
 @Slf4j
@@ -52,23 +51,23 @@ public class SQSConfig {
 
     @Primary
     @Bean
-    public SqsClient amazonSQSAsync() throws URISyntaxException {
+    public SqsAsyncClient amazonSQSAsync() {
         log.info("Locakstack url " + url);
         if (url != null) {
-            return createQueue(SqsClient.builder()
+            return createQueue(SqsAsyncClient.builder()
                     .credentialsProvider(DefaultCredentialsProvider.builder().build())
-                    .endpointOverride(new URI(url))
+                    .endpointOverride(URI.create(url))
                     .region(Region.US_EAST_1)
                     .build());
         }
-        return createQueue(SqsClient.builder()
+        return SqsAsyncClient.builder()
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.US_EAST_1)
-                .build());
+                .build();
     }
 
     @Bean
-    public SQSEventClient sqsEventClient(SqsClient amazonSQS) {
+    public SQSEventClient sqsEventClient(SqsAsyncClient amazonSQS) {
         return new SQSEventClient(amazonSQS, objectMapper(), sqsQueueName);
     }
 
@@ -93,7 +92,7 @@ public class SQSConfig {
         return jacksonMessageConverter;
     }
 
-    public SqsClient createQueue(SqsClient sqsClient) {
+    public SqsAsyncClient createQueue(SqsAsyncClient sqsClient) {
         try {
             CreateQueueRequest createQueueRequest = CreateQueueRequest.builder()
                     .queueName(sqsQueueName)
