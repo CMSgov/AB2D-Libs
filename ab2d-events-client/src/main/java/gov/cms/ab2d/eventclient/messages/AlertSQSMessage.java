@@ -2,8 +2,8 @@ package gov.cms.ab2d.eventclient.messages;
 
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.util.List;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

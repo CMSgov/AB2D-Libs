@@ -22,27 +22,27 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='1.2.9'
-    bfdVersion='2.2.5'
-    aggregatorVersion='1.3.4'
-    filtersVersion='1.9.6'
-    eventClientVersion='1.12.10'
-    propertiesClientVersion='1.2.5'
-    contractClientVersion='1.2.4'
-    snsClientVersion='0.2.4'
+    fhirVersion='2.0.0'
+    bfdVersion='3.0.0'
+    aggregatorVersion='2.0.0'
+    filtersVersion='2.0.0'
+    eventClientVersion='3.1.0'
+    propertiesClientVersion='2.0.0'
+    contractClientVersion='2.0.0'
+    snsClientVersion='1.0.0'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
 
     commonsLangVersion='3.12.0'
-    lombokVersion = '1.18.28'
-    hapiVersion = '6.8.0'
-    springBootVersion='2.7.6'
-    springCloudAwsVersion='2.4.4'
-    springWebVersion="5.3.26"
+    lombokVersion = '1.18.34'
+    springBootVersion='3.2.8'
+    springCloudAwsVersion='3.1.1'
+    hapiVersion = '6.6.2'
+    springWebVersion="6.1.12"
     newRelicVersion='8.4.0'
-    testContainerVersion='1.18.3'
+    testContainerVersion='1.20.1'
     mockServerVersion='5.15.0'
     liquibaseVersion="4.23.0"
     jacksonVersion = "2.15.2"
@@ -134,8 +134,8 @@ subprojects {
         println("Artifactory password not set")
     }
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
     group 'gov.cms.ab2d'
 
