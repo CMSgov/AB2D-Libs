@@ -65,7 +65,7 @@ class BFDClientConfigurationTest {
             "/v1/fhir/metadata",
             HttpStatus.SC_OK,
             getRawJson(METADATA_PATH),
-            List.of(),
+           "",
             MOCK_PORT_V1
         );
 

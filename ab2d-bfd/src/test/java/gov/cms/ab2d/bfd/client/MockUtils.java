@@ -28,7 +28,7 @@ public class MockUtils {
     }
 
     /**
-     * Helper method that configures the mock server to respond to a given GET request
+     * Helper method that configures the mock server to respond to a given POST request
      *
      * @param path          The path segment of the URL that would be received by BlueButton
      * @param respCode      The desired HTTP response code
@@ -38,19 +38,21 @@ public class MockUtils {
      *                      response
      */
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
-                                            List<Parameter> qStringParams, int port) {
+                                            String qStringParams, int port) {
         var delay = 100;
         return createMockServerExpectation(path, respCode, payload, qStringParams, delay, port);
     }
 
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
-                                            List<Parameter> qStringParams, int delayMs, int port) {
+                                            String qStringParams, int delayMs, int port) {
         MockServerClient mock = new MockServerClient("localhost", port);
                 mock.when(
                         HttpRequest.request()
-                                .withMethod("GET")
+                             //   .withMethod("GET")
+                                .withMethod("POST")
                                 .withPath(path)
-                                .withQueryStringParameters(qStringParams),
+                                .withBody(qStringParams),
+                            //    .withQueryStringParameters(qStringParams),
                         Times.unlimited()
                 ).respond(
                         org.mockserver.model.HttpResponse.response()
