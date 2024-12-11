@@ -11,10 +11,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
-import org.json.JSONObject;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -57,23 +55,7 @@ public class BFDSearchImpl implements BFDSearch {
     public IBaseBundle searchEOB(long patientId, OffsetDateTime since, OffsetDateTime until, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
         String urlLocation = bfdClientVersions.getUrl(version);
 
-     //   StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
-        StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit/_search");
-
-//        if (since != null) {
-//            url.append("&_lastUpdated=ge").append(since);
-//        }
-//
-//        if (until != null) {
-//            url.append("&_lastUpdated=le").append(until);
-//        }
-//
-//        if (pageSize > 0) {
-//            url.append("&_count=").append(pageSize);
-//        }
-
-       // HttpGet request = new HttpGet(url.toString());
-        HttpPost request = new HttpPost(url.toString());
+        HttpPost request = new HttpPost(urlLocation + "ExplanationOfBenefit/_search");
         // No active profiles means use JSON
         if (environment.getActiveProfiles().length == 0) {
             request.addHeader("Accept", "application/fhir+json;q=1.0, application/json+fhir;q=0.9");

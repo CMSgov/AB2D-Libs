@@ -23,7 +23,7 @@ ext {
 
     // AB2D libraries
     fhirVersion='2.1.0'
-    bfdVersion='3.1.0'
+    bfdVersion='2.4.0'
     aggregatorVersion='2.0.0'
     filtersVersion='2.1.0'
     eventClientVersion='3.2.0'
@@ -157,8 +157,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+     //   classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+     //   out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -174,7 +174,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled true
+  //          xml.enabled true
         }
     }
 

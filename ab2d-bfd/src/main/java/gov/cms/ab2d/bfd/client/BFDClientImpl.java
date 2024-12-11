@@ -1,5 +1,6 @@
 package gov.cms.ab2d.bfd.client;
 
+import ca.uhn.fhir.rest.api.SearchStyleEnum;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
@@ -163,6 +164,7 @@ public class BFDClientImpl implements BFDClient {
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
+                .usingStyle(SearchStyleEnum.POST)
                 .returnBundle(version.getBundleClass())
                 .encodedJson()
                 .execute();
@@ -191,6 +193,7 @@ public class BFDClientImpl implements BFDClient {
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
+                .usingStyle(SearchStyleEnum.POST)
                 .returnBundle(version.getBundleClass())
                 .encodedJson()
                 .execute();
