@@ -10,9 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static org.mockserver.model.ParameterBody.params;
 
 public class MockUtils {
 
@@ -28,7 +29,7 @@ public class MockUtils {
     }
 
     /**
-     * Helper method that configures the mock server to respond to a given GET request
+     * Helper method that configures the mock server to respond to a given POST request
      *
      * @param path          The path segment of the URL that would be received by BlueButton
      * @param respCode      The desired HTTP response code
@@ -38,30 +39,49 @@ public class MockUtils {
      *                      response
      */
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
-                                            List<Parameter> qStringParams, int port) {
+                                                        List<Parameter> qStringParams, int port) {
         var delay = 100;
         return createMockServerExpectation(path, respCode, payload, qStringParams, delay, port);
     }
 
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
-                                            List<Parameter> qStringParams, int delayMs, int port) {
+                                                        List<Parameter> qStringParams, int delayMs, int port) {
         MockServerClient mock = new MockServerClient("localhost", port);
-                mock.when(
-                        HttpRequest.request()
-                                .withMethod("GET")
-                                .withPath(path)
-                                .withQueryStringParameters(qStringParams),
-                        Times.unlimited()
-                ).respond(
-                        org.mockserver.model.HttpResponse.response()
-                                .withStatusCode(respCode)
-                                .withHeader(
-                                        new Header("Content-Type",
-                                                "application/json;charset=UTF-8")
-                                )
-                                .withBody(payload)
-                                .withDelay(TimeUnit.MILLISECONDS, delayMs)
-                );
+        if (path.contains("/fhir/metadata")) {
+            mock.when(
+                    HttpRequest.request()
+                            .withMethod("GET")
+                            .withPath(path)
+                            .withBody(params(qStringParams)),
+                    Times.unlimited()
+            ).respond(
+                    org.mockserver.model.HttpResponse.response()
+                            .withStatusCode(respCode)
+                            .withHeader(
+                                    new Header("Content-Type",
+                                            "application/json;charset=UTF-8")
+                            )
+                            .withBody(payload)
+                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
+            );
+        } else {
+            mock.when(
+                    HttpRequest.request()
+                            .withMethod("POST")
+                            .withPath(path)
+                            .withBody(params(qStringParams)),
+                    Times.unlimited()
+            ).respond(
+                    org.mockserver.model.HttpResponse.response()
+                            .withStatusCode(respCode)
+                            .withHeader(
+                                    new Header("Content-Type",
+                                            "application/json;charset=UTF-8")
+                            )
+                            .withBody(payload)
+                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
+            );
+        }
         return mock;
     }
 
@@ -73,7 +93,4 @@ public class MockUtils {
         }
     }
 
-    static void createKeystoreFile(Path tempDir) {
-
-    }
 }
