@@ -156,16 +156,16 @@ public class BFDClientImpl implements BFDClient {
         var monthCriterion = new TokenClientParam("_has:Coverage.extension")
                 .exactly()
                 .systemAndIdentifier(monthParameter, contractNumber);
-
-        return bfdClientVersions.getClient(version).search()
+        var request = bfdClientVersions.getClient(version).search()
                 .forResource(version.getPatientClass())
                 .where(monthCriterion)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
-                .usingStyle(SearchStyleEnum.POST)
-                .returnBundle(version.getBundleClass())
+                .usingStyle(SearchStyleEnum.POST);
+        log.info("Executing request to get Part D Enrollees " + request);
+        return  request.returnBundle(version.getBundleClass())
                 .encodedJson()
                 .execute();
     }
@@ -184,8 +184,7 @@ public class BFDClientImpl implements BFDClient {
         var yearCriterion = new TokenClientParam("_has:Coverage.rfrncyr")
                 .exactly()
                 .systemAndIdentifier(YEAR_URL_PREFIX, createYearParameter(year));
-
-        return bfdClientVersions.getClient(version).search()
+        var request = bfdClientVersions.getClient(version).search()
                 .forResource(version.getPatientClass())
                 .where(monthCriterion)
                 .and(yearCriterion)
@@ -193,8 +192,9 @@ public class BFDClientImpl implements BFDClient {
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
                 .count(contractToBenePageSize)
-                .usingStyle(SearchStyleEnum.POST)
-                .returnBundle(version.getBundleClass())
+                .usingStyle(SearchStyleEnum.POST);
+        log.info("Executing request to get Part D Enrollees " + request);
+        return request.returnBundle(version.getBundleClass())
                 .encodedJson()
                 .execute();
     }
