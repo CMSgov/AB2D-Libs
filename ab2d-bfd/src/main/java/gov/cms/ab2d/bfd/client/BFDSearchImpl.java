@@ -80,6 +80,7 @@ public class BFDSearchImpl implements BFDSearch {
             params.add(new BasicNameValuePair("_count", "" + pageSize));
         }
         request.setEntity(new UrlEncodedFormEntity(params));
+        log.info("Executing BFD Search Request " + request);
 
         byte[] responseBytes = getEOBSFromBFD(patientId, request);
 
