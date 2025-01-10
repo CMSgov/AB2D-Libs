@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
+import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
+import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
@@ -24,6 +27,7 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.net.URI;
 
+@Import(SqsBootstrapConfiguration.class)
 @Configuration
 @Slf4j
 public class SQSConfig {
@@ -49,6 +53,14 @@ public class SQSConfig {
         System.setProperty("sqs.queue-name", sqsQueueName);
     }
 
+    @Bean
+    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory() {
+        return SqsMessageListenerContainerFactory
+                .builder()
+                .sqsAsyncClient(amazonSQSAsync())
+                .build();
+    }
+
     @Primary
     @Bean
     public SqsAsyncClient amazonSQSAsync() {
@@ -60,6 +72,7 @@ public class SQSConfig {
                     .region(Region.US_EAST_1)
                     .build());
         }
+        log.info("Creating SqsAsyncClient");
         return SqsAsyncClient.builder()
                 .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.US_EAST_1)
@@ -99,7 +112,7 @@ public class SQSConfig {
                     .build();
 
             sqsClient.createQueue(createQueueRequest);
-            log.info("Queue created");
+            log.info("Queue created: " + sqsQueueName);
         } catch (SqsException e) {
             log.error(e.getMessage());
         }

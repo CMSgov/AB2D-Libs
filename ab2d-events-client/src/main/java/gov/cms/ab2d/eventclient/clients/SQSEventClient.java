@@ -36,12 +36,14 @@ public class SQSEventClient implements EventClient {
 
     @Override
     public void sendLogs(LoggableEvent requestEvent) {
+        log.info("Send logs to queue: {}", queueName);
         GeneralSQSMessage sqsMessage = new GeneralSQSMessage(requestEvent);
         sendMessage(sqsMessage);
     }
 
     @Override
     public void alert(String message, List<Ab2dEnvironment> environments) {
+        log.info("Send alert to queue: {}", queueName);
         AlertSQSMessage sqsMessage = new AlertSQSMessage(message, environments);
         sendMessage(sqsMessage);
     }
@@ -116,6 +118,7 @@ public class SQSEventClient implements EventClient {
                     .build();
 
             amazonSQS.sendMessage(sendMessageRequest);
+            log.info("Sent message to queue: {}", queueUrl);
 
         } catch (JsonProcessingException | UnsupportedOperationException | SqsException e) {
             log.info(e.getMessage());
