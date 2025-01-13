@@ -116,7 +116,7 @@ allprojects {
                 basic(BasicAuthentication)
             }
         }
-        mavenLocal() // needed to test file encryption
+        mavenLocal() // TODO remove - needed to test file encryption
     }
 }
 
