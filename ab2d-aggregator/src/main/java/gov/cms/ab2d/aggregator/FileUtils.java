@@ -1,8 +1,6 @@
 package gov.cms.ab2d.aggregator;
 
-// TODO remove
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import java.io.File;
 import java.io.IOException;
@@ -192,5 +190,4 @@ public final class FileUtils {
             return false;
         }
     }
-
 }
