@@ -15,7 +15,6 @@ import static gov.cms.ab2d.aggregator.FileOutputType.DATA;
 import static gov.cms.ab2d.aggregator.FileOutputType.ERROR;
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
 import static gov.cms.ab2d.aggregator.FileUtils.deleteAllInDir;
-import static gov.cms.ab2d.aggregator.GzipCompressUtilsTest.UNCOMPRESSED_FILE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -199,41 +198,6 @@ class FileUtilsTest {
         assertTrue(deleteAllInDir(new File("does-not-exist")));
     }
 
-    @Test
-    void testCompressFile_fileIsDeleted(@TempDir File tempDir) throws IOException {
-        File file = copyFile(UNCOMPRESSED_FILE.toFile(), tempDir).toFile();
-        assertTrue(file.exists());
-        assertTrue(FileUtils.compressFile(file, true));
-
-        assertTrue(new File(file.getParent(), file.getName() + ".gz").exists());
-        assertFalse(file.exists());
-    }
-
-    @Test
-    void testCompressFile_fileIsNotDeleted(@TempDir File tempDir) throws IOException {
-        File file = copyFile(UNCOMPRESSED_FILE.toFile(), tempDir).toFile();
-        assertTrue(file.exists());
-        assertTrue(FileUtils.compressFile(file, false));
-
-        assertTrue(new File(file.getParent(), file.getName() + ".gz").exists());
-        assertTrue(file.exists());
-    }
-
-    @Test
-    void testCompressFile_fileNotFound(@TempDir File tempDir) throws IOException {
-        assertFalse(FileUtils.compressFile(new File("not-a-real-file"), true));
-    }
-
-    @Test
-    void testCompressFile_fileIsADirectory(@TempDir File tempDir) throws IOException {
-        assertFalse(FileUtils.compressFile(tempDir, true));
-    }
-
-
-    static Path copyFile(File file, File directory) throws IOException {
-        return Files.copy(file.toPath(), new File(directory, file.getName()).toPath());
-    }
-
     static Path createFile(File dir, String fileName, String data) throws IOException {
         Files.createDirectories(Path.of(dir.getAbsolutePath()));
         Path p = Path.of(dir.getAbsolutePath(), fileName);
@@ -241,5 +205,4 @@ class FileUtilsTest {
         Files.writeString(p, data);
         return p;
     }
-
 }

@@ -1,11 +1,7 @@
 package gov.cms.ab2d.aggregator;
 
-import lombok.val;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.stream.Stream;
 
 import static gov.cms.ab2d.aggregator.FileUtils.createADir;
 import static gov.cms.ab2d.aggregator.FileUtils.deleteAllInDir;
@@ -66,28 +62,4 @@ public final class JobHelper {
         deleteAllInDir(finishedDir);
     }
 
-    /**
-     * Compress job output files (both 'DATA' and 'ERROR' types)
-     * @param jobId job id
-     * @param baseDir root directory containing directory for corresponding job id
-     * @return false if an error occurred while compressing one or more files (unlikely), true otherwise
-     */
-    // TODO add test in FileUtilsTest
-    public static boolean compressJobOutputFiles(String jobId, String baseDir) {
-        val jobDirectory = new File(baseDir + File.separator + jobId);
-        if (!jobDirectory.exists() || !jobDirectory.isDirectory()) {
-            return false;
-        }
-
-        val files = jobDirectory.listFiles(file -> {
-            val type = FileOutputType.getFileType(file);
-            return type == FileOutputType.DATA || type == FileOutputType.ERROR;
-        });
-
-        boolean success = true;
-        for (File file : files) {
-            success = success && FileUtils.compressFile(file, true);
-        }
-        return success;
-    }
 }

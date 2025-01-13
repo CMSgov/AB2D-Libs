@@ -193,29 +193,4 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Compress a file and optionally delete file after compressing
-     * @param file file to compress
-     * @param deleteFile if true, delete file after compressing
-     * @return true if file was compressed successfully, false otherwise
-     */
-    static boolean compressFile(File file, boolean deleteFile) {
-        if (file != null && !file.exists() && !file.isFile()) {
-            return false;
-        }
-        // append ".gz" to the input filename
-        val compressedOutputFile = new File(file.getParent(), file.getName() + ".gz");
-        try {
-            GzipCompressUtils.compress(file.toPath(), compressedOutputFile.toPath());
-        } catch (IOException e) {
-            log.error("Unable to compress file: {}", file.getAbsoluteFile());
-            return false;
-        }
-        if (deleteFile) {
-            return deleteIt(file);
-        }
-
-        return true;
-    }
-
 }
