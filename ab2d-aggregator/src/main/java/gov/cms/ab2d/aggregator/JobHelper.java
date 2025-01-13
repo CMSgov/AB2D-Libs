@@ -61,5 +61,4 @@ public final class JobHelper {
     public static void aggregatorFinishJob(String finishedDir) {
         deleteAllInDir(finishedDir);
     }
-
 }
