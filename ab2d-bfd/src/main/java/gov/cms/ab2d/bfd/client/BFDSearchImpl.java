@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.newrelic.api.agent.Trace;
 import gov.cms.ab2d.fhir.FhirVersion;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -16,8 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -65,15 +64,23 @@ public class BFDSearchImpl implements BFDSearch {
         }
 
         HttpGet request = new HttpGet(url.toString());
-        log.info("Executing BFD Search Request " + request);
+        // No active profiles means use JSON
+        if (environment.getActiveProfiles().length == 0) {
+            request.addHeader("Accept", "application/fhir+json;q=1.0, application/json+fhir;q=0.9");
+        }
 
+        request.addHeader(HttpHeaders.ACCEPT, "gzip");
+        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
+        request.addHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum);
+        request.addHeader(BFDClient.BFD_HDR_BULK_JOBID, bulkJobId);
+        log.info("Executing BFD Search Request " + request);
         byte[] responseBytes = getEOBSFromBFD(patientId, request);
 
         return parseBundle(version, responseBytes);
     }
 
     /**
-        Method exists to track connection to BFD for New Relic
+     Method exists to track connection to BFD for New Relic
      */
     @Trace
     private byte[] getEOBSFromBFD(long patientId, HttpGet request) throws IOException {
