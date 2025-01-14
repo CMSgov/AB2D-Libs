@@ -4,14 +4,10 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.newrelic.api.agent.Trace;
 import gov.cms.ab2d.fhir.FhirVersion;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.methods.HttpGet;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -54,32 +50,21 @@ public class BFDSearchImpl implements BFDSearch {
     @Override
     public IBaseBundle searchEOB(long patientId, OffsetDateTime since, OffsetDateTime until, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
         String urlLocation = bfdClientVersions.getUrl(version);
+        StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
 
-        HttpPost request = new HttpPost(urlLocation + "ExplanationOfBenefit/_search");
-        // No active profiles means use JSON
-        if (environment.getActiveProfiles().length == 0) {
-            request.addHeader("Accept", "application/fhir+json;q=1.0, application/json+fhir;q=0.9");
-        }
-        request.addHeader(HttpHeaders.ACCEPT, "gzip");
-        request.addHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8");
-        request.addHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum);
-        request.addHeader(BFDClient.BFD_HDR_BULK_JOBID, bulkJobId);
-
-        List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("patient", "" + patientId));
-        params.add(new BasicNameValuePair("excludeSAMHSA", "true"));
         if (since != null) {
-            params.add(new BasicNameValuePair("_lastUpdated", "ge" + since));
+            url.append("&_lastUpdated=ge").append(since);
         }
 
         if (until != null) {
-            params.add(new BasicNameValuePair("_lastUpdated", "le" + until));
+            url.append("&_lastUpdated=le").append(until);
         }
 
         if (pageSize > 0) {
-            params.add(new BasicNameValuePair("_count", "" + pageSize));
+            url.append("&_count=").append(pageSize);
         }
-        request.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpGet request = new HttpGet(url.toString());
         log.info("Executing BFD Search Request " + request);
 
         byte[] responseBytes = getEOBSFromBFD(patientId, request);
@@ -91,7 +76,7 @@ public class BFDSearchImpl implements BFDSearch {
         Method exists to track connection to BFD for New Relic
      */
     @Trace
-    private byte[] getEOBSFromBFD(long patientId, HttpPost request) throws IOException {
+    private byte[] getEOBSFromBFD(long patientId, HttpGet request) throws IOException {
         byte[] responseBytes;
         try (CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(request)) {
             int status = response.getStatusLine().getStatusCode();
