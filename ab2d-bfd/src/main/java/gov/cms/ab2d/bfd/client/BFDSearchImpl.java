@@ -4,7 +4,6 @@ import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import com.newrelic.api.agent.Trace;
 import gov.cms.ab2d.fhir.FhirVersion;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
