@@ -29,7 +29,7 @@ public class MockUtils {
     }
 
     /**
-     * Helper method that configures the mock server to respond to a given POST request
+     * Helper method that configures the mock server to respond to a given GET request
      *
      * @param path          The path segment of the URL that would be received by BlueButton
      * @param respCode      The desired HTTP response code
@@ -47,41 +47,22 @@ public class MockUtils {
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
                                                         List<Parameter> qStringParams, int delayMs, int port) {
         MockServerClient mock = new MockServerClient("localhost", port);
-        if (path.contains("/fhir/metadata")) {
-            mock.when(
-                    HttpRequest.request()
-                            .withMethod("GET")
-                            .withPath(path)
-                            .withBody(params(qStringParams)),
-                    Times.unlimited()
-            ).respond(
-                    org.mockserver.model.HttpResponse.response()
-                            .withStatusCode(respCode)
-                            .withHeader(
-                                    new Header("Content-Type",
-                                            "application/json;charset=UTF-8")
-                            )
-                            .withBody(payload)
-                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
-            );
-        } else {
-            mock.when(
-                    HttpRequest.request()
-                            .withMethod("POST")
-                            .withPath(path)
-                            .withBody(params(qStringParams)),
-                    Times.unlimited()
-            ).respond(
-                    org.mockserver.model.HttpResponse.response()
-                            .withStatusCode(respCode)
-                            .withHeader(
-                                    new Header("Content-Type",
-                                            "application/json;charset=UTF-8")
-                            )
-                            .withBody(payload)
-                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
-            );
-        }
+        mock.when(
+                HttpRequest.request()
+                        .withMethod("GET")
+                        .withPath(path)
+                        .withQueryStringParameters(qStringParams),
+                Times.unlimited()
+        ).respond(
+                org.mockserver.model.HttpResponse.response()
+                        .withStatusCode(respCode)
+                        .withHeader(
+                                new Header("Content-Type",
+                                        "application/json;charset=UTF-8")
+                        )
+                        .withBody(payload)
+                        .withDelay(TimeUnit.MILLISECONDS, delayMs)
+        );
         return mock;
     }
 
