@@ -166,7 +166,7 @@ public class BlueButtonClientSTU3Test {
 
         for (String month : CONTRACT_MONTHS) {
             MockUtils.createMockServerExpectation(
-                    "/v1/fhir/Patient/",
+                    "/v1/fhir/Patient",
                     HttpStatus.SC_OK,
                     getRawJson(SAMPLE_PATIENT_PATH_PREFIX + "/bundle/patientbundle.json"),
                     List.of(Parameter.param("_has:Coverage.extension",
