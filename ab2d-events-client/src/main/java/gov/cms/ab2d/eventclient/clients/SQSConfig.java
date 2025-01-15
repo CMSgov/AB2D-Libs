@@ -55,7 +55,7 @@ public class SQSConfig {
     }
 
     @Bean
-    SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory(SqsAsyncClient sqsAsyncClient) {
+    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory(SqsAsyncClient sqsAsyncClient) {
         return SqsMessageListenerContainerFactory
                 .builder()
                 .configure(options -> options
