@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
+import io.awspring.cloud.sqs.support.converter.SqsMessagingMessageConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -54,10 +55,12 @@ public class SQSConfig {
     }
 
     @Bean
-    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory() {
+    public SqsMessageListenerContainerFactory<Object> defaultSqsListenerContainerFactory(SqsAsyncClient sqsAsyncClient) {
         return SqsMessageListenerContainerFactory
                 .builder()
-                .sqsAsyncClient(amazonSQSAsync())
+                .configure(options -> options
+                        .messageConverter(sqsMessagingMessageConverter()))
+                .sqsAsyncClient(sqsAsyncClient)
                 .build();
     }
 
@@ -103,6 +106,12 @@ public class SQSConfig {
         jacksonMessageConverter.setSerializedPayloadClass(String.class);
         jacksonMessageConverter.setStrictContentTypeMatch(false);
         return jacksonMessageConverter;
+    }
+
+    private SqsMessagingMessageConverter sqsMessagingMessageConverter() {
+        SqsMessagingMessageConverter converter = new SqsMessagingMessageConverter();
+        converter.setPayloadMessageConverter(messageConverter());
+        return converter;
     }
 
     public SqsAsyncClient createQueue(SqsAsyncClient sqsClient) {
