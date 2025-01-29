@@ -29,7 +29,7 @@ ext {
     eventClientVersion='3.2.3'
     propertiesClientVersion='2.0.0'
     contractClientVersion='2.0.0'
-    snsClientVersion='1.0.0'
+    snsClientVersion='1.0.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
@@ -157,8 +157,8 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
- //       classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-  //      out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
     }
 
     test {
@@ -174,7 +174,7 @@ subprojects {
 
     jacocoTestReport {
         reports {
-   //         xml.enabled true
+            xml.enabled true
         }
     }
 
