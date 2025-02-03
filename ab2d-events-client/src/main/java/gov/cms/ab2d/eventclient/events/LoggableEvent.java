@@ -1,5 +1,6 @@
 package gov.cms.ab2d.eventclient.events;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.time.OffsetDateTime;
 
@@ -9,6 +10,7 @@ import lombok.Data;
  * Interface describing a loggable event
  */
 @Data
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class LoggableEvent {
     protected LoggableEvent() { }
 
