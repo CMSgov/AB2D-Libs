@@ -1,5 +1,6 @@
 package gov.cms.ab2d.eventclient.events;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import java.time.OffsetDateTime;
@@ -10,7 +11,23 @@ import lombok.Data;
  * Interface describing a loggable event
  */
 @Data
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.WRAPPER_ARRAY
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ApiRequestEvent.class, name = "ApiRequestEvent"),
+        @JsonSubTypes.Type(value = ApiResponseEvent.class, name = "ApiResponseEvent"),
+        @JsonSubTypes.Type(value = BeneficiarySearchEvent.class, name = "BeneficiarySearchEvent"),
+        @JsonSubTypes.Type(value = ContractSearchEvent.class, name = "ContractSearchEvent"),
+        @JsonSubTypes.Type(value = ErrorEvent.class, name = "ErrorEvent"),
+        @JsonSubTypes.Type(value = FileEvent.class, name = "FileEvent"),
+        @JsonSubTypes.Type(value = JobStatusChangeEvent.class, name = "JobStatusChangeEvent"),
+        @JsonSubTypes.Type(value = JobSummaryEvent.class, name = "JobSummaryEvent"),
+        @JsonSubTypes.Type(value = MetricsEvent.class, name = "MetricsEvent"),
+        @JsonSubTypes.Type(value = ReloadEvent.class, name = "ReloadEvent"),
+        @JsonSubTypes.Type(value = SlackEvents.class, name = "SlackEvents"),
+})
 public abstract class LoggableEvent {
     protected LoggableEvent() { }
 
