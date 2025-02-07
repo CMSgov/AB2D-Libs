@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix-workflows
   pull_request:
 
 env:
