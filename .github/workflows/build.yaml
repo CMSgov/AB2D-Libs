@@ -24,7 +24,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10'
 
@@ -59,7 +59,7 @@ jobs:
 
       - name: Quality Gate
         id: quality-gate
-        uses: sonarsource/sonarcloud-github-action@v2
+        uses: sonarsource/sonarqube-scan-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
         timeout-minutes: 10
