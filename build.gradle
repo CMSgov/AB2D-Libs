@@ -158,7 +158,7 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        // suppress
+        // suppress the '*** building branch' logs
         if (!'true'.equals(System.getenv("SUPPRESS_LOGGING_BRANCH_CLASSIFIER"))) {
             out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
         }
@@ -169,11 +169,11 @@ subprojects {
         finalizedBy jacocoTestReport // report is always generated after tests run
     }
 
-//    sonarqube {
-//        properties {
-//            property 'sonar.coverage.exclusions', "**/SQSConfig.java, **/SNSConfig.java, **/BFDSearchImpl.java, **/BFDClientImpl.java"
-//        }
-//    }
+    sonarqube {
+        properties {
+            property 'sonar.coverage.exclusions', "**/SQSConfig.java, **/SNSConfig.java, **/BFDSearchImpl.java, **/BFDClientImpl.java"
+        }
+    }
 
     jacocoTestReport {
         reports {
