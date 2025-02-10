@@ -6,6 +6,13 @@ on:
       - main
       - fix-workflows
   pull_request:
+  workflow_dispatch: # Allow manual trigger
+    inputs:
+      forcePublish:
+        description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
+        type: boolean
+        default: 'false' # boolean values are actually strings
+        required: false
 
 env:
   ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
@@ -64,7 +71,7 @@ jobs:
       - name: Generate SBOM
         run: gradle cyclonedxBom
 
-      - name: Publish Libraries
+      - name: Publish libraries from main branch
 #        if: github.ref == 'refs/heads/main'
         run: |
           # Check for artifacts to deploy
@@ -87,3 +94,7 @@ jobs:
           else
             echo "No artifacts to publish."
           fi
+
+      - name: Force publish libraries
+        if: inputs.forcePublish == 'true'
+        run: gradle artifactoryPublish -b build.gradle
