@@ -31,7 +31,6 @@ jobs:
         with:
           gradle-version: '7.2'
 
-
       - name: Set env vars from AWS params
         uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
         with:
@@ -48,36 +47,25 @@ jobs:
       - name: Build JARs
         run: gradle jar --info -b build.gradle
 
-#
-#      - name: SonarQube Analysis
-#        env:
-#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        run: |
-#          gradle sonarqube \
-#            -Dsonar.projectKey=ab2d-lib-project \
-#            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
-#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-#
-#      - name: Quality Gate
-#        id: quality-gate
-#        uses: sonarsource/sonarqube-scan-action@master
-#        with:
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#        timeout-minutes: 10
+      - name: SonarQube Analysis
+        run: |
+          gradle sonarqube \
+            -Dsonar.projectKey=ab2d-lib-project \
+            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Quality Gate
+        id: quality-gate
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        timeout-minutes: 10
 
       - name: Generate SBOM
-#        env:
-#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle cyclonedxBom
 
       - name: Publish Libraries
         if: github.ref == 'refs/heads/main'
-#        env:
-#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(gradle -q lookForArtifacts)
