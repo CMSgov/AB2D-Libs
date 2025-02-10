@@ -24,10 +24,10 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set Gradle
+        uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: '8.10'
+          gradle-version: 7.5
 
       - name: Build Libraries
         env:
@@ -46,24 +46,24 @@ jobs:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle jar --info -b build.gradle
-#
-#      - name: SonarQube Analysis
-#        env:
-#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        run: |
-#          gradle sonarqube \
-#            -Dsonar.projectKey=ab2d-lib-project \
-#            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
-#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-#
-#      - name: Quality Gate
-#        id: quality-gate
-#        uses: sonarsource/sonarqube-scan-action@master
-#        with:
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#        timeout-minutes: 10
+      #
+      #      - name: SonarQube Analysis
+      #        env:
+      #          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+      #          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+      #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #        run: |
+      #          gradle sonarqube \
+      #            -Dsonar.projectKey=ab2d-lib-project \
+      #            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
+      #            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      #
+      #      - name: Quality Gate
+      #        id: quality-gate
+      #        uses: sonarsource/sonarqube-scan-action@master
+      #        with:
+      #          github-token: ${{ secrets.GITHUB_TOKEN }}
+      #        timeout-minutes: 10
 
       - name: Generate SBOM
         env:
