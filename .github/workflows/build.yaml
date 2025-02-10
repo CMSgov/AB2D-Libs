@@ -12,7 +12,9 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
 
     steps:
       - name: Checkout Code
@@ -32,8 +34,6 @@ jobs:
 
       - name: Set env vars from AWS params
         uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
-        env:
-          AWS_REGION: ${{ vars.AWS_REGION }}
         with:
           params: |
             ARTIFACTORY_URL=/artifactory/url
