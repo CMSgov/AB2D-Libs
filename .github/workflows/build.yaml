@@ -96,5 +96,5 @@ jobs:
           fi
 
       - name: Force publish libraries
-        if: inputs.forcePublish == 'true'
+#        if: inputs.forcePublish == 'true'
         run: gradle artifactoryPublish -b build.gradle
