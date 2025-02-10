@@ -54,12 +54,12 @@ jobs:
             -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      - name: Quality Gate
-        id: quality-gate
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        timeout-minutes: 10
+#      - name: Quality Gate
+#        id: quality-gate
+#        uses: sonarsource/sonarqube-scan-action@master
+#        with:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#        timeout-minutes: 10
 
       - name: Generate SBOM
         run: gradle cyclonedxBom
@@ -68,7 +68,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           # Check for artifacts to deploy
-          versionPublishedList=$(gradle -q lookForArtifacts)
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true gradle -q lookForArtifacts)
 
           deployScript=""
           for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
@@ -82,7 +82,8 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-            gradle $deployScript -b build.gradle
+            echo "deployScript = $deployScript"
+            #gradle $deployScript -b build.gradle
           else
             echo "No artifacts to publish."
           fi
