@@ -29,16 +29,22 @@ jobs:
         with:
           gradle-version: '7.2'
 
-      - name: Build and test libraries
+      - name: Set env vars from AWS params
+        uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
         env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        with:
+          params: |
+            ARTIFACTORY_URL=/artifactory/url
+            ARTIFACTORY_USER=/artifactory/user
+            ARTIFACTORY_PASSWORD=/artifactory/password
+            SONAR_HOST_URL=/sonarqube/url
+            SONAR_TOKEN=/sonarqube/token
+
+      - name: Build and test libraries
         run: gradle clean test --info -b build.gradle
 
       - name: Build JARs
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle jar --info -b build.gradle
 
 #
@@ -61,16 +67,16 @@ jobs:
 #        timeout-minutes: 10
 
       - name: Generate SBOM
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#        env:
+#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle cyclonedxBom
 
       - name: Publish Libraries
         if: github.ref == 'refs/heads/main'
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+#        env:
+#          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
+#          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(gradle -q lookForArtifacts)
