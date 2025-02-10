@@ -50,7 +50,7 @@ jobs:
       - name: SonarQube Analysis
         uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_PROJECT_KEY: ab2d-lib-project
+          SONAR_PROJECTKEY: ab2d-lib-project
           SONAR_HOST_URL: https://sonarqube.cloud.cms.gov
 
       - name: Quality Gate
