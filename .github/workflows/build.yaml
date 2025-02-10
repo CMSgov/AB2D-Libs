@@ -27,25 +27,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10'
+          gradle-version: '7.2'
 
-      - name: Build Libraries
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
-        run: gradle -b build.gradle
-
-      - name: Test Libraries
+      - name: Build and test libraries
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle clean test --info -b build.gradle
 
-      - name: Build Jars
+      - name: Build JARs
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: gradle jar --info -b build.gradle
+
 #
 #      - name: SonarQube Analysis
 #        env:
