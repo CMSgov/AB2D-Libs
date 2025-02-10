@@ -65,7 +65,7 @@ jobs:
         run: gradle cyclonedxBom
 
       - name: Publish Libraries
-        if: github.ref == 'refs/heads/main'
+#        if: github.ref == 'refs/heads/main'
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true gradle -q lookForArtifacts)
