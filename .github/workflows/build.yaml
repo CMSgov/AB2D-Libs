@@ -48,18 +48,23 @@ jobs:
         run: gradle jar --info -b build.gradle
 
       - name: SonarQube Analysis
-        run: |
-          gradle sonarqube \
-            -Dsonar.projectKey=ab2d-lib-project \
-            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_PROJECT_KEY=ab2d-lib-project
+          SONAR_HOST_URL=https://sonarqube.cloud.cms.gov
+          SONAR_LOGIN=${{ secrets.SONAR_TOKEN }}
+#        run: |
+#          gradle sonarqube \
+#            -Dsonar.projectKey=ab2d-lib-project \
+#            -Dsonar.host.url=https://sonarqube.cloud.cms.gov \
+#            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-#      - name: Quality Gate
-#        id: quality-gate
-#        uses: sonarsource/sonarqube-scan-action@master
-#        with:
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
-#        timeout-minutes: 10
+      - name: Quality Gate
+        id: quality-gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          scanMetadataReportFile: build/sonar/report-task.txt
+        timeout-minutes: 10
 
       - name: Generate SBOM
         run: gradle cyclonedxBom
