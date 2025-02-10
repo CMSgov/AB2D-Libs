@@ -50,15 +50,18 @@ jobs:
       - name: SonarQube Analysis
         uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_PROJECTKEY: ab2d-lib-project
           SONAR_HOST_URL: https://sonarqube.cloud.cms.gov
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Quality Gate
-        id: quality-gate
+        id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
           scanMetadataReportFile: build/sonar/report-task.txt
         timeout-minutes: 10
+
+      - name: "Example show SonarQube Quality Gate Status value"
+        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
 
       - name: Generate SBOM
         run: gradle cyclonedxBom
