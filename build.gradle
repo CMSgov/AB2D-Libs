@@ -24,7 +24,7 @@ ext {
     // AB2D libraries
     fhirVersion='2.1.0'
     bfdVersion='3.2.0'
-    aggregatorVersion='2.0.2' // should publish snapshot TODO remove
+    aggregatorVersion='2.0.1'
     filtersVersion='2.1.0'
     eventClientVersion='3.2.5'
     propertiesClientVersion='2.0.0'
