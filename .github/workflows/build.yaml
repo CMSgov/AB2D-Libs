@@ -89,12 +89,11 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-            echo "deployScript = $deployScript"
-            #gradle $deployScript -b build.gradle
+            gradle $deployScript -b build.gradle
           else
             echo "No artifacts to publish."
           fi
 
       - name: Force publish libraries
-#        if: inputs.forcePublish == 'true'
+        if: inputs.forcePublish == 'true'
         run: gradle artifactoryPublish -b build.gradle
