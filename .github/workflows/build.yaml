@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - fix-workflows
   pull_request:
   workflow_dispatch: # Allow manual trigger
     inputs:
