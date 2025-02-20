@@ -67,8 +67,8 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-#                      ./gradlew  $deployScript -b build.gradle
-          echo "*** (TEST) $deployScript"
+#            ./gradlew  $deployScript -b build.gradle
+          echo "TEST --- $deployScript"
           else
-          echo "No artifacts to publish."
+            echo "No artifacts to publish."
           fi
