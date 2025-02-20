@@ -3,10 +3,10 @@ name: Build libraries
 on:
   workflow_dispatch:
   workflow_call:
-  push:
-    branches:
+#  push:
+#    branches:
 #      - main
-      - fix-workflows
+#      - fix-workflows
 #  pull_request:
 #  workflow_dispatch: # Allow manual trigger
 #    inputs:
@@ -58,7 +58,7 @@ jobs:
 
       - name: SonarQube Analysis
         run: |
-          ./gradlew sonarqube \
+          ./gradlew sonar \
             -Dsonar.projectKey=ab2d-lib-project \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
