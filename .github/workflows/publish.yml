@@ -54,21 +54,22 @@ jobs:
 
       - name: Publish to artifactory
         run: |
-          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
+          # Check for artifacts to deploy
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true gradle -q lookForArtifacts)
+
           deployScript=""
           for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
-          buildName=$(echo "$entry" | cut -d":" -f1)
-          isPublished=$(echo "$entry" | cut -d":" -f2)
-           
-          if [ "$isPublished" == "false" ]; then
-          echo "Deploying $buildName"
-          deployScript+="$buildName:artifactoryPublish "
-          fi
+            buildName=$(echo "$entry" | cut -d":" -f1)
+            isPublished=$(echo "$entry" | cut -d":" -f2)
+
+            if [ "$isPublished" == "false" ]; then
+              echo "Deploying $buildName"
+              deployScript+="$buildName:artifactoryPublish "
+            fi
           done
 
           if [ "$deployScript" != "" ]; then
-#            ./gradlew  $deployScript -b build.gradle
-          echo "TEST --- $deployScript"
+            gradle $deployScript -b build.gradle
           else
             echo "No artifacts to publish."
           fi
