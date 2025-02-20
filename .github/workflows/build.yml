@@ -41,6 +41,9 @@ jobs:
         uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
         with:
           params: |
+            ARTIFACTORY_URL=/artifactory/url
+            ARTIFACTORY_USER=/artifactory/user
+            ARTIFACTORY_PASSWORD=/artifactory/password
             SONAR_HOST_URL=/sonarqube/url
             SONAR_TOKEN=/sonarqube/token
 
