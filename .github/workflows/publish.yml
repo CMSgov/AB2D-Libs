@@ -52,8 +52,7 @@ jobs:
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
 
-
-      - name: Generate SBOM
+      - name: Publish to artifactory
         run: |
 #                              Check for artifacts to deploy
            versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
