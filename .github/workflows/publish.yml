@@ -69,7 +69,7 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-            gradle $deployScript -b build.gradle
+            echo "TEST -- $deployScript"
           else
             echo "No artifacts to publish."
           fi
