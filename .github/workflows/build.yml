@@ -16,9 +16,6 @@ on:
 #        default: 'false' # boolean values are actually strings
 #        required: false
 
-env:
-  ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
-
 jobs:
   build:
     runs-on: self-hosted
@@ -44,9 +41,6 @@ jobs:
         uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
         with:
           params: |
-            ARTIFACTORY_URL=/artifactory/url
-            ARTIFACTORY_USER=/artifactory/user
-            ARTIFACTORY_PASSWORD=/artifactory/password
             SONAR_HOST_URL=/sonarqube/url
             SONAR_TOKEN=/sonarqube/token
 
