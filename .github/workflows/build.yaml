@@ -1,17 +1,20 @@
-name: Build and Publish Libraries
+name: Build libraries
 
 on:
+  workflow_dispatch:
+  workflow_call:
   push:
     branches:
-      - main
-  pull_request:
-  workflow_dispatch: # Allow manual trigger
-    inputs:
-      forcePublish:
-        description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
-        type: boolean
-        default: 'false' # boolean values are actually strings
-        required: false
+#      - main
+      - fix-workflows
+#  pull_request:
+#  workflow_dispatch: # Allow manual trigger
+#    inputs:
+#      forcePublish:
+#        description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
+#        type: boolean
+#        default: 'false' # boolean values are actually strings
+#        required: false
 
 env:
   ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}

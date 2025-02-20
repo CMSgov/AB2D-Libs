@@ -1,0 +1,71 @@
+name: Publish Libraries
+
+
+
+on:
+  push:
+    branches:
+#      - main
+      - fix-workflows
+#  pull_request:
+  workflow_call:
+    inputs:
+      forcePublish:
+        type: boolean
+        required: true
+  workflow_dispatch: # Allow manual trigger
+    inputs:
+      forcePublish:
+        description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
+        type: boolean
+        default: 'false' # boolean values are actually strings
+        required: false
+
+env:
+  ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+  publish:
+    needs: build
+    runs-on: self-hosted
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+
+    steps:
+      - name: Build
+        uses: ./.github/workflows/build.ymml
+
+      - name: Generate SBOM
+        run: gradle cyclonedxBom
+
+
+      - name: Publish libraries from main branch
+        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
+        run: |
+          # Check for artifacts to deploy
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true gradle -q lookForArtifacts)
+
+          deployScript=""
+          for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
+            buildName=$(echo "$entry" | cut -d":" -f1)
+            isPublished=$(echo "$entry" | cut -d":" -f2)
+
+            if [ "$isPublished" == "false" ]; then
+              echo "Deploying $buildName"
+              deployScript+="$buildName:artifactoryPublish "
+            fi
+          done
+
+          if [ "$deployScript" != "" ]; then
+#            gradle $deployScript -b build.gradle
+            echo "*** $deployScript"
+          else
+            echo "No artifacts to publish."
+          fi
+
+      - name: Force publish libraries
+        if: inputs.forcePublish == 'true'
+#        run: gradle artifactoryPublish -b build.gradle
+        run: echo "*** Force publishing libraries"
