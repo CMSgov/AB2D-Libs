@@ -25,6 +25,7 @@ env:
 jobs:
   build:
     uses: ./.github/workflows/build.yml
+    secrets: inherit
   publish:
     needs: build
     runs-on: self-hosted
@@ -41,7 +42,7 @@ jobs:
       - name: Publish libraries from main branch
 #        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
         run: |
-          # Check for artifacts to deploy
+#          Check for artifacts to deploy
           versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
 
           deployScript=""
