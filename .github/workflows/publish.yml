@@ -23,11 +23,11 @@ env:
   ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+#  build:
+#    uses: ./.github/workflows/build.yml
+#    secrets: inherit
   publish:
-    needs: build
+#    needs: build
     runs-on: self-hosted
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
@@ -52,36 +52,31 @@ jobs:
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
 
+      - name: Publish libraries from main branch
+#        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
+        run: |
+#                    Check for artifacts to deploy
+               versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
 
+               deployScript=""
+               for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
+               buildName=$(echo "$entry" | cut -d":" -f1)
+               isPublished=$(echo "$entry" | cut -d":" -f2)
 
+               if [ "$isPublished" == "false" ]; then
+               echo "Deploying $buildName"
+               deployScript+="$buildName:artifactoryPublish "
+               fi
+               done
 
+               if [ "$deployScript" != "" ]; then
+#                      ./gradlew  $deployScript -b build.gradle
+               echo "*** (TEST) $deployScript"
+               else
+               echo "No artifacts to publish."
+               fi
 
-
-#      - name: Publish libraries from main branch
-##        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
-#        run: |
-##                    Check for artifacts to deploy
-#               versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
-#
-#               deployScript=""
-#               for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
-#               buildName=$(echo "$entry" | cut -d":" -f1)
-#               isPublished=$(echo "$entry" | cut -d":" -f2)
-#
-#               if [ "$isPublished" == "false" ]; then
-#               echo "Deploying $buildName"
-#               deployScript+="$buildName:artifactoryPublish "
-#               fi
-#               done
-#
-#               if [ "$deployScript" != "" ]; then
-##                      ./gradlew  $deployScript -b build.gradle
-#               echo "*** (TEST) $deployScript"
-#               else
-#               echo "No artifacts to publish."
-#               fi
-#
-#      - name: Force publish libraries
-#        if: inputs.forcePublish == 'true'
-#        #        run: ./gradlew  artifactoryPublish -b build.gradle
-#        run: echo "*** (TEST) Force publishing libraries"
+      - name: Force publish libraries
+        if: inputs.forcePublish == 'true'
+        #        run: ./gradlew  artifactoryPublish -b build.gradle
+        run: echo "*** (TEST) Force publishing libraries"
