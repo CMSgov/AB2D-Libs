@@ -29,6 +29,8 @@ jobs:
   publish:
     needs: build
     runs-on: self-hosted
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
