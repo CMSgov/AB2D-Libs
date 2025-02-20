@@ -35,7 +35,6 @@ jobs:
     steps:
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
-
       - name: Publish libraries from main branch
 #        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
         run: |
