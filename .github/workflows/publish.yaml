@@ -6,7 +6,7 @@ on:
   push:
     branches:
 #      - main
-      - fix-workflows
+#      - fix-workflows
 #  pull_request:
   workflow_call:
     inputs:
@@ -38,14 +38,14 @@ jobs:
         uses: ./.github/workflows/build.ymml
 
       - name: Generate SBOM
-        run: gradle cyclonedxBom
+        run: ./gradlew cyclonedxBom
 
 
       - name: Publish libraries from main branch
         if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
         run: |
           # Check for artifacts to deploy
-          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true gradle -q lookForArtifacts)
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
 
           deployScript=""
           for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
@@ -59,7 +59,7 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-#            gradle $deployScript -b build.gradle
+#            ./gradlew  $deployScript -b build.gradle
             echo "*** $deployScript"
           else
             echo "No artifacts to publish."
@@ -67,5 +67,5 @@ jobs:
 
       - name: Force publish libraries
         if: inputs.forcePublish == 'true'
-#        run: gradle artifactoryPublish -b build.gradle
+#        run: ./gradlew  artifactoryPublish -b build.gradle
         run: echo "*** Force publishing libraries"
