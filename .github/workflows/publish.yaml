@@ -35,12 +35,10 @@ jobs:
     steps:
       - name: Build
         uses: ./.github/workflows/build.yml
-
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
-
       - name: Publish libraries from main branch
-        #        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
+#        if: github.ref == 'refs/heads/main' && inputs.forcePublish != 'true'
         run: |
 #                    Check for artifacts to deploy
                versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
