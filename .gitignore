@@ -77,24 +77,12 @@ fabric.properties
 ######################################################
 ## Gradle gitignore
 
-gradle.properties
-.gradle
-gradle
-.gradlea
-gradlew
-gradlew.bat
 **/build/
 !ab2d-filters/src/**/build/
 
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
 
 # Cache of project
 .gradletasknamecache
-
 
 ##################################################
 ## Mac Specific
