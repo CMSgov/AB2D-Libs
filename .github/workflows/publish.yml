@@ -1,11 +1,6 @@
 name: Publish libraries
 
-
-
 on:
-  push:
-    branches:
-      - fix-workflows
   workflow_call:
     inputs:
       forcePublish:
