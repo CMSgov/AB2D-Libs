@@ -1,20 +1,21 @@
-name: Publish Libraries
+name: Publish libraries
 
 on:
   push:
     branches:
       #      - main
-      - fix-workflows
+#      - fix-workflows
   #  pull_request:
   workflow_call:
     inputs:
       forcePublish:
         type: boolean
+        default: false
         required: true
   workflow_dispatch: # Allow manual trigger
     inputs:
       forcePublish:
-        description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
+        description: 'Force publish libraries to Artifactory - use with caution'
         type: boolean
         default: false
         required: false
@@ -52,16 +53,8 @@ jobs:
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
 
-      - name: Test 1
-        if: inputs.forcePublish == 'false'
-        run: echo "Test 1"
-
-      - name: Test 2
-        if: inputs.forcePublish == false
-        run: echo "Test 2"
-
       - name: Publish to artifactory
-        if: github.ref == 'refs/heads/main' && (inputs.forcePublish != 'true' || inputs.forcePublish != true)
+        if: inputs.forcePublish != true
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
@@ -82,3 +75,9 @@ jobs:
           else
             echo "No artifacts to publish."
           fi
+
+      - name: Force publish to Artifactory
+        if: inputs.forcePublish == true
+        run: ./gradlew artifactoryPublish -b build.gradle
+
+
