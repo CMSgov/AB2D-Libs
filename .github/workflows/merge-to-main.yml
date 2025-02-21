@@ -3,8 +3,7 @@ name: Push to main
 on:
   push:
     branches:
-      #      - main
-      - fix-workflows
+      - main
 
 jobs:
   build:

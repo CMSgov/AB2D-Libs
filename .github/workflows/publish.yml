@@ -1,21 +1,21 @@
 name: Publish libraries
 
+
+
 on:
   push:
     branches:
-      #      - main
-#      - fix-workflows
-  #  pull_request:
+      - fix-workflows
   workflow_call:
     inputs:
       forcePublish:
         type: boolean
         default: false
         required: true
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
     inputs:
       forcePublish:
-        description: 'Force publish libraries to Artifactory - use with caution'
+        description: 'Force publish libraries to Artifactory - Use with caution as this may overwrite artifacts'
         type: boolean
         default: false
         required: false
@@ -24,11 +24,11 @@ env:
   ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
 
 jobs:
-#  build:
-#    uses: ./.github/workflows/build.yml
-#    secrets: inherit
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
   publish:
-#    needs: build
+    needs: build
     runs-on: self-hosted
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
