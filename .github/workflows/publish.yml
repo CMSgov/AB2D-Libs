@@ -52,7 +52,16 @@ jobs:
       - name: Generate SBOM
         run: ./gradlew cyclonedxBom
 
+      - name: Test 1
+        if: inputs.forcePublish != 'true'
+        run: echo "Test 1"
+
+      - name: Test 2
+        if: inputs.forcePublish != true
+        run: echo "Test 2"
+
       - name: Publish to artifactory
+        if: github.ref == 'refs/heads/main' && (inputs.forcePublish != 'true' || inputs.forcePublish != true)
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
