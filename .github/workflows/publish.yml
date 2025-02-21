@@ -53,11 +53,11 @@ jobs:
         run: ./gradlew cyclonedxBom
 
       - name: Test 1
-        if: inputs.forcePublish != 'true'
+        if: inputs.forcePublish == 'false'
         run: echo "Test 1"
 
       - name: Test 2
-        if: inputs.forcePublish != true
+        if: inputs.forcePublish == false
         run: echo "Test 2"
 
       - name: Publish to artifactory
