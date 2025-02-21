@@ -16,7 +16,7 @@ on:
       forcePublish:
         description: 'Force publish snapshots of libraries to Artifactory even if not main branch'
         type: boolean
-        default: 'false' # boolean values are actually strings
+        default: false
         required: false
 
 env:
