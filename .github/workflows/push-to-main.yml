@@ -1,0 +1,13 @@
+name: Push to main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: ./.github/workflows/publish.yml
+    with:
+      forcePublish: false
+    secrets: inherit
