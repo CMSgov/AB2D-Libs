@@ -112,9 +112,9 @@ allprojects {
                 username = project.artifactory_user
                 password = project.artifactory_password
             }
-            authentication {
-                basic(BasicAuthentication)
-            }
+//            authentication {
+//                basic(BasicAuthentication)
+//            }
         }
     }
 }
@@ -158,7 +158,10 @@ subprojects {
     jar {
         processResources.exclude('checkstyle.xml')
         classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
-        out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        // suppress the '*** building branch' logs
+        if (!'true'.equals(System.getenv("SUPPRESS_LOGGING_BRANCH_CLASSIFIER"))) {
+            out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
+        }
     }
 
     test {

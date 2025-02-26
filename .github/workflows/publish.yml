@@ -1,0 +1,78 @@
+name: Publish libraries
+
+on:
+  workflow_call:
+    inputs:
+      forcePublish:
+        type: boolean
+        default: false
+        required: true
+  workflow_dispatch:
+    inputs:
+      forcePublish:
+        description: 'Force publish libraries to Artifactory - Use with caution as this may overwrite artifacts'
+        type: boolean
+        default: false
+        required: false
+
+env:
+  ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+  publish:
+    needs: build
+    runs-on: self-hosted
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Set env vars from AWS params
+        uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
+        with:
+          params: |
+            ARTIFACTORY_URL=/artifactory/url
+            ARTIFACTORY_USER=/artifactory/user
+            ARTIFACTORY_PASSWORD=/artifactory/password
+
+      - name: Generate SBOM
+        run: ./gradlew cyclonedxBom
+
+      - name: Publish to artifactory
+        if: inputs.forcePublish != true
+        run: |
+          # Check for artifacts to deploy
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
+
+          deployScript=""
+          for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
+            buildName=$(echo "$entry" | cut -d":" -f1)
+            isPublished=$(echo "$entry" | cut -d":" -f2)
+
+            if [ "$isPublished" == "false" ]; then
+              echo "Deploying $buildName"
+              deployScript+="$buildName:artifactoryPublish "
+            fi
+          done
+
+          if [ "$deployScript" != "" ]; then
+            echo "TEST -- $deployScript"
+          else
+            echo "No artifacts to publish."
+          fi
+
+      - name: Force publish to Artifactory
+        if: inputs.forcePublish == true
+        run: ./gradlew artifactoryPublish -b build.gradle
+
+
