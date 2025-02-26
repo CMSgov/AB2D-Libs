@@ -40,7 +40,7 @@ class FileOutputTypeTest {
     }
 
     @Test
-    void testActualFile() {
+    void testShouldFail() {
         assertEquals("1234", "abcd");
     }
 
