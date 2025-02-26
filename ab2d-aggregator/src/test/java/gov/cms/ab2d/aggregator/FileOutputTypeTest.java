@@ -39,9 +39,4 @@ class FileOutputTypeTest {
         assertEquals(DATA_COMPRESSED, FileOutputType.getFileType(file4));
     }
 
-    @Test
-    void testShouldFail() {
-        assertEquals("1234", "abcd");
-    }
-
 }
