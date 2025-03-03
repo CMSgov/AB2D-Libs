@@ -138,17 +138,4 @@ public final class BundleUtils {
     public static boolean isExplanationOfBenefitResource(IElement resource) {
         return resource != null && resource.fhirType() != null && resource.fhirType().endsWith(EOB);
     }
-
-    /**
-     * Return the total number of returned values for the search
-     *
-     * @param bundle - the Bundle object
-     * @return the total returned in the search
-     */
-    public static int getTotal(IBaseBundle bundle) {
-        if (bundle == null) {
-            return 0;
-        }
-        return (int) Versions.invokeGetMethod(bundle, "getTotal");
-    }
 }

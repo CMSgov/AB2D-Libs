@@ -48,7 +48,6 @@ class BundleUtilsTest {
     @Test
     void testErrors() {
         assertNull(BundleUtils.getEntries(null));
-        assertEquals(0, BundleUtils.getTotal(null));
         assertNull(BundleUtils.getEobResources(null));
 
         assertNull(BundleUtils.getNextLink(null));
@@ -72,8 +71,6 @@ class BundleUtilsTest {
         eob.setPatient(new org.hl7.fhir.dstu3.model.Reference().setReference("Patient/bene-id"));
         component.setResource(eob);
         bundle.addEntry(component);
-        assertEquals(1, BundleUtils.getTotal(bundle));
-        assertEquals(0, BundleUtils.getTotal(null));
 
         List<IBaseResource> resources = BundleUtils.getEobResources(BundleUtils.getEntries(bundle));
         assertNotNull(resources);
