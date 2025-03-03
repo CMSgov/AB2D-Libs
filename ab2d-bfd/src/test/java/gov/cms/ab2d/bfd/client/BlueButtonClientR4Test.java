@@ -101,7 +101,7 @@ public class BlueButtonClientR4Test {
         org.hl7.fhir.r4.model.Bundle response = (org.hl7.fhir.r4.model.Bundle) bbc.requestEOBFromServer(R4, TEST_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
-        assertEquals(10, response.getEntry().size(), "The demo patient should have exactly 260 EOBs");
+        assertEquals(10, response.getEntry().size(), "The demo patient should have exactly 10 EOBs");
     }
 
     @Test

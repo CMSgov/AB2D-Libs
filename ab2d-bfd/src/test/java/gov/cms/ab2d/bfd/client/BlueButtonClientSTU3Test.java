@@ -218,7 +218,7 @@ public class BlueButtonClientSTU3Test {
 
     private static void validation(Bundle response) {
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
-        assertEquals(10, response.getEntry().size(), "The demo patient should have exactly 32 EOBs");
+        assertEquals(10, response.getEntry().size(), "The demo patient should have exactly 10 EOBs");
     }
 
     @Test
