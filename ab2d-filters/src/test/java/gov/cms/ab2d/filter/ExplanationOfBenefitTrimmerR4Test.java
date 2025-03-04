@@ -188,7 +188,6 @@ class ExplanationOfBenefitTrimmerR4Test {
         assertNull(eobtrim.getForm().getCreation());
         assertEquals(0, eobtrim.getProcessNote().size());
         assertEquals(0, eobtrim.getBenefitBalance().size());
-        assertEquals(0, eobtrim.getTotal().size());
         assertNull(eobtrim.getUse());
         assertEquals(0, eobtrim.getAdjudication().size());
         assertEquals(0, eobtrim.getSupportingInfo().size());

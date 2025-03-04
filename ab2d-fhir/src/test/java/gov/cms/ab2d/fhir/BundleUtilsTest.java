@@ -71,6 +71,7 @@ class BundleUtilsTest {
         eob.setPatient(new org.hl7.fhir.dstu3.model.Reference().setReference("Patient/bene-id"));
         component.setResource(eob);
         bundle.addEntry(component);
+        assertEquals(1, BundleUtils.getEntries(bundle).size());
 
         List<IBaseResource> resources = BundleUtils.getEobResources(BundleUtils.getEntries(bundle));
         assertNotNull(resources);
