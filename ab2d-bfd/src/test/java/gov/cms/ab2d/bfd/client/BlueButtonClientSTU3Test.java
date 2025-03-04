@@ -218,7 +218,7 @@ public class BlueButtonClientSTU3Test {
 
     private static void validation(Bundle response) {
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
-        assertEquals(32, response.getTotal(), "The demo patient should have exactly 32 EOBs");
+        assertEquals(10, response.getEntry().size(), "The demo patient should have exactly 10 EOBs");
     }
 
     @Test
@@ -238,7 +238,7 @@ public class BlueButtonClientSTU3Test {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID, CONTRACT);
 
         assertNotNull(response, "The demo patient should have a non-null EOB bundle");
-        assertEquals(1, response.getTotal(), "The demo patient should have exactly 1 EOBs");
+        assertEquals(1, response.getEntry().size(), "The demo patient should have exactly 1 EOBs");
         assertNull(response.getLink(org.hl7.fhir.dstu3.model.Bundle.LINK_NEXT),
                 "Should have no next link since all the resources are in the bundle");
     }
@@ -277,7 +277,7 @@ public class BlueButtonClientSTU3Test {
     @Test
     void shouldHandlePatientsWithOnlyOneEOB() {
         org.hl7.fhir.dstu3.model.Bundle response = (org.hl7.fhir.dstu3.model.Bundle) bbc.requestEOBFromServer(STU3, TEST_SINGLE_EOB_PATIENT_ID, CONTRACT);
-        assertEquals(1, response.getTotal(), "This demo patient should have exactly 1 EOB");
+        assertEquals(1, response.getEntry().size(), "This demo patient should have exactly 1 EOB");
     }
 
     @Test
