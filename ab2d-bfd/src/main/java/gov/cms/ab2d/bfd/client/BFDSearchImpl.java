@@ -6,12 +6,9 @@ import gov.cms.ab2d.fhir.FhirVersion;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.methods.HttpGet;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -20,8 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -53,13 +48,22 @@ public class BFDSearchImpl implements BFDSearch {
     @Trace
     @Override
     public IBaseBundle searchEOB(long patientId, OffsetDateTime since, OffsetDateTime until, int pageSize, String bulkJobId, FhirVersion version, String contractNum) throws IOException {
-        StringBuilder url = new StringBuilder(bfdClientVersions.getUrl(version) + "ExplanationOfBenefit/_search");
+        String urlLocation = bfdClientVersions.getUrl(version);
+        StringBuilder url = new StringBuilder(urlLocation + "ExplanationOfBenefit?patient=" + patientId + "&excludeSAMHSA=true");
+
+        if (since != null) {
+            url.append("&_lastUpdated=ge").append(since);
+        }
+
+        if (until != null) {
+            url.append("&_lastUpdated=le").append(until);
+        }
 
         if (pageSize > 0) {
             url.append("&_count=").append(pageSize);
         }
 
-        HttpPost request = new HttpPost(url.toString());
+        HttpGet request = new HttpGet(url.toString());
 
         // No active profiles means use JSON
         if (environment.getActiveProfiles().length == 0) {
@@ -71,19 +75,6 @@ public class BFDSearchImpl implements BFDSearch {
         request.addHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNum);
         request.addHeader(BFDClient.BFD_HDR_BULK_JOBID, bulkJobId);
 
-        List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("patient", "" + patientId));
-        params.add(new BasicNameValuePair("excludeSAMHSA", "true"));
-        if (since != null) {
-            params.add(new BasicNameValuePair("_lastUpdated", "ge" + since));
-        }
-
-        if (until != null) {
-            params.add(new BasicNameValuePair("_lastUpdated", "le" + until));
-        }
-
-        request.setEntity(new UrlEncodedFormEntity(params));
-        log.info("Executing BFD Search Request {}", request);
         byte[] responseBytes = getEOBSFromBFD(patientId, request);
 
         return parseBundle(version, responseBytes);
@@ -93,7 +84,7 @@ public class BFDSearchImpl implements BFDSearch {
      * Method exists to track connection to BFD for New Relic
      */
     @Trace
-    private byte[] getEOBSFromBFD(long patientId, HttpPost request) throws IOException {
+    private byte[] getEOBSFromBFD(long patientId, HttpGet request) throws IOException {
         byte[] responseBytes;
         try (CloseableHttpResponse response = (CloseableHttpResponse) httpClient.execute(request)) {
             int status = response.getStatusLine().getStatusCode();
