@@ -22,30 +22,29 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='2.3.0'
-    bfdVersion='4.1.1'
-    aggregatorVersion='2.0.1'
-    filtersVersion='2.2.0'
-    eventClientVersion='3.2.5'
-    propertiesClientVersion='2.0.0'
-    contractClientVersion='2.0.0'
-    snsClientVersion='1.0.1'
+    fhirVersion='2.4.0'
+    bfdVersion='4.2.1'
+    aggregatorVersion='2.1.1'
+    filtersVersion='2.3.0'
+    eventClientVersion='3.3.5'
+    propertiesClientVersion='2.1.0'
+    contractClientVersion='2.1.0'
+    snsClientVersion='1.1.1'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
     resolverRepo = 'ab2d-main'
 
     commonsLangVersion='3.12.0'
-    lombokVersion = '1.18.34'
-    springBootVersion='3.2.8'
-    springCloudAwsVersion='3.1.1'
+    lombokVersion = '1.18.38'
+    springBootVersion='3.4.4'
+    springCloudAwsVersion='3.3.0'
     hapiVersion = '8.0.0'
-    springWebVersion="6.1.12"
     newRelicVersion='8.4.0'
-    testContainerVersion='1.20.1'
+    testContainerVersion='1.20.6'
     mockServerVersion='5.15.0'
-    liquibaseVersion="4.23.0"
-    jacksonVersion = "2.18.2"
+    liquibaseVersion="4.31.1"
+    jacksonVersion = "2.18.3"
     slackAPIVersion='1.30.0'
     jupiterVersion='5.9.3'
     hl7Version = '6.5.13'
