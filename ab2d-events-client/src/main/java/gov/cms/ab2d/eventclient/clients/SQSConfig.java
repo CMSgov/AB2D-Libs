@@ -99,7 +99,7 @@ public class SQSConfig {
     }
 
     @Bean
-    protected MessageConverter messageConverter() {
+    protected MessageConverter jacksonMessageConverter() {
         MappingJackson2MessageConverter jacksonMessageConverter = new MappingJackson2MessageConverter();
         jacksonMessageConverter.setObjectMapper(objectMapper());
         jacksonMessageConverter.setSerializedPayloadClass(String.class);
@@ -109,7 +109,7 @@ public class SQSConfig {
 
     private SqsMessagingMessageConverter sqsMessagingMessageConverter() {
         SqsMessagingMessageConverter converter = new SqsMessagingMessageConverter();
-        converter.setPayloadMessageConverter(messageConverter());
+        converter.setPayloadMessageConverter(jacksonMessageConverter());
         return converter;
     }
 

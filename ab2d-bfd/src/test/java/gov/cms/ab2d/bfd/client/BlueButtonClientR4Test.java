@@ -65,15 +65,7 @@ public class BlueButtonClientR4Test {
 
         // Ensure timeouts are working.
         MockUtils.createMockServerExpectation(
-                "/v2/fhir/ExplanationOfBenefit/_search",
-                HttpStatus.SC_OK,
-                getRawJson(SAMPLE_EOB_BUNDLE),
-                List.of(Parameter.param("patient", TEST_PATIENT_ID.toString()),
-                        Parameter.param("excludeSAMHSA", "true")),
-                MOCK_PORT_V2
-        );
-        MockUtils.createMockServerExpectation(
-                "/v2/fhir/ExplanationOfBenefit/_search&_count=10",
+                "/v2/fhir/ExplanationOfBenefit",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_EOB_BUNDLE),
                 List.of(Parameter.param("patient", TEST_PATIENT_ID.toString()),
@@ -82,7 +74,7 @@ public class BlueButtonClientR4Test {
         );
 
         MockUtils.createMockServerExpectation(
-                "/v2/fhir/Patient/_search",
+                "/v2/fhir/Patient",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_PATIENT_BUNDLE),
                 List.of(Parameter.param("_has:Coverage.extension",
