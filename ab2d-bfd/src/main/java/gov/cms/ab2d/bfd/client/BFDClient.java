@@ -3,6 +3,7 @@ package gov.cms.ab2d.bfd.client;
 import gov.cms.ab2d.fhir.FhirVersion;
 import org.hl7.fhir.instance.model.api.IBaseConformance;
 
+import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 
@@ -12,7 +13,7 @@ public interface BFDClient {
 
     IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, String contractNum);
     IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, OffsetDateTime untilTime, String contractNum);
-    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum);
+    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum) throws URISyntaxException;
 
     /**
      * Request BFD for a list of all active patients in a contract for a specific month
@@ -24,6 +25,8 @@ public interface BFDClient {
     IBaseBundle requestPartDEnrolleesFromServer(FhirVersion version, String contractNumber, int month);
 
     IBaseBundle requestPartDEnrolleesFromServer(FhirVersion version, String contractNumber, int month, int year);
+
+    IBaseBundle requestPartDEnrolleesFromServer(FhirVersion version, String contractNumber, String month, String year, String cursor);
 
     IBaseConformance capabilityStatement(FhirVersion version);
 
