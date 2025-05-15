@@ -208,8 +208,7 @@ public class BFDClientImpl implements BFDClient {
 
         String year = referenceYearParam.split("\\|", 2)[1];
 
-        String month = extParts[0]
-                .replaceAll(".*/ptdcntrct(\\d{2})$", "$1");
+        String month = extParts[0].substring(extParts[0].length()-2);
 
         return requestPartDEnrolleesFromServer(version, contract, month, year, params.get("cursor"));
     }
