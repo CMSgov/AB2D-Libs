@@ -82,7 +82,7 @@ public class BlueButtonClientSTU3Test {
 
         // Ensure timeouts are working.
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/ExplanationOfBenefit",
+                "/v1/fhir/ExplanationOfBenefit/_search&_count=10",
                 HttpStatus.SC_OK,
                 StringUtils.EMPTY,
                 Collections.singletonList(Parameter.param("patient", TEST_SLOW_PATIENT_ID.toString())),
@@ -92,15 +92,15 @@ public class BlueButtonClientSTU3Test {
 
         for (String patientId : TEST_PATIENT_IDS) {
             MockUtils.createMockServerExpectation(
-                    "/v1/fhir/Patient/" + patientId,
+                    "/v1/fhir/Patient/_search",
                     HttpStatus.SC_OK,
                     getRawJson(SAMPLE_PATIENT_PATH_PREFIX + patientId + ".json"),
-                    List.of(),
+                    List.of(Parameter.param("patient", patientId)),
                     MOCK_PORT_V1
             );
 
             MockUtils.createMockServerExpectation(
-                    "/v1/fhir/ExplanationOfBenefit",
+                    "/v1/fhir/ExplanationOfBenefit/_search&_count=10",
                     HttpStatus.SC_OK,
                     getRawJson(SAMPLE_EOB_PATH_PREFIX + patientId + ".json"),
                     List.of(Parameter.param("patient", patientId),
@@ -110,7 +110,7 @@ public class BlueButtonClientSTU3Test {
         }
 
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/Patient",
+                "/v1/fhir/Patient/_search",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_PATIENT_PATH_PREFIX + "/bundle/patientbundle.json"),
                 List.of(),
@@ -119,14 +119,14 @@ public class BlueButtonClientSTU3Test {
 
         // Patient that exists, but has no records
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/Patient/" + TEST_NO_RECORD_PATIENT_ID,
+                "/v1/fhir/Patient/_search",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_PATIENT_PATH_PREFIX + TEST_NO_RECORD_PATIENT_ID + ".json"),
-                List.of(),
+                List.of(Parameter.param("patient", TEST_NO_RECORD_PATIENT_ID.toString())),
                 MOCK_PORT_V1
         );
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/ExplanationOfBenefit",
+                "/v1/fhir/ExplanationOfBenefit/_search&_count=10",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_EOB_PATH_PREFIX + TEST_NO_RECORD_PATIENT_ID + ".json"),
                 List.of(Parameter.param("patient", TEST_NO_RECORD_PATIENT_ID.toString()),
@@ -135,14 +135,14 @@ public class BlueButtonClientSTU3Test {
         );
 
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/Patient/" + TEST_NO_RECORD_PATIENT_ID_MBI,
+                "/v1/fhir/Patient/_search",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_PATIENT_PATH_PREFIX + TEST_NO_RECORD_PATIENT_ID_MBI + ".json"),
-                List.of(),
+                List.of(Parameter.param("patient", TEST_NO_RECORD_PATIENT_ID_MBI.toString())),
                 MOCK_PORT_V1
         );
         MockUtils.createMockServerExpectation(
-                "/v1/fhir/ExplanationOfBenefit",
+                "/v1/fhir/ExplanationOfBenefit/_search&_count=10",
                 HttpStatus.SC_OK,
                 getRawJson(SAMPLE_EOB_PATH_PREFIX + TEST_NO_RECORD_PATIENT_ID_MBI + ".json"),
                 List.of(Parameter.param("patient", TEST_NO_RECORD_PATIENT_ID_MBI.toString()),
@@ -153,11 +153,10 @@ public class BlueButtonClientSTU3Test {
         // Create mocks for pages of the results
         for (String startIndex : List.of("10", "20", "30")) {
             MockUtils.createMockServerExpectation(
-                    "/v1/fhir/ExplanationOfBenefit",
+                    "/v1/fhir/ExplanationOfBenefit/_search&_count=10",
                     HttpStatus.SC_OK,
                     getRawJson(SAMPLE_EOB_PATH_PREFIX + TEST_PATIENT_ID + "_" + startIndex + ".json"),
                     List.of(Parameter.param("patient", TEST_PATIENT_ID.toString()),
-                            Parameter.param("count", "10"),
                             Parameter.param("startIndex", startIndex),
                             Parameter.param("excludeSAMHSA", "true")),
                     MOCK_PORT_V1
@@ -166,7 +165,7 @@ public class BlueButtonClientSTU3Test {
 
         for (String month : CONTRACT_MONTHS) {
             MockUtils.createMockServerExpectation(
-                    "/v1/fhir/Patient/",
+                    "/v1/fhir/Patient/_search",
                     HttpStatus.SC_OK,
                     getRawJson(SAMPLE_PATIENT_PATH_PREFIX + "/bundle/patientbundle.json"),
                     List.of(Parameter.param("_has:Coverage.extension",

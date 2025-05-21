@@ -47,22 +47,41 @@ public class MockUtils {
     static MockServerClient createMockServerExpectation(String path, int respCode, String payload,
                                                         List<Parameter> qStringParams, int delayMs, int port) {
         MockServerClient mock = new MockServerClient("localhost", port);
-        mock.when(
-                HttpRequest.request()
-                        .withMethod("GET")
-                        .withPath(path)
-                        .withQueryStringParameters(qStringParams),
-                Times.unlimited()
-        ).respond(
-                org.mockserver.model.HttpResponse.response()
-                        .withStatusCode(respCode)
-                        .withHeader(
-                                new Header("Content-Type",
-                                        "application/json;charset=UTF-8")
-                        )
-                        .withBody(payload)
-                        .withDelay(TimeUnit.MILLISECONDS, delayMs)
-        );
+        if (path.contains("/fhir/metadata")) {
+            mock.when(
+                    HttpRequest.request()
+                            .withMethod("GET")
+                            .withPath(path)
+                            .withBody(params(qStringParams)),
+                    Times.unlimited()
+            ).respond(
+                    org.mockserver.model.HttpResponse.response()
+                            .withStatusCode(respCode)
+                            .withHeader(
+                                    new Header("Content-Type",
+                                            "application/json;charset=UTF-8")
+                            )
+                            .withBody(payload)
+                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
+            );
+        } else {
+            mock.when(
+                    HttpRequest.request()
+                            .withMethod("POST")
+                            .withPath(path)
+                            .withBody(params(qStringParams)),
+                    Times.unlimited()
+            ).respond(
+                    org.mockserver.model.HttpResponse.response()
+                            .withStatusCode(respCode)
+                            .withHeader(
+                                    new Header("Content-Type",
+                                            "application/json;charset=UTF-8")
+                            )
+                            .withBody(payload)
+                            .withDelay(TimeUnit.MILLISECONDS, delayMs)
+            );
+        }
         return mock;
     }
 
