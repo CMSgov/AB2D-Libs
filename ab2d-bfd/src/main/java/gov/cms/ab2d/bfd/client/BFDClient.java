@@ -13,7 +13,7 @@ public interface BFDClient {
 
     IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, String contractNum);
     IBaseBundle requestEOBFromServer(FhirVersion version, long patientID, OffsetDateTime sinceTime, OffsetDateTime untilTime, String contractNum);
-    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum) throws URISyntaxException;
+    IBaseBundle requestNextBundleFromServer(FhirVersion version, IBaseBundle bundle, String contractNum);
 
     /**
      * Request BFD for a list of all active patients in a contract for a specific month

@@ -13,8 +13,6 @@ import gov.cms.ab2d.fhir.FhirVersion;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseConformance;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +20,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -153,14 +149,14 @@ public class BFDClientImpl implements BFDClient {
             if (nextPageUrl.contains("ExplanationOfBenefit"))
                 return searchEOB(version, contractNum, nextPageUrl);
 
-        } catch (URISyntaxException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    private IBaseBundle searchEOB(FhirVersion version, String contractNum, String url) throws IOException, URISyntaxException {
-       String query = url.substring(url.indexOf('?') + 1);
+    private IBaseBundle searchEOB(FhirVersion version, String contractNum, String url) throws IOException {
+        String query = url.substring(url.indexOf('?') + 1);
 
         Map<String, List<String>> params = Arrays.stream(query.split("&"))
                 .map(s -> s.split("=", 2))
@@ -183,12 +179,17 @@ public class BFDClientImpl implements BFDClient {
                 .filter(v -> v.startsWith("le"))
                 .map(v -> v.substring(2))
                 .findFirst().orElse(null);
-
+        log.info("bfdSearch.searchEOBString " + patient + " " + count + " " + startIndex + " " + since + " " + until);
         return bfdSearch.searchEOBString(patient, since, until, count, getJobId(), version, contractNum, startIndex);
     }
 
-    private IBaseBundle requestPartDEnrolleesWithCursor(FhirVersion version, String url) throws URISyntaxException, UnsupportedEncodingException {
-        URI uri = new URI(url);
+    private IBaseBundle requestPartDEnrolleesWithCursor(FhirVersion version, String url) throws UnsupportedEncodingException {
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         String rawQuery = uri.getRawQuery();
 
         // Decode into a map of parameter → value
@@ -208,11 +209,10 @@ public class BFDClientImpl implements BFDClient {
 
         String year = referenceYearParam.split("\\|", 2)[1];
 
-        String month = extParts[0].substring(extParts[0].length()-2);
-
+        String month = extParts[0].substring(extParts[0].length() - 2);
+        log.info("requestPartDEnrolleesWithCursor " + contract + " " + year + " " + month + " " + params.get("cursor"));
         return requestPartDEnrolleesFromServer(version, contract, month, year, params.get("cursor"));
     }
-
 
     private String getJobId() {
         var jobId = BFDClient.BFD_BULK_JOB_ID.get();
