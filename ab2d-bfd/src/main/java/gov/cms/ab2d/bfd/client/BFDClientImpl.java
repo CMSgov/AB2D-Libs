@@ -57,6 +57,7 @@ public class BFDClientImpl implements BFDClient {
 
     private static final String INCLUDE_IDENTIFIERS_HEADER = "IncludeIdentifiers";
     private static final String MBI_HEADER_VALUE = "mbi";
+    private static final String CURSOR = "cursor";
 
     public BFDClientImpl(BFDSearch bfdSearch, BfdClientVersions bfdClientVersions) {
         this.bfdSearch = bfdSearch;
@@ -150,7 +151,8 @@ public class BFDClientImpl implements BFDClient {
                 return searchEOB(version, contractNum, nextPageUrl);
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Exception:  " + e.getMessage());
+           return null;
         }
         return null;
     }
@@ -188,7 +190,8 @@ public class BFDClientImpl implements BFDClient {
         try {
             uri = new URI(url);
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            log.error("Cannot create uri from " + url + ": " + e.getMessage());
+           return null;
         }
         String rawQuery = uri.getRawQuery();
 
@@ -210,8 +213,8 @@ public class BFDClientImpl implements BFDClient {
         String year = referenceYearParam.split("\\|", 2)[1];
 
         String month = extParts[0].substring(extParts[0].length() - 2);
-        log.info("requestPartDEnrolleesWithCursor " + contract + " " + year + " " + month + " " + params.get("cursor"));
-        return requestPartDEnrolleesFromServer(version, contract, month, year, params.get("cursor"));
+        log.info("requestPartDEnrolleesWithCursor " + contract + " " + year + " " + month + " " + params.get(CURSOR));
+        return requestPartDEnrolleesFromServer(version, contract, month, year, params.get(CURSOR));
     }
 
     private String getJobId() {
@@ -295,7 +298,7 @@ public class BFDClientImpl implements BFDClient {
                 .forResource(version.getPatientClass())
                 .where(monthCriterion)
                 .and(yearCriterion)
-                .and(new StringClientParam("cursor").matches().value(cursor))
+                .and(new StringClientParam(CURSOR).matches().value(cursor))
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_CLIENTID, contractNumber)
                 .withAdditionalHeader(BFDClient.BFD_HDR_BULK_JOBID, getJobId())
                 .withAdditionalHeader(INCLUDE_IDENTIFIERS_HEADER, MBI_HEADER_VALUE)
