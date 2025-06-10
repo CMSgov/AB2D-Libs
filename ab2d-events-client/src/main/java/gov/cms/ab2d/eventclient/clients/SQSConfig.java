@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import gov.cms.ab2d.eventclient.EventClientException;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
@@ -41,7 +42,7 @@ public class SQSConfig {
 
     public SQSConfig(@Value("${cloud.aws.region.static}") String region,
                      @Value("${cloud.aws.end-point.uri}") String url,
-                     @Deprecated Ab2dEnvironment ab2dEnvironment) {
+                     Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
 
@@ -61,7 +62,7 @@ public class SQSConfig {
             return tokens[tokens.length-1];
         }
         catch (Exception e) {
-            throw new RuntimeException("Unable to derive SQS queue name from URL: " + url);
+            throw new EventClientException("Unable to derive SQS queue name from URL: " + url);
         }
     }
 
