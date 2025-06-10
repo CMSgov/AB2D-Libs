@@ -41,7 +41,7 @@ public class SQSConfig {
 
     public SQSConfig(@Value("${cloud.aws.region.static}") String region,
                      @Value("${cloud.aws.end-point.uri}") String url,
-                     Ab2dEnvironment ab2dEnvironment) {
+                     @Deprecated Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
         this.sqsQueueName = deriveSqsQueueName(url);
