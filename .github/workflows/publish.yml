@@ -51,7 +51,10 @@ jobs:
       - name: Publish to artifactory
         if: inputs.forcePublish != true
         run: | # TODO add modules to be published here
-          ./gradlew ab2d-events-client:artifactoryPublish -b build.gradle
+          ./gradlew \ 
+            ab2d-events-client:artifactoryPublish \
+            ab2d-sns-client:artifactoryPublish \
+            -b build.gradle
 
 #      - name: Force publish to Artifactory
 #        if: inputs.forcePublish == true
