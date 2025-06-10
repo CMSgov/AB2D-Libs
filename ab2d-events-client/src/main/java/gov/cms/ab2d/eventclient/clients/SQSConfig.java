@@ -2,11 +2,9 @@ package gov.cms.ab2d.eventclient.clients;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import gov.cms.ab2d.eventclient.config.Ab2dEnvironment;
 import io.awspring.cloud.sqs.config.SqsBootstrapConfiguration;
@@ -34,7 +32,6 @@ import java.net.URI;
 public class SQSConfig {
 
     private final String sqsQueueName;
-    private static final String EVENTS_QUEUE = "-events-sqs";
 
     @Value("${cloud.aws.region.static}")
     private String region;
@@ -47,11 +44,22 @@ public class SQSConfig {
                      Ab2dEnvironment ab2dEnvironment) {
         this.region = region;
         this.url = url;
-        this.sqsQueueName = ab2dEnvironment.getName() + EVENTS_QUEUE;
+        this.sqsQueueName = deriveSqsQueueName(url);
 
         // This is needed so the sqsListener can get the queue name.
         // It only accepts constance and this is a way to get around that while dynamically setting a sqs name
         System.setProperty("sqs.queue-name", sqsQueueName);
+        log.info("Setting SQS queue name: '{}'", sqsQueueName);
+    }
+
+    public static String deriveSqsQueueName(String url) {
+        try {
+            String[] tokens = url.split("/");
+            return tokens[tokens.length-1];
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to derive SQS queue name from URL: " + url);
+        }
     }
 
     @Bean
@@ -125,6 +133,13 @@ public class SQSConfig {
             log.error(e.getMessage());
         }
         return sqsClient;
+    }
+
+    public static void main(String[] args) {
+        String url ="https://sqs.us-east-1.amazonaws.com/539247469933/ab2d-dev-events-sqs";
+        String[] tokens = url.split("/");
+        String sqsName = tokens[tokens.length-1];
+        System.out.println(sqsName);
     }
 
 }
