@@ -166,8 +166,5 @@ public class SendSqsEventTest {
         new SQSConfig("us-east-1", url, null);
         assertEquals("ab2d-dev-events-sqs", System.getProperty("sqs.queue-name"));
 
-
-
-
     }
 }
