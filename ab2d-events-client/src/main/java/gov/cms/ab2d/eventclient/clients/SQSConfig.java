@@ -135,11 +135,4 @@ public class SQSConfig {
         return sqsClient;
     }
 
-    public static void main(String[] args) {
-        String url ="https://sqs.us-east-1.amazonaws.com/539247469933/ab2d-dev-events-sqs";
-        String[] tokens = url.split("/");
-        String sqsName = tokens[tokens.length-1];
-        System.out.println(sqsName);
-    }
-
 }
