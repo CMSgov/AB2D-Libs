@@ -161,10 +161,13 @@ public class SendSqsEventTest {
 
     @Test
     void testAB2DEEnvironment() {
-        new SQSConfig("", "", Ab2dEnvironment.DEV);
-        assertEquals(DEV_EVENTS_SQS, System.getProperty("sqs.queue-name"));
+        String url = "https://sqs.us-east-1.amazonaws.com/123456789/ab2d-dev-events-sqs";
 
-        new SQSConfig("", "", Ab2dEnvironment.SANDBOX);
-        assertEquals("ab2d-sbx-sandbox-events-sqs", System.getProperty("sqs.queue-name"));
+        new SQSConfig("us-east-1", url, null);
+        assertEquals("ab2d-dev-events-sqs", System.getProperty("sqs.queue-name"));
+
+
+
+
     }
 }
