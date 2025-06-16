@@ -133,7 +133,6 @@ subprojects {
         println("Artifactory password not set")
     }
 
-
     sourceCompatibility = 17
     targetCompatibility = 17
 
