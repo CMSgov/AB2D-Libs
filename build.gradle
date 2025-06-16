@@ -26,10 +26,10 @@ ext {
     bfdVersion='4.2.1'
     aggregatorVersion='2.1.1'
     filtersVersion='2.3.0'
-    eventClientVersion='3.3.6-gf-SNAPSHOT'
+    eventClientVersion='3.3.6'
     propertiesClientVersion='2.1.0'
     contractClientVersion='2.1.0'
-    snsClientVersion='1.1.2-gf-SNAPSHOT'
+    snsClientVersion='1.1.2'
 
     sourcesRepo = 'ab2d-maven-repo'
     deployerRepo = 'ab2d-main'
