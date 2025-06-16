@@ -118,7 +118,6 @@ public class SQSEventClient implements EventClient {
                     .build();
 
             amazonSQS.sendMessage(sendMessageRequest);
-            log.info("Sent message to queue: {}", queueUrl);
 
         } catch (JsonProcessingException | UnsupportedOperationException | SqsException e) {
             log.info(e.getMessage());
