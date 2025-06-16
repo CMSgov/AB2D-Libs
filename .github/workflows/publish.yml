@@ -50,13 +50,29 @@ jobs:
 
       - name: Publish to artifactory
         if: inputs.forcePublish != true
-        run: | # TODO add modules to be published here
-          ./gradlew ab2d-events-client:artifactoryPublish -b build.gradle
-          ./gradlew ab2d-sns-client:artifactoryPublish -b build.gradle
-            
+        run: |
+          # Check for artifacts to deploy
+          versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
 
-#      - name: Force publish to Artifactory
-#        if: inputs.forcePublish == true
-#        run: ./gradlew artifactoryPublish -b build.gradle
+          deployScript=""
+          for entry in $(echo "$versionPublishedList" | tr "'''" "\n"); do
+            buildName=$(echo "$entry" | cut -d":" -f1)
+            isPublished=$(echo "$entry" | cut -d":" -f2)
+
+            if [ "$isPublished" == "false" ]; then
+              echo "Deploying $buildName"
+              deployScript+="$buildName:artifactoryPublish "
+            fi
+          done
+
+          if [ "$deployScript" != "" ]; then
+            echo "TEST -- $deployScript"
+          else
+            echo "No artifacts to publish."
+          fi
+
+      - name: Force publish to Artifactory
+        if: inputs.forcePublish == true
+        run: ./gradlew artifactoryPublish -b build.gradle
 
 
