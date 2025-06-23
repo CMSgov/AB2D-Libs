@@ -11,6 +11,7 @@ task prepareKotlinBuildScriptModel {
 }
 
 dependencies {
+    implementation "io.awspring.cloud:spring-cloud-aws-starter-parameter-store:${springCloudAwsVersion}"
     implementation "commons-configuration:commons-configuration:1.10"
     implementation "com.konghq:unirest-java:3.14.5"
     implementation "org.projectlombok:lombok:$lombokVersion"
