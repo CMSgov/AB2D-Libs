@@ -28,6 +28,7 @@ public class ParameterStorePropertiesClient implements PropertiesClient {
     private final SsmClient ssmClient;
     private final Ab2dEnvironment environment;
 
+    // Derive AB2D environment based on `AB2D_EXECUTION_ENV` environment variable
     public ParameterStorePropertiesClient() {
         this(deriveAb2dEnvironment());
     }
@@ -136,7 +137,7 @@ public class ParameterStorePropertiesClient implements PropertiesClient {
          */
 
         PropertiesClient propertiesClient = new ParameterStorePropertiesClient();
-        // Try to find parameter at e.g. `/ab2d/dev/properties/testing`
+        // Try to find parameter at e.g. `/ab2d/dev/properties/testing` assuming AB2D_EXECUTION_ENV=ab2d-dev
         System.out.println(propertiesClient.getProperty("testing"));
     }
 
