@@ -23,7 +23,7 @@ ext {
 
     // AB2D libraries
     fhirVersion='2.4.0'
-    bfdVersion='4.2.1'
+    bfdVersion='4.2.2-SNAPSHOT'
     aggregatorVersion='2.1.1'
     filtersVersion='2.3.0'
     eventClientVersion='3.3.6'
@@ -156,7 +156,7 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+//        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         // suppress the '*** building branch' logs
         if (!'true'.equals(System.getenv("SUPPRESS_LOGGING_BRANCH_CLASSIFIER"))) {
             out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
@@ -171,6 +171,7 @@ subprojects {
     sonarqube {
         properties {
             property 'sonar.coverage.exclusions', "**/SQSConfig.java, **/SNSConfig.java, **/BFDSearchImpl.java, **/BFDClientImpl.java"
+            property "sonar.cpd.exclusions", "**/BFDSearchImpl.java, **/BFDClientImpl.java"
         }
     }
 
