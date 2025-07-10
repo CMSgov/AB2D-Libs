@@ -3,7 +3,6 @@ package gov.cms.ab2d.properties.client;
 import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
@@ -21,7 +20,6 @@ public class ParameterStorePropertiesClient implements PropertiesClient {
     public enum Ab2dEnvironment {
         DEV,
         TEST,
-        SANDBOX,
         PROD
     }
 
@@ -139,6 +137,7 @@ public class ParameterStorePropertiesClient implements PropertiesClient {
         PropertiesClient propertiesClient = new ParameterStorePropertiesClient();
         // Try to find parameter at e.g. `/ab2d/dev/properties/testing` assuming AB2D_EXECUTION_ENV=ab2d-dev
         System.out.println(propertiesClient.getProperty("testing"));
+        System.out.println(propertiesClient.getProperty("maintenance.mode"));
     }
 
 }
