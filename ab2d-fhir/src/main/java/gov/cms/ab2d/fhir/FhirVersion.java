@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public enum FhirVersion {
     STU3("org.hl7.fhir.dstu3.model", FhirContext.forDstu3(), FhirVersionEnum.DSTU3, "/v1/", "/v1/",
             org.hl7.fhir.dstu3.model.ResourceType.Patient, false),
-    R4("org.hl7.fhir.r4.model", FhirContext.forR4(), FhirVersionEnum.R4, "/v2/", "/v2/",
+    R4("org.hl7.fhir.r4.model", FhirContext.forR4(), FhirVersionEnum.R4, "/v2/", "/v3/",
             org.hl7.fhir.r4.model.ResourceType.Patient, true);
 
     private final String classLocation;

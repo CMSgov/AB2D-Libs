@@ -75,7 +75,7 @@ class FhirVersionTest {
       FhirVersion.STU3.getBfdVersionString()
     );
     assertEquals(
-      "/v2/",
+      "/v3/",
       FhirVersion.R4.getBfdVersionString()
     );
   }
