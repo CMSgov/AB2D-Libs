@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: codebuild-AB2D-libs-${{github.run_id}}-${{github.run_attempt}}
+    runs-on: codebuild-AB2D-Libs-${{github.run_id}}-${{github.run_attempt}}
     env:
       AWS_ACCOUNT: ${{ secrets.NON_PROD_ACCOUNT }}
       AWS_REGION: ${{ vars.AWS_REGION }}
