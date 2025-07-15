@@ -22,8 +22,8 @@ env:
 
 jobs:
   build:
-  uses: ./.github/workflows/build.yml
-  secrets: inherit
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
   publish:
     permissions:
       contents: read

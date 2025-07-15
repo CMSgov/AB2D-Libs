@@ -2,8 +2,6 @@ name: Build libraries
 run-name: Build-libraries
 
 on:
-  push:
-    branches: [ "AB2D-6790/workflow-gf" ]
   workflow_dispatch:
   workflow_call:
 
