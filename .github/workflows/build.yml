@@ -1,4 +1,5 @@
 name: Build libraries
+run-name: Build-libraries
 
 on:
   workflow_dispatch:
@@ -6,8 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: codebuild-AB2D-Libs-${{ github.run_id }}-${{ github.run_attempt }}
     env:
+      AWS_ACCOUNT: ${{ secrets.NON_PROD_ACCOUNT }}
       AWS_REGION: ${{ vars.AWS_REGION }}
 
     steps:
@@ -37,11 +42,14 @@ jobs:
         run: ./gradlew jar --info -b build.gradle
 
       - name: SonarQube Analysis
-        run: |
+        run: |          
+          unset CODEBUILD_BUILD_ID CODEBUILD_START_TIME CODEBUILD_BUILD_ARN
+          
           ./gradlew sonar \
             -Dsonar.projectKey=ab2d-lib-project \
             -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
+            -Dsonar.login=$SONAR_TOKEN \
+            -Dsonar.ci.autoconfig.disabled=true
 
       - name: Quality Gate
         id: sonarqube-quality-gate-check
