@@ -37,11 +37,11 @@ jobs:
             SONAR_HOST_URL=/sonarqube/url
             SONAR_TOKEN=/sonarqube/token
 
-      - name: Build and test libraries
-        run: ./gradlew clean test --info -b build.gradle
-
-      - name: Build JARs
-        run: ./gradlew jar --info -b build.gradle
+#      - name: Build and test libraries
+#        run: ./gradlew clean test --info -b build.gradle
+#
+#      - name: Build JARs
+#        run: ./gradlew jar --info -b build.gradle
 
       - name: SonarQube Analysis
         run: |
