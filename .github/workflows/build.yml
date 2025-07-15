@@ -45,6 +45,10 @@ jobs:
 
       - name: SonarQube Analysis
         run: |
+          echo "SONAR_HOST_URL = $SONAR_HOST_URL"
+          
+          unset CODEBUILD_BUILD_ID CODEBUILD_START_TIME CODEBUILD_BUILD_ARN
+          
           ./gradlew sonar \
             -Dsonar.projectKey=ab2d-lib-project \
             -Dsonar.host.url=$SONAR_HOST_URL \
