@@ -1,8 +1,6 @@
 name: Publish libraries
 
 on:
-  push:
-    branches: [ "AB2D-6790/workflow-gf" ]
   workflow_call:
     inputs:
       forcePublish:
@@ -31,8 +29,7 @@ jobs:
     runs-on: codebuild-AB2D-Libs-${{ github.run_id }}-${{ github.run_attempt }}
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
-#      FORCE_PUBLISH: ${{ inputs.forcePublish }}
-      FORCE_PUBLISH: 'false'
+      FORCE_PUBLISH: ${{ inputs.forcePublish }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
