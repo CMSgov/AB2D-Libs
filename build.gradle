@@ -22,7 +22,7 @@ ext {
             : System.getenv()['ARTIFACTORY_PASSWORD']
 
     // AB2D libraries
-    fhirVersion='2.4.0'
+    fhirVersion='2.4.0-SNAPSHOT'
     bfdVersion='4.2.1'
     aggregatorVersion='2.1.1'
     filtersVersion='2.3.0'
@@ -156,7 +156,7 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        //classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         // suppress the '*** building branch' logs
         if (!'true'.equals(System.getenv("SUPPRESS_LOGGING_BRANCH_CLASSIFIER"))) {
             out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
