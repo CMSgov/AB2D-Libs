@@ -72,7 +72,7 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-            echo "Publishing artifacts: $deployScript, avoiding overwriting existing ones
+            echo "Publishing artifacts: $deployScript, avoiding overwriting existing ones"
             ./gradlew ${deployScript} -b build.gradle
           else
             echo "No artifacts to publish."
