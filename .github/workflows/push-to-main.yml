@@ -9,5 +9,5 @@ jobs:
   build:
     uses: ./.github/workflows/publish.yml
     with:
-      forcePublish: false
+      forcePublish: true
     secrets: inherit
