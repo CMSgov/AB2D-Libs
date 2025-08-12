@@ -34,6 +34,7 @@ public class Contract extends TimestampBase {
         }
     }
 
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contract_seq")
     @SequenceGenerator(name = "contract_seq", sequenceName = "contract_seq", schema = "contract", allocationSize = 1)
     @EqualsAndHashCode.Include
