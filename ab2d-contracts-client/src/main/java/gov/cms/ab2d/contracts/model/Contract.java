@@ -5,13 +5,8 @@ import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,8 +34,8 @@ public class Contract extends TimestampBase {
         }
     }
 
-    @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contract_seq")
+    @SequenceGenerator(name = "contract_seq", sequenceName = "contract_seq", schema = "contract", allocationSize = 1)
     @EqualsAndHashCode.Include
     private Long id;
 
