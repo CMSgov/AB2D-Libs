@@ -21,7 +21,7 @@ public class SNSConfig {
     @Value("${cloud.aws.end-point.uri}")
     private String url;
 
-    @Value("${cloud.aws.sns.topic-prefix}")
+    @Value("${ab2d.sns.topic-prefix}")
     private String snsTopicPrefix;
 
     @Bean
