@@ -33,6 +33,7 @@ public class SNSClientImpl implements SNSClient {
         if (snsTopicPrefix == null || snsTopicPrefix.isBlank()) {
             throw new SNSClientException("SNS topic prefix is required");
         }
+        log.info("SNS topic prefix: '{}'", snsTopicPrefix);
         this.amazonSNSClient = amazonSNSClient;
         this.ab2dEnvironment = ab2dEnvironment;
         this.snsTopicPrefix = snsTopicPrefix;
