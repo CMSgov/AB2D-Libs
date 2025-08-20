@@ -11,9 +11,6 @@ import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.SnsException;
-
-import java.util.Optional;
-
 import static com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES;
 
 @Slf4j
@@ -58,8 +55,7 @@ public class SNSClientImpl implements SNSClient {
                     .build();
 
             amazonSNSClient.publish(request);
-        }
-        catch (SnsException e) {
+        } catch (SnsException e) {
             log.error(e.getMessage());
         }
     }
