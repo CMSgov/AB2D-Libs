@@ -38,7 +38,7 @@ class SendSnsTest {
         System.clearProperty("cloud.aws.end-point.uri");
         assertDoesNotThrow(() -> {
             SNSConfig snsConfig = new SNSConfig();
-            SNSClientImpl client = new SNSClientImpl(snsConfig.amazonSNS(), environment);
+            SNSClientImpl client = new SNSClientImpl(snsConfig.amazonSNS(), environment, "ab2d-" + environment.getName());
             client.sendMessage(Topics.COVERAGE_COUNTS.getValue(), "test");
         });
     }
