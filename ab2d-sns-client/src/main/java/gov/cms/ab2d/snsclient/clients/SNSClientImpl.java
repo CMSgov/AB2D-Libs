@@ -49,8 +49,9 @@ public class SNSClientImpl implements SNSClient {
         }
     }
 
-    // map from legacy to greenfield
-    static String getTopicPrefix(Ab2dEnvironment environment) {
+    static String getSnsTopicPrefix(Ab2dEnvironment environment) {
+        // TODO
+
         final String env;
         if (environment.getName().contains("dev")) {
             env="dev";
@@ -70,7 +71,7 @@ public class SNSClientImpl implements SNSClient {
         CreateTopicResponse result;
         try {
             CreateTopicRequest request = CreateTopicRequest.builder()
-                    .name(getTopicPrefix(ab2dEnvironment) + "-" + topicName)
+                    .name(getSnsTopicPrefix(ab2dEnvironment) + "-" + topicName)
                     .build();
 
             result = amazonSNSClient.createTopic(request);
