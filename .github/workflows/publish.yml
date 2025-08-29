@@ -23,10 +23,13 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
   publish:
-    needs: build
-    runs-on: self-hosted
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: codebuild-AB2D-Libs-${{ github.run_id }}-${{ github.run_attempt }}
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
+      FORCE_PUBLISH: ${{ inputs.forcePublish }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -38,7 +41,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Set env vars from AWS params
-        uses: cmsgov/ab2d-bcda-dpc-platform/actions/aws-params-env-action@main
+        uses: cmsgov/cdap/actions/aws-params-env-action@main
         with:
           params: |
             ARTIFACTORY_URL=/artifactory/url
@@ -49,7 +52,7 @@ jobs:
         run: ./gradlew cyclonedxBom
 
       - name: Publish to artifactory
-        if: inputs.forcePublish != true
+        if: ${{ env.FORCE_PUBLISH != 'true' }}
         run: |
           # Check for artifacts to deploy
           versionPublishedList=$(SUPPRESS_LOGGING_BRANCH_CLASSIFIER=true ./gradlew -q lookForArtifacts)
@@ -66,13 +69,16 @@ jobs:
           done
 
           if [ "$deployScript" != "" ]; then
-            echo "TEST -- $deployScript"
+            echo "Publishing artifacts: $deployScript, avoiding overwriting existing ones"
+            ./gradlew ${deployScript} -b build.gradle
           else
             echo "No artifacts to publish."
           fi
 
       - name: Force publish to Artifactory
-        if: inputs.forcePublish == true
-        run: ./gradlew artifactoryPublish -b build.gradle
+        if: ${{ env.FORCE_PUBLISH == 'true' }}
+        run: |
+            echo "Force publishing (overwriting) all artifacts to Artifactory"
+            ./gradlew artifactoryPublish -b build.gradle
 
 

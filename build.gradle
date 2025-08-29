@@ -28,7 +28,7 @@ ext {
     filtersVersion='2.3.0'
     eventClientVersion='3.3.6'
     propertiesClientVersion='2.1.0'
-    contractClientVersion='2.1.0'
+    contractClientVersion='2.1.1'
     snsClientVersion='1.1.2'
 
     sourcesRepo = 'ab2d-maven-repo'
@@ -156,7 +156,7 @@ subprojects {
 
     jar {
         processResources.exclude('checkstyle.xml')
-        classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
+        //classifier "main".equalsIgnoreCase(gitBranch()) || "main".equalsIgnoreCase(System.getenv('BRANCH_NAME')) ? "" : "SNAPSHOT"
         // suppress the '*** building branch' logs
         if (!'true'.equals(System.getenv("SUPPRESS_LOGGING_BRANCH_CLASSIFIER"))) {
             out.println("**** building branch - " + gitBranch() + ", classifier - " + classifier + " - CI branch - " + System.getenv('BRANCH_NAME'))
